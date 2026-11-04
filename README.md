@@ -20,3 +20,10 @@
 * checked each file and came to know there are errors associated with the autonomy-engine.ts
 * fixed by converting this type from commonjs to a module
 ![Milestone 2 verification]("images\Screenshot 2026-11-04 131711.png")
+
+# Milestone 3: PayPal Sandbox Integration
+* added src/paypal/: client.ts, orders.ts, payouts.ts, undo-window.ts, webhook-listener.ts, index.ts
+* credentials come from PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET these are env variables, no hardcoding
+* created scripts/verify-milestone-3.ts and the verify:m3 npm script (all HTTP mocked, runs offline)
+* still to test against the real sandbox: buyer approval step, void behaviour, Payouts availability, webhook event names
+
