@@ -26,4 +26,4 @@
 * credentials come from PAYPAL_CLIENT_ID / PAYPAL_CLIENT_SECRET these are env variables, no hardcoding
 * created scripts/verify-milestone-3.ts and the verify:m3 npm script (all HTTP mocked, runs offline)
 * still to test against the real sandbox: buyer approval step, void behaviour, Payouts availability, webhook event names
-
+![Milestone 3 verification]("images\Screenshot 2026-11-04 164542.png")
