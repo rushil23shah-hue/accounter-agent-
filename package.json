@@ -1,0 +1,31 @@
+{
+  "name": "accounter-agent-",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+  "typecheck": "tsc --noEmit",
+  "build": "tsc",
+  "verify:m1": "tsx scripts/verify-milestone-1.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rushil23shah-hue/accounter-agent-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rushil23shah-hue/accounter-agent-/issues"
+  },
+  "homepage": "https://github.com/rushil23shah-hue/accounter-agent-#readme",
+  "dependencies": {
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3"
+  }
+}
