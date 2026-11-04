@@ -72,7 +72,7 @@ console.log("✅ 3. Policy Gate Contract & Asymmetric Limit calculation passed."
 
 // 4. Verify PayPal Orders v2 Undo Hold Contract
 const txRecord = PayPalTransactionRecordSchema.parse({
-  transactionId: "a0000000-0000-0000-0000-000000000001",
+  transactionId: "a0000000-0000-4000-8000-000000000001",
   paypalOrderId: "ORD-987654321",
   authorizationId: "AUTH-123456",
   captureId: null,
