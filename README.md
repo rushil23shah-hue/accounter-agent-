@@ -1,6 +1,6 @@
 # accounter-agent-
 
-#Milestone 1: Domain Contracts and Runtime Zod schemas
+#  Milestone 1: Domain Contracts and Runtime Zod schemas
 * initialized typescript inside the folder.
 * created a directory structure for the contracts.
 * put in the contents of all the contracts files.
@@ -8,5 +8,15 @@
 * changed adversarial, payments and inverntory in the src/contracts/ folder.
 * index.ts is now a non-errornaeous file.
 * ran checks on the whole system and all passed 
-![Milestone 1 verification]("C:\Users\Keya\Desktop\accounter-agent-\images\Screenshot 2026-11-04 110454.png")
+![Milestone 1 verification]("images\Screenshot 2026-11-04 110454.png")
 * included DOM in tsconfig as well to make the console command compatible
+
+# Milestone 2: Core Execution Engines
+* created engine directory and updated package.json to fit the version 2 test
+* implemented taint-parser.ts, inventory-calculus.ts, policy-engine.ts, autonomy-engine.ts, index.ts
+* created the verification file scripts/verify-milestone-2.ts
+* run compilation and ran into errors associated with line 9 of package.json
+* fixed and re-run, now everything compiles smoothly
+* checked each file and came to know there are errors associated with the autonomy-engine.ts
+* fixed by converting this type from commonjs to a module
+![Milestone 2 verification]("images\Screenshot 2026-11-04 131711.png")
