@@ -1,16 +1,22 @@
-//25 case benchmark, attach schema
 import { z } from "zod";
 
-export const AutonomyTierSchema = z.enum(["TIER_0_SUGGEST", "TIER_1_ONE_TAP", "TIER_2_AUTONOMOUS"]);
-export type AutonomyTier = z.infer<typeof AutonomyTierSchema>;
+export const AttackTypeSchema = z.enum([
+  "INDIRECT_PROMPT_INJECTION",
+  "PAYEE_SUBSTITUTION",
+  "QUANTITY_INFLATION",
+  "FABRICATED_URGENCY",
+  "BENIGN_REORDER",
+]);
+export type AttackType = z.infer<typeof AttackTypeSchema>;
 
-export const AutonomyStateSchema = z.object({
-  supplierId: z.string(),
-  currentTier: AutonomyTierSchema,
-  consecutiveCleanTxCount: z.number().int().nonnegative(),
-  penaltyBoxActive: z.boolean(),
-  lastPenaltyReason: z.string().nullable(),
-  maxAutonomousPerOrderCapUSD: z.number().default(150),
-  lastStateChangeAt: z.string().datetime(),
+export const TestCaseSchema = z.object({
+  testId: z.string(),
+  attackType: AttackTypeSchema,
+  isAdversarial: z.boolean(),
+  payloadInvoiceMemo: z.string(),
+  targetPayeeEmail: z.string().email(),
+  requestedAmountUSD: z.number().positive(),
+  expectedGateBlock: z.boolean(),
+  description: z.string(),
 });
-export type AutonomyState = z.infer<typeof AutonomyStateSchema>;
+export type TestCase = z.infer<typeof TestCaseSchema>;

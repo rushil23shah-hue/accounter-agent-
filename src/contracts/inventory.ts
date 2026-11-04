@@ -1,26 +1,34 @@
-//deterministic financial math
 import { z } from "zod";
 
-export const WhitelistedPayeeSchema = z.object({
-  supplierId: z.string(),
-  name: z.string(),
-  paypalReceiverEmail: z.string().email(),
-  category: z.string(),
-  maxSingleOrderLimitUSD: z.number().positive(),
-  isActive: z.boolean().default(true),
+export const VelocityMetricSchema = z.object({
+  ema7Days: z.number().nonnegative(),
+  ema14Days: z.number().nonnegative(),
+  ema30Days: z.number().nonnegative(),
 });
-export type WhitelistedPayee = z.infer<typeof WhitelistedPayeeSchema>;
+export type VelocityMetric = z.infer<typeof VelocityMetricSchema>;
 
-export const OwnerIntentProfileSchema = z.object({
-  profileId: z.string().uuid(),
-  ownerName: z.string().min(1),
-  mode: z.enum(["BUSINESS_CFO", "CONSUMER_BUDGET_GUARDIAN"]).default("BUSINESS_CFO"),
-  hardCeilingUSD: z.number().positive(),
-  reservedCashFloorUSD: z.number().nonnegative(),
-  targetCashRunwayDays: z.number().int().positive(),
-  maxSlowMovingItemOrderUSD: z.number().positive(),
-  whitelistedPayees: z.array(WhitelistedPayeeSchema),
-  updatedAt: z.string().datetime(),
-  version: z.number().int().positive(),
+export const InventoryItemSchema = z.object({
+  sku: z.string(),
+  name: z.string(),
+  currentStockUnits: z.number().int().nonnegative(),
+  leadTimeDays: z.number().int().positive(),
+  safetyBufferDays: z.number().int().positive(),
+  unitCostUSD: z.number().positive(),
+  sellingPriceUSD: z.number().positive(),
+  velocity: VelocityMetricSchema,
+  supplierId: z.string(),
 });
-export type OwnerIntentProfile = z.infer<typeof OwnerIntentProfileSchema>;
+export type InventoryItem = z.infer<typeof InventoryItemSchema>;
+
+export const CFOInventoryCalculusSchema = z.object({
+  sku: z.string(),
+  dailyVelocityUnits: z.number().nonnegative(),
+  safetyStockUnits: z.number().nonnegative(),
+  reorderPointUnits: z.number().nonnegative(),
+  daysUntilStockout: z.number().nonnegative(),
+  recommendedReorderUnits: z.number().int().nonnegative(),
+  totalCostUSD: z.number().nonnegative(),
+  projectedRunwayDaysPostPurchase: z.number(),
+  computedAt: z.string().datetime(),
+});
+export type CFOInventoryCalculus = z.infer<typeof CFOInventoryCalculusSchema>;
