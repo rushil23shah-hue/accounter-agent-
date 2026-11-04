@@ -6,7 +6,8 @@
   "scripts": {
   "typecheck": "tsc --noEmit",
   "build": "tsc",
-  "verify:m1": "tsx scripts/verify-milestone-1.ts"
+  "verify:m1": "tsx scripts/verify-milestone-1.ts",
+  "verify:m2": "tsx scripts/verify-milestone-2.ts"
   },
   "repository": {
     "type": "git",
@@ -15,7 +16,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/rushil23shah-hue/accounter-agent-/issues"
   },
