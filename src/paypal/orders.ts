@@ -22,16 +22,25 @@ export class PayPalOrders {
   constructor(private readonly client: PayPalClient) {}
 
   /** Creates an AUTHORIZE order. The buyer must approve at approveUrl before authorizeOrder can succeed. */
-  public async createOrder(amountUSD: number, payeeEmail: string, requestId?: string) {
+  public async createOrder(amountUSD: number, payeeEmail?: string, requestId?: string) {
     const raw = await this.client.request(
       "POST",
       "/v2/checkout/orders",
       {
         intent: "AUTHORIZE",
+        payment_source: {
+          paypal: {
+            experience_context: {
+              return_url: "https://example.com/return",
+              cancel_url: "https://example.com/cancel",
+              user_action: "CONTINUE",
+            },
+          },
+        },
         purchase_units: [
           {
             amount: { currency_code: "USD", value: amountUSD.toFixed(2) },
-            payee: { email_address: payeeEmail },
+            ...(payeeEmail ? { payee: { email_address: payeeEmail } } : {}),
           },
         ],
       },

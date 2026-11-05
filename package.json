@@ -8,7 +8,8 @@
   "build": "tsc",
   "verify:m1": "tsx scripts/verify-milestone-1.ts",
   "verify:m2": "tsx scripts/verify-milestone-2.ts",
-  "verify:m3": "tsx scripts/verify-milestone-3.ts"
+  "verify:m3": "tsx scripts/verify-milestone-3.ts",
+  "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts"
   },
   "repository": {
     "type": "git",

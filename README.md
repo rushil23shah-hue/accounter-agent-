@@ -27,3 +27,8 @@
 * created scripts/verify-milestone-3.ts and the verify:m3 npm script (all HTTP mocked, runs offline)
 * still to test against the real sandbox: buyer approval step, void behaviour, Payouts availability, webhook event names
 ![Milestone 3 verification]("images\Screenshot 2026-11-04 164542.png")
+* added scripts/live-sandbox.ts and the live:m3 npm script, which make real calls to the PayPal sandbox
+* verified against real sandbox: OAuth, authorize order creation, buyer approval, authorize, void, and capture 
+* sandbox note: india to india payments are blocked, so testing used the India business account with a US personal buyer in USD
+* payouts request is not being processed since the sandbox business account is India based
+* still to test against the real sandbox: webhook event names
