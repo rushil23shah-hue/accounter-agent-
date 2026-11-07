@@ -10,6 +10,7 @@
     "verify:m2": "tsx scripts/verify-milestone-2.ts",
     "verify:m3": "tsx scripts/verify-milestone-3.ts",
     "verify:m4": "tsx scripts/verify-phase-4.ts",
+    "benchmark": "tsx scripts/run-benchmark.ts",
     "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts",
     "pdf": "node scripts/generate-pdf.js",
     "ui": "tsx src/server/app.ts",

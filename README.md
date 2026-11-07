@@ -32,3 +32,15 @@
 * sandbox note: india to india payments are blocked, so testing used the India business account with a US personal buyer in USD
 * payouts request is not being processed since the sandbox business account is India based
 * still to test against the real sandbox: webhook event names
+
+# Milestone 5: Adversarial Benchmark Suite
+* created src/benchmark/cases.ts and scripts/run-benchmark.ts
+* added the benchmark script to package.json
+* ran into a file not found error because run-benchmark.ts was missing in scripts
+* fixed that and got a TypeError because the function was named inspect instead of scan
+* changed scan to inspect and ran the test, saw that only 10 out of 15 attacks were getting blocked
+* added more edge cases to cover all tricky attacks like foreign languages, symbols, and prompt injections (65 cases total)
+* noticed the terminal was only showing 50 results because of terminal scroll and hardcoded text
+* updated run-benchmark.ts to show all 65 cases properly and list out what failed
+* updated pre-flight-shield.ts to catch all the new attacks
+* re-ran the benchmark and all 65 tests passed with a 100% block rate
