@@ -11,7 +11,9 @@
     "verify:m3": "tsx scripts/verify-milestone-3.ts",
     "verify:m4": "tsx scripts/verify-phase-4.ts",
     "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts",
-    "pdf": "node scripts/generate-pdf.js"
+    "pdf": "node scripts/generate-pdf.js",
+    "ui": "tsx src/server/app.ts",
+    "dev": "tsx src/server/app.ts"
   },
   "repository": {
     "type": "git",
