@@ -383,13 +383,72 @@
       </div>
     </section>
 
-    <!-- TAB 3: WHOLESALE DEAL SCOUT -->
+    <!-- TAB 3: WHOLESALE DEAL SCOUT & ITEM SEARCH -->
     <section id="tab-scout" class="hidden space-y-6">
       <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
-        <h2 class="text-xl font-bold text-white">Wholesale Restock Deal Scout</h2>
-        <p class="text-sm text-slate-400 mt-1">Multi-vendor marketplace comparison: evaluates volume tiers, shipping fees, lead-time deadlines, and composite reliability ratings.</p>
+        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-magnifying-glass-dollar text-paypal-accent"></i>
+          <span>Wholesale Deal Scout & Sourcing Engine</span>
+        </h2>
+        <p class="text-sm text-slate-400 mt-1">Search for any raw material, inventory item, or packaging supply. Steward scouts across competing wholesale suppliers, computes volume discount tiers, factors in shipping thresholds & delivery speed, and ranks them by net landed cost & reliability.</p>
       </div>
 
+      <!-- Item Sourcing Search Console -->
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+          <div class="md:col-span-6">
+            <label class="text-xs font-bold text-slate-400 block mb-1 uppercase tracking-wider">Product / Supply Search</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i class="fa-solid fa-search"></i>
+              </span>
+              <input type="text" id="scout-search-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-paypal-accent outline-none" placeholder="Search any item (e.g. Kraft Pouches, Matcha, Coffee Beans, Cups...)" value="Organic Earl Grey Reserve">
+            </div>
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold text-slate-400 block mb-1 uppercase tracking-wider">Batch Units</label>
+            <input type="number" id="scout-search-units" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-paypal-accent outline-none" value="100" min="10" step="10">
+          </div>
+
+          <div class="md:col-span-3">
+            <label class="text-xs font-bold text-slate-400 block mb-1 uppercase tracking-wider">Max Lead Time (Days)</label>
+            <input type="number" id="scout-search-leadtime" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:ring-2 focus:ring-paypal-accent outline-none" value="11" min="1" max="60">
+          </div>
+        </div>
+
+        <!-- Quick Search Suggestion Chips -->
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <span class="text-xs text-slate-500 font-semibold mr-1">Try searching:</span>
+          <button onclick="setScoutQuery('Organic Earl Grey Reserve', 100, 11)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🍵 Earl Grey Reserve</button>
+          <button onclick="setScoutQuery('Kraft Stand-Up Pouches 250g', 250, 7)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">📦 Kraft Pouches 250g</button>
+          <button onclick="setScoutQuery('Ceremonial Grade Matcha 100g', 50, 8)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🍵 Uji Matcha Powder</button>
+          <button onclick="setScoutQuery('Single-Origin Colombian Coffee Beans', 50, 10)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">☕ Colombian Coffee 1kg</button>
+          <button onclick="setScoutQuery('Compostable Hot Cups 12oz', 10, 5)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🥤 12oz Eco Hot Cups</button>
+          <button onclick="setScoutQuery('Boba Tapioca Pearls 1kg', 80, 12)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🧋 Boba Pearls</button>
+        </div>
+
+        <button onclick="searchAndScoutDeals()" id="btn-scout-search" class="w-full py-3 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-sm shadow-lg shadow-paypal-blue/30 transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-radar"></i>
+          <span>Search & Scout Best Wholesale Deals</span>
+        </button>
+      </div>
+
+      <!-- AI Recommendation Banner -->
+      <div id="scout-recommendation-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-emerald-950/90 border border-emerald-500/50 shadow-xl space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400 text-slate-950 uppercase tracking-wider">🏆 AI Optimal Restock Deal Selected</span>
+            <span class="text-xs text-slate-400 font-mono" id="scout-sku-tag">SKU: TEA-EG-001</span>
+          </div>
+          <span class="text-xs font-black text-emerald-400 font-mono text-base" id="scout-total-savings">Total Savings: $93.00</span>
+        </div>
+        <p class="text-sm text-slate-200" id="scout-decision-reason">
+          Comparing wholesale quotes...
+        </p>
+      </div>
+
+      <!-- Live Comparison Cards Matrix -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="scout-cards">
         <!-- Quotes will be dynamically populated here -->
       </div>
@@ -516,6 +575,134 @@
       document.getElementById('shield-amount').value = p.amount;
     }
 
+    function setScoutQuery(q, units, leadTime) {
+      document.getElementById('scout-search-input').value = q;
+      document.getElementById('scout-search-units').value = units;
+      document.getElementById('scout-search-leadtime').value = leadTime;
+      searchAndScoutDeals();
+    }
+
+    async function searchAndScoutDeals() {
+      const btn = document.getElementById('btn-scout-search');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Scouting Wholesale Marketplace...</span>`;
+
+      const query = document.getElementById('scout-search-input').value.trim() || 'Organic Earl Grey Reserve';
+      const units = parseInt(document.getElementById('scout-search-units').value, 10) || 100;
+      const maxLeadTimeDays = parseInt(document.getElementById('scout-search-leadtime').value, 10) || 12;
+
+      try {
+        const res = await fetch('/api/scout/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, units, maxLeadTimeDays })
+        });
+        const data = await res.json();
+        const comparison = data.comparison;
+
+        // Render AI Recommendation Banner
+        const banner = document.getElementById('scout-recommendation-banner');
+        banner.classList.remove('hidden');
+        document.getElementById('scout-sku-tag').innerText = `SKU: ${data.product.sku} (${units} units)`;
+        document.getElementById('scout-total-savings').innerText = `Savings: $${comparison.totalSavingsUSD.toFixed(2)}`;
+        document.getElementById('scout-decision-reason').innerText = comparison.decisionReason;
+
+        // Render Cards Matrix
+        const container = document.getElementById('scout-cards');
+        const recommendedId = comparison.recommendedDeal.supplierId;
+
+        container.innerHTML = comparison.evaluatedDeals.map(d => {
+          const isWinner = d.supplierId === recommendedId;
+          const isDisqualified = !d.fitsDeliveryDeadline;
+
+          let cardBorderClass = 'border-slate-800 bg-slate-900';
+          let badgeHtml = '';
+
+          if (isWinner) {
+            cardBorderClass = 'border-2 border-paypal-accent bg-gradient-to-b from-slate-900 to-emerald-950/40 shadow-2xl shadow-paypal-blue/20 ring-1 ring-paypal-accent/30';
+            badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-paypal-accent text-slate-950 uppercase tracking-wider">🏆 Best Landed Deal</span>`;
+          } else if (isDisqualified) {
+            cardBorderClass = 'border-rose-900/40 bg-slate-950/70 opacity-75';
+            badgeHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-900/60 text-rose-300 uppercase">❌ Exceeds ${maxLeadTimeDays}d Deadline</span>`;
+          } else {
+            cardBorderClass = 'border-amber-700/40 bg-slate-900';
+            badgeHtml = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950/80 text-amber-300 uppercase">Runner-up</span>`;
+          }
+
+          return `
+            <div class="p-6 rounded-2xl ${cardBorderClass} space-y-4 relative flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start gap-2">
+                  <div>
+                    <h3 class="font-bold text-white text-base leading-snug">${d.supplierName}</h3>
+                    <p class="text-xs text-slate-400 font-mono mt-0.5">${d.paypalReceiverEmail}</p>
+                  </div>
+                  ${badgeHtml}
+                </div>
+
+                <div class="mt-4 space-y-2 text-xs text-slate-300 font-mono">
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Effective Unit Cost:</span>
+                    <span class="text-white font-bold">$${d.effectiveUnitCostUSD.toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Bulk Discount Tier:</span>
+                    <span class="${d.appliedDiscountPercent > 0 ? 'text-emerald-400 font-bold' : 'text-slate-500'}">
+                      ${d.appliedDiscountPercent > 0 ? `${d.appliedDiscountPercent}% Applied` : 'None'}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Shipping Fee:</span>
+                    <span class="${d.shippingFeeUSD === 0 ? 'text-emerald-400 font-bold' : 'text-slate-300'}">
+                      ${d.shippingFeeUSD === 0 ? 'FREE Shipping' : `$${d.shippingFeeUSD.toFixed(2)}`}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Delivery Lead Time:</span>
+                    <span class="${isDisqualified ? 'text-rose-400 font-bold' : 'text-slate-200 font-bold'}">
+                      ${d.leadTimeDays} Days ${isDisqualified ? `(Max: ${maxLeadTimeDays}d)` : '✓'}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-slate-400">Reliability Rating:</span>
+                    <span class="text-amber-400 font-bold">★ ${d.reliabilityRating.toFixed(1)} / 5.0</span>
+                  </div>
+                  <div class="flex justify-between pt-2 border-t border-slate-800">
+                    <span class="text-slate-400">Net Landed Cost / Unit:</span>
+                    <span class="text-sm font-black text-white">$${d.netLandedCostPerUnitUSD.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-800 space-y-3">
+                <div class="flex justify-between items-baseline">
+                  <span class="text-xs text-slate-400">Gross Total (${units} units):</span>
+                  <span class="text-xl font-black ${isWinner ? 'text-emerald-400' : 'text-white'}">$${d.grossTotalUSD.toFixed(2)}</span>
+                </div>
+                ${isWinner ? `
+                  <button onclick="restockWinningDeal('${data.product.sku}', '${d.supplierName}', ${d.grossTotalUSD})" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-90 text-slate-950 font-black text-xs shadow-lg transition flex items-center justify-center space-x-1.5">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>1-Click Restock via Autopilot</span>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        alert("Scout search error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-radar"></i><span>Search & Scout Best Wholesale Deals</span>`;
+      }
+    }
+
+    function restockWinningDeal(sku, supplier, amount) {
+      switchTab('autopilot');
+      triggerAutopilot();
+    }
+
     async function fetchDashboardState() {
       try {
         const res = await fetch('/api/state');
@@ -528,41 +715,15 @@
         document.getElementById('stat-tier').innerText = data.autonomyState.currentTier.replace(/_/g, ' ');
         document.getElementById('stat-tx-count').innerText = `${data.autonomyState.consecutiveCleanTxCount} Clean Txns`;
 
-        renderScoutCards(data.quotes);
-
         if (data.activeHold && data.activeHold.status === 'ACTIVE') {
           showUndoWindow(data.activeHold);
         }
+
+        // Trigger initial scout search
+        searchAndScoutDeals();
       } catch (err) {
         console.error("Failed to load dashboard state:", err);
       }
-    }
-
-    function renderScoutCards(quotes) {
-      const container = document.getElementById('scout-cards');
-      container.innerHTML = quotes.map(q => {
-        const isAssam = q.supplierId === 'sup_assam_direct';
-        return `
-          <div class="p-6 rounded-2xl bg-slate-900 border ${isAssam ? 'border-paypal-accent shadow-xl shadow-paypal-blue/10 ring-1 ring-paypal-accent/30' : 'border-slate-800'} space-y-4 relative">
-            ${isAssam ? '<span class="absolute top-4 right-4 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-paypal-accent text-slate-950 uppercase tracking-wider">Recommended Deal</span>' : ''}
-            <div>
-              <h3 class="font-bold text-white text-base">${q.supplierName}</h3>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">${q.paypalReceiverEmail}</p>
-            </div>
-            <div class="space-y-2 text-xs text-slate-300 font-mono">
-              <div class="flex justify-between"><span>Base Unit Cost:</span> <span class="text-white font-bold">$${q.baseUnitCostUSD.toFixed(2)}</span></div>
-              <div class="flex justify-between"><span>Bulk Discount:</span> <span class="text-emerald-400">${q.volumeTiers.length > 0 ? 'Up to 15% off' : 'None'}</span></div>
-              <div class="flex justify-between"><span>Shipping Fee:</span> <span>$${q.shippingCostUSD.toFixed(2)}</span></div>
-              <div class="flex justify-between"><span>Lead Time:</span> <span class="${q.leadTimeDays > 11 ? 'text-rose-400' : 'text-slate-200'} font-bold">${q.leadTimeDays} Days</span></div>
-              <div class="flex justify-between"><span>Reliability:</span> <span class="text-amber-400">★ ${q.reliabilityRating} / 5.0</span></div>
-            </div>
-            <div class="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
-              <span class="text-slate-400">Net 100u Landed:</span>
-              <span class="text-lg font-black ${isAssam ? 'text-emerald-400' : 'text-slate-200'}">$${isAssam ? '357.00' : (q.baseUnitCostUSD * 100 + q.shippingCostUSD).toFixed(2)}</span>
-            </div>
-          </div>
-        `;
-      }).join('');
     }
 
     async function triggerAutopilot() {

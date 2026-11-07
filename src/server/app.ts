@@ -21,6 +21,260 @@ const __dirname = path.dirname(__filename);
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
+// Dynamic Wholesale Marketplace Catalog & Multi-Vendor Generator
+function generateWholesaleQuotesForQuery(query: string): { quotes: WholesaleSupplierQuote[]; baselineUnitCostUSD: number; sku: string; name: string } {
+  const q = query.toLowerCase().trim();
+
+  if (q.includes("pouch") || q.includes("packag") || q.includes("bag") || q.includes("box")) {
+    return {
+      sku: "PKG-KRAFT-250",
+      name: "Eco-Friendly Kraft Stand-Up Pouches 250g",
+      baselineUnitCostUSD: 0.65,
+      quotes: [
+        {
+          supplierId: "sup_packaging_eco",
+          supplierName: "EcoPack Containers Direct",
+          paypalReceiverEmail: "billing@ecopack.com",
+          baseUnitCostUSD: 0.42,
+          volumeTiers: [
+            { minUnits: 100, discountPercent: 10 },
+            { minUnits: 250, discountPercent: 20 },
+          ],
+          shippingCostUSD: 15.0,
+          freeShippingThresholdUSD: 100.0,
+          leadTimeDays: 4,
+          reliabilityRating: 4.9,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_local_pack",
+          supplierName: "Metro Packaging Express",
+          paypalReceiverEmail: "orders@metropack.com",
+          baseUnitCostUSD: 0.55,
+          volumeTiers: [{ minUnits: 100, discountPercent: 5 }],
+          shippingCostUSD: 12.0,
+          freeShippingThresholdUSD: 200.0,
+          leadTimeDays: 2,
+          reliabilityRating: 4.7,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_global_plastic",
+          supplierName: "Trans-Pacific Poly Exporters",
+          paypalReceiverEmail: "bulk@transpacific-poly.com",
+          baseUnitCostUSD: 0.28,
+          volumeTiers: [{ minUnits: 500, discountPercent: 25 }],
+          shippingCostUSD: 45.0,
+          freeShippingThresholdUSD: 500.0,
+          leadTimeDays: 19,
+          reliabilityRating: 4.0,
+          isVerifiedPartner: false,
+        },
+      ],
+    };
+  }
+
+  if (q.includes("matcha") || q.includes("ceremonial")) {
+    return {
+      sku: "TEA-MAT-003",
+      name: "Ceremonial Grade Uji Matcha 100g",
+      baselineUnitCostUSD: 18.0,
+      quotes: [
+        {
+          supplierId: "sup_kyoto_direct",
+          supplierName: "Kyoto Direct Harvest Estate",
+          paypalReceiverEmail: "export@kyoto-harvest.jp",
+          baseUnitCostUSD: 13.5,
+          volumeTiers: [
+            { minUnits: 20, discountPercent: 8 },
+            { minUnits: 50, discountPercent: 18 },
+          ],
+          shippingCostUSD: 20.0,
+          freeShippingThresholdUSD: 250.0,
+          leadTimeDays: 5,
+          reliabilityRating: 5.0,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_pac_tea",
+          supplierName: "Pacific Coast Matcha Distro",
+          paypalReceiverEmail: "sales@pacificmatcha.com",
+          baseUnitCostUSD: 15.8,
+          volumeTiers: [{ minUnits: 30, discountPercent: 6 }],
+          shippingCostUSD: 10.0,
+          freeShippingThresholdUSD: 300.0,
+          leadTimeDays: 2,
+          reliabilityRating: 4.8,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_cargo_tea",
+          supplierName: "East Sea Cargo Wholesalers",
+          paypalReceiverEmail: "orders@eastseacargo.com",
+          baseUnitCostUSD: 10.0,
+          volumeTiers: [{ minUnits: 100, discountPercent: 22 }],
+          shippingCostUSD: 60.0,
+          freeShippingThresholdUSD: 800.0,
+          leadTimeDays: 21,
+          reliabilityRating: 4.2,
+          isVerifiedPartner: false,
+        },
+      ],
+    };
+  }
+
+  if (q.includes("coffee") || q.includes("espresso") || q.includes("bean")) {
+    return {
+      sku: "COF-COL-001",
+      name: "Single-Origin Colombian Huila Beans (1kg)",
+      baselineUnitCostUSD: 15.0,
+      quotes: [
+        {
+          supplierId: "sup_huila_estate",
+          supplierName: "Huila High-Altitude Estate Direct",
+          paypalReceiverEmail: "sales@huilacoffee.co",
+          baseUnitCostUSD: 11.2,
+          volumeTiers: [
+            { minUnits: 25, discountPercent: 10 },
+            { minUnits: 50, discountPercent: 16 },
+          ],
+          shippingCostUSD: 20.0,
+          freeShippingThresholdUSD: 250.0,
+          leadTimeDays: 6,
+          reliabilityRating: 4.9,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_local_roast",
+          supplierName: "City Roasters Wholesale Hub",
+          paypalReceiverEmail: "hub@cityroasters.com",
+          baseUnitCostUSD: 13.5,
+          volumeTiers: [{ minUnits: 20, discountPercent: 5 }],
+          shippingCostUSD: 12.0,
+          freeShippingThresholdUSD: 200.0,
+          leadTimeDays: 2,
+          reliabilityRating: 4.7,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_south_cargo",
+          supplierName: "Global Green Bean Freight",
+          paypalReceiverEmail: "freight@greenbeanbulk.com",
+          baseUnitCostUSD: 8.5,
+          volumeTiers: [{ minUnits: 100, discountPercent: 20 }],
+          shippingCostUSD: 70.0,
+          freeShippingThresholdUSD: 1000.0,
+          leadTimeDays: 22,
+          reliabilityRating: 3.9,
+          isVerifiedPartner: false,
+        },
+      ],
+    };
+  }
+
+  if (q.includes("cup") || q.includes("lid") || q.includes("takeaway")) {
+    return {
+      sku: "SUP-CUP-12OZ",
+      name: "Compostable Double-Wall Hot Cups 12oz (Case of 500)",
+      baselineUnitCostUSD: 52.0,
+      quotes: [
+        {
+          supplierId: "sup_ecoware",
+          supplierName: "EcoWare Sustainable Supplies",
+          paypalReceiverEmail: "orders@ecoware.com",
+          baseUnitCostUSD: 38.0,
+          volumeTiers: [
+            { minUnits: 5, discountPercent: 8 },
+            { minUnits: 15, discountPercent: 15 },
+          ],
+          shippingCostUSD: 25.0,
+          freeShippingThresholdUSD: 300.0,
+          leadTimeDays: 4,
+          reliabilityRating: 4.9,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_local_distro",
+          supplierName: "Local Restaurant Depot Express",
+          paypalReceiverEmail: "orders@localtea.com",
+          baseUnitCostUSD: 46.0,
+          volumeTiers: [{ minUnits: 10, discountPercent: 5 }],
+          shippingCostUSD: 15.0,
+          freeShippingThresholdUSD: 250.0,
+          leadTimeDays: 1,
+          reliabilityRating: 4.8,
+          isVerifiedPartner: true,
+        },
+        {
+          supplierId: "sup_bulk_containers",
+          supplierName: "Overseas Container Cup Importers",
+          paypalReceiverEmail: "sales@containercups.com",
+          baseUnitCostUSD: 26.0,
+          volumeTiers: [{ minUnits: 25, discountPercent: 25 }],
+          shippingCostUSD: 80.0,
+          freeShippingThresholdUSD: 900.0,
+          leadTimeDays: 20,
+          reliabilityRating: 4.1,
+          isVerifiedPartner: false,
+        },
+      ],
+    };
+  }
+
+  // Default / Universal Item Generator: Generates realistic quotes for any user query!
+  const capitalizedQuery = query.charAt(0).toUpperCase() + query.slice(1);
+  const hash = query.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const estimatedUnitCost = Number((3.5 + (hash % 15)).toFixed(2));
+  const cleanSku = `SKU-${query.replace(/[^a-zA-Z0-9]/g, "").slice(0, 8).toUpperCase() || "GEN"}-01`;
+
+  return {
+    sku: cleanSku,
+    name: capitalizedQuery,
+    baselineUnitCostUSD: Number((estimatedUnitCost * 1.35).toFixed(2)),
+    quotes: [
+      {
+        supplierId: "sup_direct_factory",
+        supplierName: `${capitalizedQuery} Certified Wholesale Direct`,
+        paypalReceiverEmail: "supplier-assam@teaestate.com",
+        baseUnitCostUSD: estimatedUnitCost,
+        volumeTiers: [
+          { minUnits: 50, discountPercent: 8 },
+          { minUnits: 100, discountPercent: 15 },
+        ],
+        shippingCostUSD: 20.0,
+        freeShippingThresholdUSD: 250.0,
+        leadTimeDays: 5,
+        reliabilityRating: 4.9,
+        isVerifiedPartner: true,
+      },
+      {
+        supplierId: "sup_express_local",
+        supplierName: `Local 24h ${capitalizedQuery} Depot`,
+        paypalReceiverEmail: "orders@localtea.com",
+        baseUnitCostUSD: Number((estimatedUnitCost * 1.15).toFixed(2)),
+        volumeTiers: [{ minUnits: 50, discountPercent: 5 }],
+        shippingCostUSD: 14.0,
+        freeShippingThresholdUSD: 300.0,
+        leadTimeDays: 2,
+        reliabilityRating: 4.7,
+        isVerifiedPartner: true,
+      },
+      {
+        supplierId: "sup_overseas_bulk",
+        supplierName: `Trans-Oceanic ${capitalizedQuery} Cargo`,
+        paypalReceiverEmail: "cargo@overseas-tea.com",
+        baseUnitCostUSD: Number((estimatedUnitCost * 0.72).toFixed(2)),
+        volumeTiers: [{ minUnits: 100, discountPercent: 20 }],
+        shippingCostUSD: 60.0,
+        freeShippingThresholdUSD: 800.0,
+        leadTimeDays: 18,
+        reliabilityRating: 4.1,
+        isVerifiedPartner: false,
+      },
+    ],
+  };
+}
+
 // Shared Mock State for the Interactive Dashboard
 const state = {
   profile: {
@@ -89,47 +343,7 @@ const state = {
     },
   ] as InventoryItem[],
 
-  quotes: [
-    {
-      supplierId: "sup_local_distro",
-      supplierName: "Local Express Tea Distro",
-      paypalReceiverEmail: "orders@localtea.com",
-      baseUnitCostUSD: 4.8,
-      volumeTiers: [],
-      shippingCostUSD: 18.0,
-      freeShippingThresholdUSD: 600.0,
-      leadTimeDays: 2,
-      reliabilityRating: 4.8,
-      isVerifiedPartner: true,
-    },
-    {
-      supplierId: "sup_assam_direct",
-      supplierName: "Assam Highlands Estate Direct",
-      paypalReceiverEmail: "supplier-assam@teaestate.com",
-      baseUnitCostUSD: 4.2,
-      volumeTiers: [
-        { minUnits: 50, discountPercent: 8 },
-        { minUnits: 80, discountPercent: 15 },
-      ],
-      shippingCostUSD: 25.0,
-      freeShippingThresholdUSD: 300.0,
-      leadTimeDays: 6,
-      reliabilityRating: 4.9,
-      isVerifiedPartner: true,
-    },
-    {
-      supplierId: "sup_overseas_bulk",
-      supplierName: "Overseas Cargo Bulk Exporters",
-      paypalReceiverEmail: "cargo@overseas-tea.com",
-      baseUnitCostUSD: 3.2,
-      volumeTiers: [{ minUnits: 100, discountPercent: 20 }],
-      shippingCostUSD: 50.0,
-      freeShippingThresholdUSD: 1000.0,
-      leadTimeDays: 18,
-      reliabilityRating: 4.1,
-      isVerifiedPartner: false,
-    },
-  ] as WholesaleSupplierQuote[],
+  quotes: generateWholesaleQuotesForQuery("tea").quotes as WholesaleSupplierQuote[],
 
   vault: new ZKVault({
     liquidCashUSD: 14250.0,
@@ -291,24 +505,36 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // ── 5. API: Deal Scout Comparison ────────────────────────────────────────
-  if (req.method === "POST" && url.pathname === "/api/scout/compare") {
+  // ── 5. API: Deal Scout Comparison & Item Search ─────────────────────────
+  if (req.method === "POST" && (url.pathname === "/api/scout/compare" || url.pathname === "/api/scout/search")) {
     try {
       const body = await parseJsonBody(req);
+      const query = (body.query || body.sku || "tea").trim();
       const units = Number(body.units) || 100;
-      const sku = body.sku || "TEA-EG-001";
-      const maxLeadTime = Number(body.maxLeadTimeDays) || 11;
+      const maxLeadTime = Number(body.maxLeadTimeDays) || 12;
+
+      const sourced = generateWholesaleQuotesForQuery(query);
 
       const comparison = WholesaleDealScout.compareQuotes(
-        sku,
+        sourced.sku,
         units,
         maxLeadTime,
-        state.quotes,
-        4.5
+        sourced.quotes,
+        sourced.baselineUnitCostUSD
       );
 
       res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(comparison));
+      res.end(
+        JSON.stringify({
+          query,
+          product: {
+            sku: sourced.sku,
+            name: sourced.name,
+            baselineUnitCostUSD: sourced.baselineUnitCostUSD,
+          },
+          comparison,
+        })
+      );
     } catch (err: any) {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));
