@@ -1,21 +1,29 @@
 {
   "name": "accounter-agent-",
   "version": "1.0.0",
-  "description": "",
+  "description": "Steward 2.0: The Intent-Aware Agentic Financial Autopilot",
   "main": "index.js",
   "scripts": {
-  "typecheck": "tsc --noEmit",
-  "build": "tsc",
-  "verify:m1": "tsx scripts/verify-milestone-1.ts",
-  "verify:m2": "tsx scripts/verify-milestone-2.ts",
-  "verify:m3": "tsx scripts/verify-milestone-3.ts",
-  "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts"
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "verify:m1": "tsx scripts/verify-milestone-1.ts",
+    "verify:m2": "tsx scripts/verify-milestone-2.ts",
+    "verify:m3": "tsx scripts/verify-milestone-3.ts",
+    "verify:m4": "tsx scripts/verify-phase-4.ts",
+    "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts",
+    "pdf": "node scripts/generate-pdf.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rushil23shah-hue/accounter-agent-.git"
   },
-  "keywords": [],
+  "keywords": [
+    "paypal",
+    "agentic-commerce",
+    "zk-privacy",
+    "pre-flight-shield",
+    "autopilot"
+  ],
   "author": "",
   "license": "ISC",
   "type": "module",
