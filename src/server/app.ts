@@ -16,6 +16,8 @@ import {
   InventoryItem,
   OwnerIntentProfile,
   AutonomyState,
+  WebScoutEngine,
+  SelfLearningIntentAgent,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -459,12 +461,22 @@ const server = http.createServer(async (req, res) => {
 
       const dynamicQuotes = generateWholesaleQuotesForQuery(item.name).quotes;
 
+      const customUnits = body.customUnits !== undefined && Number(body.customUnits) > 0
+        ? Number(body.customUnits)
+        : undefined;
+
+      const oneTimeMandateOverrideUSD = body.oneTimeMandateOverrideUSD !== undefined && Number(body.oneTimeMandateOverrideUSD) > 0
+        ? Number(body.oneTimeMandateOverrideUSD)
+        : undefined;
+
       const result = await RestockingAutopilotOrchestrator.runCycle({
         item,
         profile: state.profile,
         zkVault: state.vault,
         availableWholesaleQuotes: dynamicQuotes,
         supplierAutonomyState: state.autonomyState,
+        customUnits,
+        oneTimeMandateOverrideUSD,
       });
 
       if (result.status === "COMPLETED_AUTONOMOUS_HOLD" && result.paypalOrderId) {
@@ -819,6 +831,121 @@ const server = http.createServer(async (req, res) => {
           details,
         })
       );
+    } catch (err: any) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 14. API: Real-Time Consumer Web Price Comparer (Amazon, Flipkart, Meesho) ─
+  if (req.method === "POST" && url.pathname === "/api/web-scout/search") {
+    try {
+      const body = await parseJsonBody(req);
+      const query = (body.query || "").trim();
+      if (!query) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "Query parameter is required" }));
+        return;
+      }
+
+      const result = await WebScoutEngine.searchDeals(query);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(result));
+    } catch (err: any) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 15. API: Self-Learning Intent Rules (List & Teach) ────────────────────
+  if (req.method === "GET" && url.pathname === "/api/intent/rules") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ rules: SelfLearningIntentAgent.getTaughtRules() }));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/intent/teach") {
+    try {
+      const body = await parseJsonBody(req);
+      const ruleText = (body.ruleText || "").trim();
+      if (!ruleText) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: "ruleText is required" }));
+        return;
+      }
+
+      const newRule = SelfLearningIntentAgent.teachRule(ruleText);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, rule: newRule }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/intent/rule/toggle") {
+    try {
+      const body = await parseJsonBody(req);
+      const success = SelfLearningIntentAgent.toggleRule(body.ruleId, Boolean(body.active));
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 16. API: Intent Proactive Tasks & Autopilot Execution ─────────────────
+  if (req.method === "GET" && url.pathname === "/api/intent/tasks") {
+    try {
+      const tasks = SelfLearningIntentAgent.generateProactiveTasks({
+        inventory: state.inventory,
+        profile: state.profile,
+        zkVault: state.vault,
+        autonomyStates: { [state.autonomyState.supplierId]: state.autonomyState },
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ tasks }));
+    } catch (err: any) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/intent/task/execute") {
+    try {
+      const body = await parseJsonBody(req);
+      const sku = body.sku || "TEA-MC-002";
+      const item = state.inventory.find((i) => i.sku === sku) || state.inventory[0];
+      const dynamicQuotes = generateWholesaleQuotesForQuery(item.name).quotes;
+
+      const result = await RestockingAutopilotOrchestrator.runCycle({
+        item,
+        profile: state.profile,
+        zkVault: state.vault,
+        availableWholesaleQuotes: dynamicQuotes,
+        supplierAutonomyState: state.autonomyState,
+        customUnits: body.targetUnits ? Number(body.targetUnits) : undefined,
+        oneTimeMandateOverrideUSD: body.overrideAmountUSD ? Number(body.overrideAmountUSD) : undefined,
+      });
+
+      if (result.status === "COMPLETED_AUTONOMOUS_HOLD" && result.paypalOrderId) {
+        state.activeHold = {
+          orderId: result.paypalOrderId,
+          amountUSD: result.dealComparison?.recommendedDeal.grossTotalUSD || 0,
+          supplier: result.dealComparison?.recommendedDeal.supplierName || "Assam Highlands",
+          expiresAt: Date.now() + 60_000,
+          status: "ACTIVE",
+        };
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, result }));
     } catch (err: any) {
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));

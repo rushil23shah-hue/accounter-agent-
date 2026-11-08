@@ -21,6 +21,14 @@ import { PayPalOrders, PayPalClient, UndoWindow } from "../paypal/index.js";
 // Result Schema — fully typed, no z.any()
 // ─────────────────────────────────────────────────────────────────────────────
 
+export const DownsizedOptionSchema = z.object({
+  suggestedUnits: z.number().int().positive(),
+  estimatedGrossTotalUSD: z.number().positive(),
+  supplierName: z.string(),
+  reason: z.string(),
+});
+export type DownsizedOption = z.infer<typeof DownsizedOptionSchema>;
+
 export const AutopilotExecutionResultSchema = z.object({
   executionId: z.string(),
   sku: z.string(),
@@ -58,6 +66,11 @@ export const AutopilotExecutionResultSchema = z.object({
 
   /** The autonomy tier that governed this execution cycle. */
   autonomyTierUsed: z.enum(["TIER_0_SUGGEST", "TIER_1_ONE_TAP", "TIER_2_AUTONOMOUS"]),
+
+  /**
+   * Downsized batch recommendation when full batch exceeds mandate ceiling.
+   */
+  downsizedOption: DownsizedOptionSchema.optional(),
 
   /**
    * CEO-level one-paragraph summary of what happened and why,
@@ -115,6 +128,14 @@ export interface AutopilotCycleInput {
    * Required for live execution (ignored in simulation mode).
    */
   undoWindow?: UndoWindow;
+  /**
+   * Optional custom order batch units (e.g. from Auto-Downsizing or merchant manual override).
+   */
+  customUnits?: number;
+  /**
+   * Optional one-time owner mandate exception ceiling in USD.
+   */
+  oneTimeMandateOverrideUSD?: number;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -217,12 +238,15 @@ export class RestockingAutopilotOrchestrator {
       );
 
       // ── Stage 3: Wholesale Deal Scout ────────────────────────────────────
+      const targetUnits = input.customUnits && input.customUnits > 0
+        ? input.customUnits
+        : forecast.tailoredNextMonthUnits;
       const maxLeadTime = input.item.leadTimeDays + input.item.safetyBufferDays;
       let dealComparison;
       try {
         dealComparison = WholesaleDealScout.compareQuotes(
           input.item.sku,
-          forecast.tailoredNextMonthUnits,
+          targetUnits,
           maxLeadTime,
           input.availableWholesaleQuotes,
           input.item.unitCostUSD,
@@ -253,7 +277,27 @@ export class RestockingAutopilotOrchestrator {
       const recommended = dealComparison.recommendedDeal;
 
       // ── Mandate guard: order must fit within effective mandate ───────────
-      if (recommended.grossTotalUSD > dynamicMandate.currentEffectiveMandateUSD) {
+      const effectiveCeiling = input.oneTimeMandateOverrideUSD && input.oneTimeMandateOverrideUSD > 0
+        ? Math.max(dynamicMandate.currentEffectiveMandateUSD, input.oneTimeMandateOverrideUSD)
+        : dynamicMandate.currentEffectiveMandateUSD;
+
+      if (recommended.grossTotalUSD > effectiveCeiling) {
+        // Calculate dynamic downsized batch to fit cleanly inside mandate
+        const effUnitCost = recommended.effectiveUnitCostUSD;
+        const shipping = recommended.shippingFeeUSD;
+        const spendableCash = Math.max(0, effectiveCeiling - shipping);
+        const downsizedUnits = Math.floor(spendableCash / effUnitCost);
+        const downsizedGrossTotal = Number(
+          (downsizedUnits * effUnitCost + (downsizedUnits > 0 ? shipping : 0)).toFixed(2)
+        );
+
+        const downsizedOption = downsizedUnits > 0 ? {
+          suggestedUnits: downsizedUnits,
+          estimatedGrossTotalUSD: downsizedGrossTotal,
+          supplierName: recommended.supplierName,
+          reason: `Auto-downsizing to ${downsizedUnits} units ($${downsizedGrossTotal.toFixed(2)}) cleanly satisfies your $${effectiveCeiling.toFixed(2)} mandate ceiling without risking cash reserve breach.`,
+        } : undefined;
+
         return {
           executionId,
           sku: input.item.sku,
@@ -266,10 +310,12 @@ export class RestockingAutopilotOrchestrator {
           undoWindowActive: false,
           undoSecondsRemaining: 0,
           autonomyTierUsed,
+          downsizedOption,
           executiveBriefing:
-            `Restock for ${input.item.name} needed (${forecast.tailoredNextMonthUnits} units, $${recommended.grossTotalUSD.toFixed(2)}) ` +
-            `but exceeds the current effective mandate of $${dynamicMandate.currentEffectiveMandateUSD.toFixed(2)}. ` +
-            `${dynamicMandate.mandateExplanation}`,
+            `Restock for ${input.item.name} needed (${targetUnits} units, $${recommended.grossTotalUSD.toFixed(2)}) ` +
+            `but exceeds the current effective mandate of $${effectiveCeiling.toFixed(2)}. ` +
+            `${dynamicMandate.mandateExplanation}` +
+            (downsizedOption ? ` | AI Recommendation: Downsize to ${downsizedUnits} units ($${downsizedGrossTotal.toFixed(2)}) to fit inside the $${effectiveCeiling.toFixed(2)} mandate ceiling.` : ''),
           status: "BLOCKED_BY_MANDATE",
           timestamp,
         };
@@ -280,7 +326,7 @@ export class RestockingAutopilotOrchestrator {
       // Raw dollar figures stay inside the vault — only booleans exit.
       const zkProof = input.zkVault.verifyFinancialSolvency(
         recommended.grossTotalUSD,
-        { hardCeilingUSD: input.profile.hardCeilingUSD },
+        { hardCeilingUSD: effectiveCeiling },
       );
 
       if (!zkProof.clearanceGranted) {
@@ -308,7 +354,7 @@ export class RestockingAutopilotOrchestrator {
       // ── Stage 5: Pre-Flight Security Shield ──────────────────────────────
       // Builds a realistic invoice memo and scans it for adversarial content.
       const invoiceMemo =
-        `Wholesale Restock Invoice — ${forecast.tailoredNextMonthUnits} units of "${input.item.name}" ` +
+        `Wholesale Restock Invoice — ${targetUnits} units of "${input.item.name}" ` +
         `(SKU: ${input.item.sku}). Net total: $${recommended.grossTotalUSD.toFixed(2)}. ` +
         `Remit to: ${recommended.paypalReceiverEmail}.`;
 
@@ -318,7 +364,7 @@ export class RestockingAutopilotOrchestrator {
         proposedAmountUSD: recommended.grossTotalUSD,
         expectedAmountUSD: recommended.grossTotalUSD,
         sku: input.item.sku,
-        units: forecast.tailoredNextMonthUnits,
+        units: targetUnits,
         whitelistedPayees: input.profile.whitelistedPayees,
         sourceIdentifier: `supplier_feed_${recommended.supplierId}`,
       });

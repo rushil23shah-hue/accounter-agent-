@@ -180,6 +180,14 @@
         <i class="fa-solid fa-robot"></i>
         <span>Restock Autopilot</span>
       </button>
+      <button onclick="switchTab('webscout')" id="tab-btn-webscout" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Consumer Web Deals (Amazon / Flipkart / Meesho)</span>
+      </button>
+      <button onclick="switchTab('intent')" id="tab-btn-intent" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fa-solid fa-brain"></i>
+        <span>Self-Learning Intent Copilot</span>
+      </button>
       <button onclick="switchTab('shield')" id="tab-btn-shield" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
         <i class="fa-solid fa-shield-virus"></i>
         <span>Red Team Shield (65 Cases)</span>
@@ -298,6 +306,8 @@
           <p class="text-sm text-slate-200 mt-2 leading-relaxed" id="briefing-content">
             Select an SKU above and click "Run Autopilot Cycle" to watch the end-to-end autonomous restock sequence in real time.
           </p>
+          <!-- Dynamic Action Buttons (e.g. Auto-Downsize / One-Tap Exception) -->
+          <div id="briefing-actions" class="mt-4 flex flex-wrap items-center gap-3 hidden"></div>
         </div>
       </div>
 
@@ -333,6 +343,134 @@
               <!-- Dynamically populated -->
             </tbody>
           </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: CONSUMER WEB PRICE COMPARER (AMAZON, FLIPKART, MEESHO) -->
+    <section id="tab-webscout" class="hidden space-y-6">
+      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-cart-shopping text-paypal-accent"></i>
+          <span>Consumer & Merchant Web Price Comparer (Amazon · Flipkart · Meesho · Nike)</span>
+        </h2>
+        <p class="text-sm text-slate-400 mt-1">Search for any consumer or wholesale product across the web (shoes, dresses, electronics, supplies). Steward dynamically crawls and compares live web shopping catalogs, extracts real pricing & delivery times, calculates cross-platform price arbitrage, and provides direct outbound links to the best deals.</p>
+      </div>
+
+      <!-- Web Scout Search Console -->
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </span>
+            <input type="text" id="webscout-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:ring-2 focus:ring-paypal-accent outline-none" placeholder="Search anything across web (e.g. Nike Air Jordan 1, Floral Summer Dress, Samsung S24 Ultra...)" value="Nike Air Jordan 1">
+          </div>
+          <button onclick="searchWebScout()" id="btn-webscout-search" class="px-8 py-3 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-sm shadow-lg shadow-paypal-blue/30 transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Compare Live Web Deals</span>
+          </button>
+        </div>
+
+        <!-- Quick Search Suggestion Chips -->
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <span class="text-xs text-slate-500 font-semibold mr-1">Trending Searches:</span>
+          <button onclick="setWebScoutQuery('Nike Air Jordan 1')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">👟 Nike Air Jordan 1</button>
+          <button onclick="setWebScoutQuery('Floral Summer Dress for Women')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">👗 Floral Summer Dress</button>
+          <button onclick="setWebScoutQuery('Samsung Galaxy S24 Ultra 256GB')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">📱 Samsung Galaxy S24</button>
+          <button onclick="setWebScoutQuery('Sony WH-1000XM5 Wireless Headphones')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🎧 Sony WH-1000XM5</button>
+          <button onclick="setWebScoutQuery('Ceremonial Grade Matcha 100g')" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 transition">🍵 Uji Ceremonial Matcha</button>
+        </div>
+      </div>
+
+      <!-- Live Web Scout Summary Banner -->
+      <div id="webscout-summary-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-emerald-950/90 via-slate-900 to-emerald-950/90 border border-emerald-500/50 shadow-xl space-y-2">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-400 text-slate-950 uppercase tracking-wider">🏆 Top Recommended Deal</span>
+            <span class="text-xs text-slate-400 font-mono" id="webscout-best-platform">Platform: Meesho</span>
+          </div>
+          <span class="text-sm font-black text-emerald-400 font-mono" id="webscout-savings-callout">Saves up to $49.45 vs Peak</span>
+        </div>
+        <p class="text-sm text-slate-200" id="webscout-summary-text">
+          Comparing live pricing across Amazon, Flipkart, Meesho, Nike Store, and direct retailers...
+        </p>
+      </div>
+
+      <!-- Deal Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="webscout-cards">
+        <!-- Live search result cards populated dynamically -->
+      </div>
+    </section>
+
+    <!-- TAB: SELF-LEARNING DYNAMIC INTENT COPILOT -->
+    <section id="tab-intent" class="hidden space-y-6">
+      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+          <i class="fa-solid fa-brain text-paypal-accent"></i>
+          <span>Self-Learning Intent Copilot & Proactive Task Feed</span>
+        </h2>
+        <p class="text-sm text-slate-400 mt-1">Instead of a rigid static spending mandate, Steward continuously self-learns your business intent. Teach rules in natural language, and the agent will proactively generate and execute intelligent tasks (e.g. batch auto-downsizing, volume discount arbitrage, cash runway defense).</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Column: Proactive Action Cards Feed -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+              <i class="fa-solid fa-list-check text-paypal-accent"></i>
+              <span>Proactive Autonomous Task Feed</span>
+            </h3>
+            <button onclick="fetchIntentTasks()" class="text-xs text-paypal-accent hover:underline flex items-center space-x-1">
+              <i class="fa-solid fa-rotate"></i>
+              <span>Refresh Tasks</span>
+            </button>
+          </div>
+
+          <!-- Dynamic Task Cards Container -->
+          <div class="space-y-4" id="intent-tasks-container">
+            <!-- Dynamic task cards loaded via API -->
+          </div>
+        </div>
+
+        <!-- Right Column: Natural Language Rule Teaching Console -->
+        <div class="lg:col-span-5 space-y-5">
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+              <i class="fa-solid fa-graduation-cap text-paypal-accent"></i>
+              <span>Teach Intent Rules to Agent</span>
+            </h3>
+            <p class="text-xs text-slate-400">Teach the agent in natural language. It semantically parses the condition, registers the policy, and adapts the dynamic mandate immediately.</p>
+
+            <div class="space-y-3">
+              <textarea id="teach-rule-input" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-paypal-accent outline-none" placeholder="e.g. When supplier offers volume discount ≥ 15%, dynamically expand mandate up to $1,500"></textarea>
+
+              <div class="flex flex-wrap gap-1.5">
+                <span class="text-[11px] text-slate-500 font-semibold block w-full mb-0.5">Quick-Teach Templates:</span>
+                <button onclick="setTeachRuleText('If supplier offers volume discount >= 15% and rating >= 4.8, allow mandate up to $1,500')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 transition">💡 15% Discount → $1.5k Mandate</button>
+                <button onclick="setTeachRuleText('Trust Kyoto Tea Co Direct with up to $1,200 reorder allowance for Ceremonial Matcha')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 transition">🍵 Trust Kyoto Tea up to $1.2k</button>
+                <button onclick="setTeachRuleText('If cash runway drops below 45 days, automatically compress all spending mandates by 40%')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 transition">🛡️ Runway < 45d → 40% Cut</button>
+                <button onclick="setTeachRuleText('When restock cost exceeds mandate ceiling, dynamically auto-downsize batch to fit limit instead of halting')" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 transition">⚡ Auto-downsize on Mandate Cap</button>
+              </div>
+
+              <button onclick="teachRuleToAgent()" id="btn-teach-rule" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-paypal-blue hover:opacity-95 text-white font-bold text-xs shadow-lg transition flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-sparkles"></i>
+                <span>Teach Agent This Rule</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Taught Rules List -->
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center justify-between">
+              <span>Active Taught Rules Knowledge Base</span>
+              <span id="rules-count-badge" class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] text-paypal-accent font-mono">4 Rules</span>
+            </h4>
+
+            <div class="space-y-3" id="taught-rules-list">
+              <!-- Dynamically populated taught rules -->
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -840,7 +978,7 @@
     };
 
     function switchTab(tab) {
-      ['autopilot', 'shield', 'scout', 'profile', 'dossier', 'vault'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'profile', 'dossier', 'vault'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -858,6 +996,16 @@
         activeBtn.classList.add('border-paypal-accent', 'text-paypal-accent');
       }
       currentTab = tab;
+
+      if (tab === 'webscout') {
+        const input = document.getElementById('webscout-input').value;
+        if (input && document.getElementById('webscout-cards').children.length === 0) {
+          searchWebScout();
+        }
+      } else if (tab === 'intent') {
+        fetchIntentTasks();
+        fetchIntentRules();
+      }
     }
 
     function loadAttackPreset(name) {
@@ -1315,10 +1463,16 @@
       }, 2000);
     }
 
-    async function triggerAutopilot() {
+    async function triggerAutopilot(options = {}) {
       const btn = document.getElementById('btn-run-autopilot');
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Analyzing...</span>`;
+
+      const actionsBox = document.getElementById('briefing-actions');
+      if (actionsBox) {
+        actionsBox.classList.add('hidden');
+        actionsBox.innerHTML = '';
+      }
 
       // Reset steps
       for (let i = 1; i <= 6; i++) {
@@ -1326,37 +1480,76 @@
         document.getElementById(`step-${i}-desc`).innerText = "Running...";
       }
 
-      const sku = document.getElementById('select-sku').value;
+      const sku = options.sku || document.getElementById('select-sku').value;
 
       try {
+        const payload = { sku };
+        if (options.customUnits) payload.customUnits = options.customUnits;
+        if (options.oneTimeMandateOverrideUSD) payload.oneTimeMandateOverrideUSD = options.oneTimeMandateOverrideUSD;
+
         const res = await fetch('/api/autopilot/run', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sku })
+          body: JSON.stringify(payload)
         });
         const data = await res.json();
 
-        // Animate steps
+        // ── Animate Step 1 (Forecast) ──────────────────────────────────
         if (data.forecast) {
+          const units = options.customUnits || data.forecast.tailoredNextMonthUnits;
           document.getElementById('step-1').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
-          document.getElementById('step-1-desc').innerText = `${data.forecast.trendType} (${data.forecast.tailoredNextMonthUnits}u)`;
+          document.getElementById('step-1-desc').innerText = `${data.forecast.trendType} (${units}u)`;
         }
+
+        // ── Animate Step 2 (Mandate) ───────────────────────────────────
         if (data.dynamicMandate) {
           document.getElementById('step-2').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
-          document.getElementById('step-2-desc').innerText = `Cap: $${data.dynamicMandate.currentEffectiveMandateUSD}`;
+          const capText = options.oneTimeMandateOverrideUSD 
+            ? `$${options.oneTimeMandateOverrideUSD.toFixed(0)} (Auth)`
+            : `$${data.dynamicMandate.currentEffectiveMandateUSD}`;
+          document.getElementById('step-2-desc').innerText = `Cap: ${capText}`;
         }
+
+        // ── Animate Step 3 (Wholesale Deal Scout) ──────────────────────
         if (data.dealComparison) {
-          document.getElementById('step-3').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
-          document.getElementById('step-3-desc').innerText = `${data.dealComparison.recommendedDeal.supplierName.split(' ')[0]} ($${data.dealComparison.recommendedDeal.grossTotalUSD})`;
+          const rec = data.dealComparison.recommendedDeal;
+          if (data.status === "BLOCKED_BY_MANDATE") {
+            document.getElementById('step-3').className = "p-3.5 rounded-xl bg-amber-950/80 border border-amber-500/60";
+            document.getElementById('step-3-desc').innerText = `Exceeds Cap ($${rec.grossTotalUSD.toFixed(0)} > $${data.dynamicMandate.currentEffectiveMandateUSD})`;
+          } else {
+            document.getElementById('step-3').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
+            document.getElementById('step-3-desc').innerText = `${rec.supplierName.split(' ')[0]} ($${rec.grossTotalUSD.toFixed(2)})`;
+          }
         }
-        if (data.zkProof) {
+
+        // ── Animate Step 4 (ZK-Vault Solvency) ─────────────────────────
+        if (data.zkProof && data.zkProof.clearanceGranted) {
           document.getElementById('step-4').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
           document.getElementById('step-4-desc').innerText = "Clearance Granted";
+        } else if (data.status === "BLOCKED_BY_MANDATE") {
+          document.getElementById('step-4').className = "p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/40 opacity-60";
+          document.getElementById('step-4-desc').innerText = "Gated (Mandate)";
+        } else if (data.status === "BLOCKED_BY_ZK_SOLVENCY") {
+          document.getElementById('step-4').className = "p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/60";
+          document.getElementById('step-4-desc').innerText = "Solvency Denied";
+        } else if (data.status === "NO_RESTOCK_NEEDED") {
+          document.getElementById('step-4').className = "p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/40 opacity-60";
+          document.getElementById('step-4-desc').innerText = "No Restock Needed";
         }
-        if (data.shieldVerdict) {
+
+        // ── Animate Step 5 (Pre-Flight Shield) ─────────────────────────
+        if (data.shieldVerdict && data.shieldVerdict.clearedForPayment) {
           document.getElementById('step-5').className = "p-3.5 rounded-xl bg-emerald-950/80 border border-emerald-500/50";
           document.getElementById('step-5-desc').innerText = "0 Threats Intercepted";
+        } else if (data.status === "BLOCKED_BY_SHIELD") {
+          document.getElementById('step-5').className = "p-3.5 rounded-xl bg-rose-950/80 border border-rose-500/60";
+          document.getElementById('step-5-desc').innerText = "Threat Intercepted";
+        } else {
+          document.getElementById('step-5').className = "p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/40 opacity-60";
+          document.getElementById('step-5-desc').innerText = data.status === "BLOCKED_BY_MANDATE" ? "Gated (Mandate)" : "Skipped";
         }
+
+        // ── Animate Step 6 (PayPal Hold / Execution) ───────────────────
         if (data.paypalOrderId) {
           document.getElementById('step-6').className = "p-3.5 rounded-xl bg-amber-950/80 border border-amber-500/50 animate-pulse";
           document.getElementById('step-6-desc').innerText = "60s Undo Active";
@@ -1365,10 +1558,43 @@
             amountUSD: data.dealComparison?.recommendedDeal.grossTotalUSD || 357,
             supplier: data.dealComparison?.recommendedDeal.supplierName || 'Assam Highlands Estate Direct',
           });
+        } else {
+          document.getElementById('step-6').className = "p-3.5 rounded-xl bg-slate-800/40 border border-slate-700/40 opacity-60";
+          document.getElementById('step-6-desc').innerText = "No Order Placed";
         }
 
         document.getElementById('briefing-content').innerText = data.executiveBriefing;
         document.getElementById('briefing-time').innerText = new Date().toLocaleTimeString();
+
+        // ── Render Dynamic Auto-Downsizing or Exception Buttons ───────
+        if (data.status === "BLOCKED_BY_MANDATE" && actionsBox) {
+          actionsBox.classList.remove('hidden');
+          let btnsHtml = '';
+
+          if (data.downsizedOption) {
+            btnsHtml += `
+              <button onclick="triggerAutopilotWithCustomUnits('${sku}', ${data.downsizedOption.suggestedUnits})" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center space-x-2 shadow-lg shadow-emerald-500/20 transition">
+                <i class="fa-solid fa-compress"></i>
+                <span>⚡ Auto-Downsize to ${data.downsizedOption.suggestedUnits}u ($${data.downsizedOption.estimatedGrossTotalUSD.toFixed(2)}) & Reorder</span>
+              </button>
+            `;
+          }
+
+          if (data.dealComparison && data.dealComparison.recommendedDeal) {
+            const fullCost = data.dealComparison.recommendedDeal.grossTotalUSD;
+            btnsHtml += `
+              <button onclick="triggerAutopilotWithOverride('${sku}', ${fullCost})" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center space-x-2 shadow-lg shadow-purple-600/20 transition">
+                <i class="fa-solid fa-unlock"></i>
+                <span>🔓 Approve One-Time $${fullCost.toFixed(2)} Exception</span>
+              </button>
+            `;
+          }
+
+          actionsBox.innerHTML = btnsHtml;
+        }
+
+        // Refresh state
+        fetchDashboardState();
 
       } catch (err) {
         alert("Autopilot cycle failed: " + err.message);
@@ -1376,6 +1602,16 @@
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-play"></i><span>Run Autopilot Cycle</span>`;
       }
+    }
+
+    function triggerAutopilotWithCustomUnits(sku, units) {
+      document.getElementById('select-sku').value = sku;
+      triggerAutopilot({ sku, customUnits: units });
+    }
+
+    function triggerAutopilotWithOverride(sku, amount) {
+      document.getElementById('select-sku').value = sku;
+      triggerAutopilot({ sku, oneTimeMandateOverrideUSD: amount });
     }
 
     function showUndoWindow(hold) {
@@ -1495,11 +1731,307 @@
       }
     }
 
+    // ── Consumer Web Price Comparer (Amazon, Flipkart, Meesho, Nike) ───────
+    function setWebScoutQuery(q) {
+      document.getElementById('webscout-input').value = q;
+      searchWebScout();
+    }
+
+    async function searchWebScout() {
+      const btn = document.getElementById('btn-webscout-search');
+      const input = document.getElementById('webscout-input');
+      const query = input.value.trim();
+      if (!query) return;
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Crawling Web Retail Catalogs...</span>`;
+
+      const cardsContainer = document.getElementById('webscout-cards');
+      cardsContainer.innerHTML = `
+        <div class="col-span-full py-12 text-center text-slate-400 space-y-3">
+          <i class="fa-solid fa-circle-notch animate-spin text-3xl text-paypal-accent"></i>
+          <p class="text-sm">Scouting real-time prices across Amazon, Flipkart, Meesho, and brand stores for "${query}"...</p>
+        </div>
+      `;
+
+      try {
+        const res = await fetch('/api/web-scout/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query })
+        });
+        const data = await res.json();
+
+        // Update Summary Banner
+        const banner = document.getElementById('webscout-summary-banner');
+        banner.classList.remove('hidden');
+        document.getElementById('webscout-summary-text').innerText = data.summaryNarrative;
+        if (data.bestDeal) {
+          document.getElementById('webscout-best-platform').innerText = `Best Platform: ${data.bestDeal.platform}`;
+          document.getElementById('webscout-savings-callout').innerText = `Saves up to $${data.priceSpreadUSD.potentialSavingsUSD.toFixed(2)} (${data.priceSpreadUSD.potentialSavingsPercent}% vs peak)`;
+        }
+
+        // Render Cards
+        if (!data.deals || data.deals.length === 0) {
+          cardsContainer.innerHTML = `<div class="col-span-full py-8 text-center text-slate-400">No matching deals found for "${query}".</div>`;
+          return;
+        }
+
+        cardsContainer.innerHTML = data.deals.map((deal, idx) => {
+          const isWinner = deal.isBestDeal;
+          return `
+            <div class="p-5 rounded-2xl ${isWinner ? 'bg-gradient-to-b from-emerald-950/40 via-slate-900 to-slate-900 border-2 border-emerald-500/70 shadow-xl shadow-emerald-950/40' : 'bg-slate-900 border border-slate-800'} space-y-4 flex flex-col justify-between transition hover:border-slate-700">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider border ${deal.storeBadgeColor}">
+                    ${deal.platform}
+                  </span>
+                  ${isWinner ? `<span class="px-2 py-0.5 rounded text-[11px] font-black bg-emerald-400 text-slate-950 uppercase tracking-wider">🏆 Best Deal</span>` : ''}
+                </div>
+
+                <h4 class="font-bold text-sm text-white line-clamp-2 leading-snug">${deal.title}</h4>
+                <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${deal.snippet}</p>
+
+                <div class="pt-2 border-t border-slate-800/80 flex items-baseline justify-between">
+                  <div>
+                    <span class="text-2xl font-black text-white font-mono">${deal.priceLocalFormatted}</span>
+                    ${deal.originalPriceLocalFormatted ? `<span class="text-xs text-slate-500 line-through ml-2 font-mono">${deal.originalPriceLocalFormatted}</span>` : ''}
+                  </div>
+                  ${deal.discountPercent ? `<span class="px-2 py-0.5 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">${deal.discountPercent}% OFF</span>` : ''}
+                </div>
+
+                <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+                  <span class="flex items-center space-x-1">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <span class="font-bold text-white">${deal.rating}</span>
+                    <span class="text-slate-500">(${deal.reviewCount.toLocaleString()})</span>
+                  </span>
+                  <span class="text-[11px] text-slate-400"><i class="fa-solid fa-truck-fast mr-1 text-paypal-accent"></i>${deal.deliveryEstimate}</span>
+                </div>
+              </div>
+
+              <div class="pt-3 border-t border-slate-800 space-y-2">
+                <a href="${deal.productUrl}" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 rounded-xl ${isWinner ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-slate-950 hover:opacity-95' : 'bg-slate-800 hover:bg-slate-700 text-white'} font-black text-xs transition flex items-center justify-center space-x-2">
+                  <span>Open Deal on ${deal.platform}</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+
+                <button onclick="simulateShieldCheckout('${deal.platform}', '${deal.title.replace(/'/g, "\\'")}', '${deal.priceLocalFormatted}')" class="w-full py-2 rounded-xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-xs transition flex items-center justify-center space-x-1.5">
+                  <i class="fa-solid fa-shield text-paypal-accent"></i>
+                  <span>Pay Privately via PayPal Shield</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        alert("Web deal scouting failed: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>Compare Live Web Deals</span>`;
+      }
+    }
+
+    function simulateShieldCheckout(platform, title, price) {
+      alert(
+        `🛡️ STEWARD ZERO-KNOWLEDGE PRIVACY SHIELD CHECKOUT\n\n` +
+        `Merchant Store: ${platform}\n` +
+        `Product: ${title}\n` +
+        `Amount: ${price}\n\n` +
+        `Virtual Token: tok_zk_${Math.random().toString(36).slice(2, 10)}\n` +
+        `Masked Card: 4111-XXXX-XXXX-8921 (Single-Use Authorized Limit: ${price})\n` +
+        `Buyer Identity: Privately Shielded via PayPal Virtual Escrow\n\n` +
+        `Your real corporate card number, bank balance, and merchant credentials were never disclosed to ${platform}!`
+      );
+    }
+
+    // ── Self-Learning Dynamic Intent Agent & Proactive Feed ────────────────
+    function setTeachRuleText(txt) {
+      document.getElementById('teach-rule-input').value = txt;
+    }
+
+    async function teachRuleToAgent() {
+      const input = document.getElementById('teach-rule-input');
+      const text = input.value.trim();
+      if (!text) {
+        alert("Please enter a rule to teach the agent.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-teach-rule');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Analyzing Intent...</span>`;
+
+      try {
+        const res = await fetch('/api/intent/teach', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ruleText: text })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`✅ Learned New Rule!\n\n"${data.rule.ruleText}"\n\nCategory: ${data.rule.category}\nCondition: ${data.rule.conditionDescription}\nAction: ${data.rule.actionDescription}`);
+          input.value = '';
+          fetchIntentRules();
+          fetchIntentTasks();
+          fetchDashboardState();
+        } else {
+          alert("Failed to teach rule: " + data.error);
+        }
+      } catch (err) {
+        alert("Error teaching rule: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-sparkles"></i><span>Teach Agent This Rule</span>`;
+      }
+    }
+
+    async function fetchIntentRules() {
+      try {
+        const res = await fetch('/api/intent/rules');
+        const data = await res.json();
+        const list = document.getElementById('taught-rules-list');
+        const countBadge = document.getElementById('rules-count-badge');
+        if (countBadge) countBadge.innerText = `${data.rules.length} Rules Active`;
+
+        if (!data.rules || data.rules.length === 0) {
+          list.innerHTML = `<p class="text-xs text-slate-500">No taught rules yet. Teach the agent above!</p>`;
+          return;
+        }
+
+        list.innerHTML = data.rules.map(r => `
+          <div class="p-3.5 rounded-xl bg-slate-950 border ${r.active ? 'border-slate-800' : 'border-slate-900 opacity-50'} space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${r.active ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' : 'bg-slate-800 text-slate-500'} uppercase">
+                ${r.category.replace(/_/g, ' ')}
+              </span>
+              <div class="flex items-center space-x-2">
+                <span class="text-[11px] text-slate-500 font-mono">Triggered ${r.timesTriggered}x</span>
+                <button onclick="toggleRule('${r.id}', ${!r.active})" class="text-xs ${r.active ? 'text-emerald-400 hover:text-emerald-300' : 'text-slate-500 hover:text-slate-300'}">
+                  <i class="fa-solid ${r.active ? 'fa-toggle-on text-base' : 'fa-toggle-off text-base'}"></i>
+                </button>
+              </div>
+            </div>
+            <p class="text-xs text-slate-200 font-medium leading-snug">"${r.ruleText}"</p>
+            <div class="text-[11px] text-slate-400 flex items-center justify-between pt-1 border-t border-slate-900">
+              <span class="text-emerald-400 font-mono">${(r.confidenceScore * 100).toFixed(0)}% Confidence</span>
+              <span class="text-slate-500">${new Date(r.learnedAt).toLocaleDateString()}</span>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error("fetchIntentRules error:", err);
+      }
+    }
+
+    async function toggleRule(ruleId, active) {
+      try {
+        await fetch('/api/intent/rule/toggle', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ruleId, active })
+        });
+        fetchIntentRules();
+        fetchIntentTasks();
+      } catch (err) {
+        console.error("toggleRule error:", err);
+      }
+    }
+
+    async function fetchIntentTasks() {
+      try {
+        const res = await fetch('/api/intent/tasks');
+        const data = await res.json();
+        const container = document.getElementById('intent-tasks-container');
+
+        if (!data.tasks || data.tasks.length === 0) {
+          container.innerHTML = `
+            <div class="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center text-slate-400 space-y-2">
+              <i class="fa-solid fa-circle-check text-2xl text-emerald-400"></i>
+              <p class="text-sm font-semibold text-white">All Intent Directives Satisfied</p>
+              <p class="text-xs text-slate-400">Inventory levels, dynamic mandates, and cash runways are currently optimal.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.tasks.map(t => {
+          const isCritical = t.priority === "CRITICAL";
+          const isHigh = t.priority === "HIGH";
+          const badgeClass = isCritical
+            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
+            : isHigh
+              ? 'bg-amber-500/20 text-amber-300 border-amber-500/40'
+              : 'bg-blue-500/20 text-blue-300 border-blue-500/40';
+
+          return `
+            <div class="p-5 rounded-2xl bg-slate-900 border ${isCritical ? 'border-amber-500/50' : 'border-slate-800'} space-y-3.5 transition hover:border-slate-700">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${badgeClass}">
+                    ${t.priority}
+                  </span>
+                  <span class="text-xs font-mono text-slate-400">${t.category.replace(/_/g, ' ')}</span>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  ${t.impactLabel}
+                </span>
+              </div>
+
+              <div>
+                <h4 class="font-bold text-sm text-white">${t.title}</h4>
+                <p class="text-xs text-slate-300 mt-1 leading-relaxed">${t.description}</p>
+              </div>
+
+              <div class="pt-2 flex items-center justify-between">
+                <span class="text-xs text-slate-500 font-mono">Impact: $${t.financialImpactUSD.toFixed(2)}</span>
+                <button onclick="executeIntentTask('${t.id}', '${t.actionType}', '${t.sku || ''}', ${t.targetUnits || 0}, ${t.overrideAmountUSD || 0})" class="px-4 py-2 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-xs shadow-md shadow-paypal-blue/20 transition flex items-center space-x-1.5">
+                  <span>${t.suggestedActionLabel}</span>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("fetchIntentTasks error:", err);
+      }
+    }
+
+    async function executeIntentTask(taskId, actionType, sku, targetUnits, overrideAmountUSD) {
+      if (actionType === "DOWNSIZE_RESTOCK") {
+        switchTab('autopilot');
+        triggerAutopilotWithCustomUnits(sku, targetUnits);
+      } else if (actionType === "EXPAND_MANDATE_EXCEPTION") {
+        switchTab('autopilot');
+        triggerAutopilotWithOverride(sku, overrideAmountUSD);
+      } else if (actionType === "OPTIMIZE_BATCH_SIZE") {
+        switchTab('autopilot');
+        triggerAutopilotWithCustomUnits(sku, targetUnits);
+      } else {
+        try {
+          const res = await fetch('/api/intent/task/execute', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ taskId, actionType, sku, targetUnits, overrideAmountUSD })
+          });
+          const data = await res.json();
+          alert(`Task Executed Successfully!\n\nStatus: ${data.result?.status}\n${data.result?.executiveBriefing || 'Action committed.'}`);
+          fetchDashboardState();
+          fetchIntentTasks();
+        } catch (err) {
+          alert("Failed to execute task: " + err.message);
+        }
+      }
+    }
+
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
       fetchDashboardState();
       loadAttackPreset('injection');
       loadBenchmarkCases();
+      fetchIntentTasks();
+      fetchIntentRules();
     });
   </script>
 </body>
