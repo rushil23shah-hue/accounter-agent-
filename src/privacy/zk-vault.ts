@@ -134,8 +134,8 @@ export class ZKVault {
       );
     }
 
-    // Deep-freeze the ledger so no reference can mutate it after construction.
-    this.ledger = Object.freeze({ ...initialLedger });
+    // Clone the initial ledger to avoid external mutation references.
+    this.ledger = { ...initialLedger };
     this.vaultSalt = vaultSalt ?? crypto.randomBytes(32).toString("hex");
   }
 
@@ -291,10 +291,7 @@ export class ZKVault {
         `ZKVault.recordSettlement: capturedAmountUSD must be a finite non-negative number, got ${capturedAmountUSD}`,
       );
     }
-    // Cast through unknown to mutate the frozen-at-construction copy.
-    // The ledger is frozen against external mutation, but the vault itself
-    // must be able to record settlements and revenue.
-    (this.ledger as unknown as PrivateMerchantLedger).liquidCashUSD -= capturedAmountUSD;
+    (this.ledger as PrivateMerchantLedger).liquidCashUSD -= capturedAmountUSD;
   }
 
   /**
@@ -308,7 +305,7 @@ export class ZKVault {
         `ZKVault.recordRevenue: revenueUSD must be a finite non-negative number, got ${revenueUSD}`,
       );
     }
-    (this.ledger as unknown as PrivateMerchantLedger).liquidCashUSD += revenueUSD;
+    (this.ledger as PrivateMerchantLedger).liquidCashUSD += revenueUSD;
   }
 
   /**
@@ -319,7 +316,7 @@ export class ZKVault {
    * never be serialised to JSON and sent anywhere.
    */
   public getPrivateLedgerCopy(): Readonly<PrivateMerchantLedger> {
-    // Spread creates a new object — callers cannot mutate the internal state.
-    return { ...this.ledger };
+    // Return a frozen copy so callers cannot mutate the internal state.
+    return Object.freeze({ ...this.ledger });
   }
 }

@@ -7,3 +7,4 @@ export * from "./deal-scout.js";
 export * from "./consumption-forecaster.js";
 export * from "./dynamic-mandate.js";
 export * from "./autopilot.js";
+export * from "./dossier-generator.js";

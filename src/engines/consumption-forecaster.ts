@@ -227,4 +227,64 @@ export class AdaptiveConsumptionForecaster {
       calculatedAt: new Date().toISOString(),
     };
   }
+
+  /**
+   * Ingests a new sales event dynamically, updates current stock,
+   * and calculates the updated rolling EMA velocity curves in real time.
+   *
+   * Exponential Smoothing Formulations:
+   *   alpha_7  = 2 / (7 + 1)  = 0.2500
+   *   alpha_14 = 2 / (14 + 1) = 0.1333
+   *   alpha_30 = 2 / (30 + 1) = 0.0645
+   */
+  public static recordSaleEvent(
+    item: InventoryItem,
+    unitsSold: number,
+  ): { updatedItem: InventoryItem; isSpikeDetected: boolean; spikeRatio: number } {
+    if (unitsSold < 0) {
+      throw new RangeError(`recordSaleEvent: unitsSold must be ≥ 0, got ${unitsSold}`);
+    }
+
+    const currentStock = Math.max(0, item.currentStockUnits - unitsSold);
+
+    // Alpha weights
+    const a7 = 0.25;
+    const a14 = 0.1333;
+    const a30 = 0.0645;
+
+    // Dynamically update EMAs
+    const newEma7 = Number((a7 * unitsSold + (1 - a7) * item.velocity.ema7Days).toFixed(2));
+    const newEma14 = Number((a14 * unitsSold + (1 - a14) * item.velocity.ema14Days).toFixed(2));
+    const newEma30 = Number((a30 * unitsSold + (1 - a30) * item.velocity.ema30Days).toFixed(2));
+
+    // Spike detection: if single-day sale exceeds 2x the 14-day baseline velocity
+    const baseline = item.velocity.ema14Days > 0 ? item.velocity.ema14Days : 1.0;
+    const spikeRatio = Number((unitsSold / baseline).toFixed(2));
+    const isSpikeDetected = unitsSold >= baseline * 2.0 && unitsSold >= 5;
+
+    const updatedItem: InventoryItem = {
+      ...item,
+      currentStockUnits: currentStock,
+      velocity: {
+        ema7Days: newEma7,
+        ema14Days: newEma14,
+        ema30Days: newEma30,
+      },
+    };
+
+    return { updatedItem, isSpikeDetected, spikeRatio };
+  }
+
+  /**
+   * Ingests a chronological array of historical daily sales and computes
+   * smoothed rolling velocity curves dynamically.
+   */
+  public static ingestSalesHistory(item: InventoryItem, dailySales: number[]): InventoryItem {
+    let current = { ...item };
+    for (const sales of dailySales) {
+      const res = this.recordSaleEvent(current, sales);
+      current = res.updatedItem;
+    }
+    return current;
+  }
 }

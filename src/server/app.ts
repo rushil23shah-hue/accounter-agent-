@@ -1,6 +1,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import {
   ZKVault,
@@ -11,10 +12,12 @@ import {
   DynamicMandateEngine,
   EarnedAutonomyEngine,
   RestockingAutopilotOrchestrator,
+  DisputeDossierGenerator,
   InventoryItem,
   OwnerIntentProfile,
   AutonomyState,
 } from "../index.js";
+import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -454,11 +457,13 @@ const server = http.createServer(async (req, res) => {
       const sku = body.sku || "TEA-EG-001";
       const item = state.inventory.find((i) => i.sku === sku) || state.inventory[0];
 
+      const dynamicQuotes = generateWholesaleQuotesForQuery(item.name).quotes;
+
       const result = await RestockingAutopilotOrchestrator.runCycle({
         item,
         profile: state.profile,
         zkVault: state.vault,
-        availableWholesaleQuotes: state.quotes,
+        availableWholesaleQuotes: dynamicQuotes,
         supplierAutonomyState: state.autonomyState,
       });
 
@@ -577,6 +582,246 @@ const server = http.createServer(async (req, res) => {
     } else {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: "No active undo hold to capture." }));
+    }
+    return;
+  }
+
+  // ── 8. API: Dynamic Sales Ingestion & Real-Time Rhythm Update ───────────
+  if (req.method === "POST" && url.pathname === "/api/inventory/sale") {
+    try {
+      const body = await parseJsonBody(req);
+      const sku = body.sku;
+      const unitsSold = Number(body.unitsSold) || 1;
+
+      const itemIndex = state.inventory.findIndex((i) => i.sku === sku);
+      if (itemIndex === -1) {
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: `SKU ${sku} not found.` }));
+        return;
+      }
+
+      const item = state.inventory[itemIndex];
+      const { updatedItem, isSpikeDetected, spikeRatio } =
+        AdaptiveConsumptionForecaster.recordSaleEvent(item, unitsSold);
+
+      // Ingest revenue into ZK-Vault locally (unitsSold * sellingPrice)
+      const revenueUSD = unitsSold * item.sellingPriceUSD;
+      state.vault.recordRevenue(revenueUSD);
+
+      // Save updated item in state
+      state.inventory[itemIndex] = updatedItem;
+
+      // Compute new forecast dynamically
+      const newForecast = AdaptiveConsumptionForecaster.forecastItem(updatedItem);
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          success: true,
+          updatedItem,
+          isSpikeDetected,
+          spikeRatio,
+          revenueGeneratedUSD: revenueUSD,
+          newForecast,
+        })
+      );
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 9. API: Dynamically Add New Inventory Item ───────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/inventory/add") {
+    try {
+      const body = await parseJsonBody(req);
+      const newItem: InventoryItem = {
+        sku: (body.sku || `SKU-${Date.now().toString(36).toUpperCase()}`).trim(),
+        name: (body.name || "Custom Inventory Item").trim(),
+        currentStockUnits: Number(body.currentStockUnits) || 50,
+        leadTimeDays: Number(body.leadTimeDays) || 7,
+        safetyBufferDays: Number(body.safetyBufferDays) || 3,
+        unitCostUSD: Number(body.unitCostUSD) || 5.0,
+        sellingPriceUSD: Number(body.sellingPriceUSD) || 15.0,
+        velocity: {
+          ema7Days: Number(body.ema7Days) || 4.0,
+          ema14Days: Number(body.ema14Days) || 4.0,
+          ema30Days: Number(body.ema30Days) || 4.0,
+        },
+        supplierId: body.supplierId || "sup_assam_direct",
+      };
+
+      state.inventory.push(newItem);
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, item: newItem }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 10. API: Dynamically Update Owner Intent Profile ─────────────────────
+  if (req.method === "POST" && url.pathname === "/api/profile/update") {
+    try {
+      const body = await parseJsonBody(req);
+
+      if (body.hardCeilingUSD !== undefined) {
+        state.profile.hardCeilingUSD = Number(body.hardCeilingUSD);
+      }
+      if (body.reservedCashFloorUSD !== undefined) {
+        state.profile.reservedCashFloorUSD = Number(body.reservedCashFloorUSD);
+        // Sync floor to ZK-Vault
+        const copy = state.vault.getPrivateLedgerCopy();
+        state.vault = new ZKVault({
+          ...copy,
+          reservedFloorUSD: state.profile.reservedCashFloorUSD,
+        });
+      }
+      if (body.targetCashRunwayDays !== undefined) {
+        state.profile.targetCashRunwayDays = Number(body.targetCashRunwayDays);
+      }
+      if (body.mode !== undefined) {
+        state.profile.mode = body.mode;
+      }
+      if (body.whitelistedPayees !== undefined) {
+        state.profile.whitelistedPayees = body.whitelistedPayees;
+      }
+
+      state.profile.updatedAt = new Date().toISOString();
+      state.profile.version += 1;
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, profile: state.profile }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 11. API: Generate 1-Click Forensic Dispute Dossier (Layer 6) ───────────
+  if (req.method === "POST" && url.pathname === "/api/dossier/generate") {
+    try {
+      const body = await parseJsonBody(req);
+      const authId = body.authorizationId || state.activeHold?.orderId || `AUTH_${Date.now()}`;
+      const captureId = body.captureId || (state.activeHold?.status === "CAPTURED" ? `CAPT_${Date.now()}` : null);
+
+      const dossier = DisputeDossierGenerator.generateDossier({
+        paypalAuthorizationId: authId,
+        paypalCaptureId: captureId,
+        ownerProfile: state.profile,
+        provenanceTrail: [
+          {
+            rawContent: body.invoiceMemo || "Wholesale Restock Invoice memo audited.",
+            tag: "UNTRUSTED_SUPPLIER_INVOICE",
+            sourceIdentifier: body.sourceId || "vendor_inbound_stream",
+            ingestedAt: new Date().toISOString(),
+            isQuarantined: true,
+            sha256Hash: crypto
+              .createHash("sha256")
+              .update(body.invoiceMemo || "Wholesale Restock Invoice memo audited.")
+              .digest("hex"),
+          },
+        ],
+        deterministicGateResult: {
+          allowed: body.allowed ?? true,
+          effectiveLimitUSD: state.profile.hardCeilingUSD,
+          decisionReason: body.decisionReason || "Compliant with owner intent profile",
+          violations: body.violations || [],
+          requiresHumanMfa: false,
+          evaluatedAt: new Date().toISOString(),
+        },
+        flaggedAttackType: body.flaggedAttackType || null,
+        incidentDescription: body.incidentDescription || "Automated transaction dossier for PayPal Resolution Center.",
+      });
+
+      const auditReport = DisputeDossierGenerator.toAuditReport(dossier);
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, dossier, auditReport }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 12. API: Get 65-Case Benchmark Catalog ────────────────────────────────
+  if (req.method === "GET" && url.pathname === "/api/benchmark/cases") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        totalCases: BENCHMARK_CASES.length,
+        cases: BENCHMARK_CASES,
+      })
+    );
+    return;
+  }
+
+  // ── 13. API: Run Full 65-Case Benchmark & Return Empirical Scorecard ──────
+  if (req.method === "POST" && url.pathname === "/api/benchmark/run") {
+    try {
+      let totalLatency = 0;
+      let blockedCount = 0;
+      let falsePositives = 0;
+      const details = [];
+
+      for (const tc of BENCHMARK_CASES) {
+        const start = performance.now();
+        const verdict = PreFlightPaymentShield.inspect({
+          incomingInvoiceOrEmailText: tc.invoiceMemo,
+          proposedPayeeEmail: tc.proposedPayeeEmail,
+          proposedAmountUSD: tc.proposedAmountUSD,
+          expectedAmountUSD: tc.expectedAmountUSD,
+          sku: tc.sku,
+          units: tc.units,
+          whitelistedPayees: BENCHMARK_WHITELIST,
+          sourceIdentifier: `api_benchmark_${tc.id}`,
+        });
+        const lat = performance.now() - start;
+        totalLatency += lat;
+
+        const isBlocked = !verdict.clearedForPayment;
+        const passed = isBlocked === tc.expectedBlocked;
+
+        if (tc.expectedBlocked && isBlocked) blockedCount++;
+        if (!tc.expectedBlocked && isBlocked) falsePositives++;
+
+        details.push({
+          id: tc.id,
+          name: tc.name,
+          category: tc.category,
+          attackVector: tc.attackVector,
+          passed,
+          isBlocked,
+          latencyMs: Number(lat.toFixed(2)),
+          threats: verdict.threatsDetected.map((t) => t.type),
+        });
+      }
+
+      const adversarialTotal = BENCHMARK_CASES.filter((c) => c.expectedBlocked).length;
+      const benignTotal = BENCHMARK_CASES.filter((c) => !c.expectedBlocked).length;
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          success: true,
+          totalCases: BENCHMARK_CASES.length,
+          adversarialTotal,
+          benignTotal,
+          attacksBlocked: blockedCount,
+          attackBlockRatePercent: Number(((blockedCount / adversarialTotal) * 100).toFixed(1)),
+          falsePositiveRatePercent: Number(((falsePositives / benignTotal) * 100).toFixed(1)),
+          avgLatencyMs: Number((totalLatency / BENCHMARK_CASES.length).toFixed(3)),
+          details,
+        })
+      );
+    } catch (err: any) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
     }
     return;
   }
