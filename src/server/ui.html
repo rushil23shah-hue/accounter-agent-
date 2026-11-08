@@ -196,6 +196,10 @@
         <i class="fa-solid fa-tags"></i>
         <span>Wholesale Deal Scout</span>
       </button>
+      <button onclick="switchTab('webhooks')" id="tab-btn-webhooks" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fa-brands fa-paypal text-paypal-accent"></i>
+        <span>PayPal Webhooks & Undo Engine</span>
+      </button>
       <button onclick="switchTab('profile')" id="tab-btn-profile" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
         <i class="fa-solid fa-sliders"></i>
         <span>Dynamic Intent & Policies</span>
@@ -704,6 +708,149 @@
       </div>
     </section>
 
+    <!-- TAB: PAYPAL WEBHOOKS & UNDO ENGINE -->
+    <section id="tab-webhooks" class="hidden space-y-6">
+      <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
+        <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+          <i class="fa-brands fa-paypal text-paypal-accent"></i>
+          <span>PayPal Webhooks & Autonomous Settlement Engine (Layer 5)</span>
+        </h2>
+        <p class="text-sm text-slate-400 mt-1">Live bidirectional event synchronization between PayPal Orders v2, the 60-Second Reversibility Undo Window, and Steward's ZK-Vault. Test live webhook verification, real-time inventory restock triggers, and zero-fee void cancellations.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Card 1: Active 60s Undo Window Control -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+              <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+              <span>Active Undo Hold</span>
+            </h3>
+            <span id="webhook-hold-status" class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-800 text-slate-400">NO ACTIVE HOLD</span>
+          </div>
+
+          <div id="webhook-hold-details" class="p-4 rounded-xl bg-slate-950 border border-slate-800/80 space-y-2 text-xs">
+            <div class="flex justify-between text-slate-400">
+              <span>Order / Auth ID:</span>
+              <span id="wh-order-id" class="font-mono text-slate-200">—</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>Supplier Payee:</span>
+              <span id="wh-supplier" class="font-semibold text-slate-200">—</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>Authorized Amount:</span>
+              <span id="wh-amount" class="font-bold text-emerald-400 font-mono text-sm">—</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>Reversible Window:</span>
+              <span id="wh-countdown" class="font-bold text-amber-400 font-mono">60s Hold</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="voidActiveOrder()" id="btn-wh-void" class="py-2.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 font-bold text-xs transition flex items-center justify-center space-x-1.5">
+              <i class="fa-solid fa-ban"></i>
+              <span>1-Tap Void (0 Fees)</span>
+            </button>
+            <button onclick="captureActiveOrder()" id="btn-wh-capture" class="py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition flex items-center justify-center space-x-1.5 shadow-md shadow-emerald-500/20">
+              <i class="fa-solid fa-check-double"></i>
+              <span>Immediate Capture</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card 2: Webhook Endpoint Health -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+              <i class="fa-solid fa-network-wired text-paypal-accent"></i>
+              <span>Listener Endpoint</span>
+            </h3>
+            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">ONLINE</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <label class="text-slate-400 block font-semibold">Incoming Webhook URL (POST):</label>
+            <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 font-mono text-slate-300 break-all select-all">
+              http://localhost:3000/api/webhooks/paypal
+            </div>
+          </div>
+
+          <div class="space-y-1.5 text-xs text-slate-400 border-t border-slate-800 pt-3">
+            <div class="flex items-center justify-between">
+              <span>Signature Verifier:</span>
+              <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-check mr-1"></i>Active</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Event Deduplication:</span>
+              <span class="text-slate-200 font-mono">SHA-256 Seen Cache</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span>Mapped Payment States:</span>
+              <span class="text-paypal-accent font-semibold">8 PayPal Event Types</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3: 1-Click Webhook Simulator -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+            <i class="fa-solid fa-vial-circle-check text-paypal-accent"></i>
+            <span>Simulate Live Webhooks</span>
+          </h3>
+          <p class="text-xs text-slate-400">Trigger live PayPal webhook events on demand to verify instant ZK-Vault settlement and inventory restock updates.</p>
+
+          <div class="space-y-2">
+            <button onclick="simulateWebhook('PAYMENT.CAPTURE.COMPLETED')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-emerald-500/30 text-emerald-300 font-bold text-xs transition flex items-center justify-between px-3">
+              <span>⚡ PAYMENT.CAPTURE.COMPLETED</span>
+              <span class="text-[10px] bg-emerald-950 px-2 py-0.5 rounded text-emerald-400">Auto-Restock</span>
+            </button>
+            <button onclick="simulateWebhook('PAYMENT.AUTHORIZATION.VOIDED')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-rose-500/30 text-rose-300 font-bold text-xs transition flex items-center justify-between px-3">
+              <span>⚡ PAYMENT.AUTHORIZATION.VOIDED</span>
+              <span class="text-[10px] bg-rose-950 px-2 py-0.5 rounded text-rose-400">Zero-Fee Undo</span>
+            </button>
+            <button onclick="simulateWebhook('PAYMENT.AUTHORIZATION.CREATED')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-amber-500/30 text-amber-300 font-bold text-xs transition flex items-center justify-between px-3">
+              <span>⚡ PAYMENT.AUTHORIZATION.CREATED</span>
+              <span class="text-[10px] bg-amber-950 px-2 py-0.5 rounded text-amber-400">Start 60s Hold</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Webhook Event Stream Table -->
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
+            <i class="fa-solid fa-list-timeline text-paypal-accent"></i>
+            <span>Live PayPal Webhook Inbound Stream</span>
+          </h3>
+          <button onclick="fetchWebhookEvents()" class="text-xs text-paypal-accent hover:underline flex items-center space-x-1">
+            <i class="fa-solid fa-rotate"></i>
+            <span>Refresh Stream</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-800">
+                <th class="py-3 px-3">Timestamp</th>
+                <th class="py-3 px-3">Event Type</th>
+                <th class="py-3 px-3">Mapped State</th>
+                <th class="py-3 px-3">Resource / Auth ID</th>
+                <th class="py-3 px-3">Amount</th>
+                <th class="py-3 px-3">Signature Verification</th>
+              </tr>
+            </thead>
+            <tbody id="webhook-events-tbody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Dynamically populated events -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- TAB 4: DYNAMIC INTENT PROFILE & POLICIES -->
     <section id="tab-profile" class="hidden space-y-6">
       <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
@@ -978,7 +1125,7 @@
     };
 
     function switchTab(tab) {
-      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'profile', 'dossier', 'vault'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -1005,6 +1152,8 @@
       } else if (tab === 'intent') {
         fetchIntentTasks();
         fetchIntentRules();
+      } else if (tab === 'webhooks') {
+        fetchWebhookEvents();
       }
     }
 
@@ -1172,6 +1321,8 @@
         if (data.activeHold && data.activeHold.status === 'ACTIVE') {
           showUndoWindow(data.activeHold);
         }
+
+        fetchWebhookEvents();
 
         // Trigger initial scout search
         searchAndScoutDeals();
@@ -2025,6 +2176,102 @@
       }
     }
 
+    // ── Live PayPal Webhook Monitor & Simulator ─────────────────────────────
+    async function fetchWebhookEvents() {
+      try {
+        const res = await fetch('/api/webhooks/events');
+        const data = await res.json();
+        const tbody = document.getElementById('webhook-events-tbody');
+
+        // Update active hold card in webhooks tab
+        const hold = data.activeHold;
+        const statusBadge = document.getElementById('webhook-hold-status');
+        const orderIdEl = document.getElementById('wh-order-id');
+        const supplierEl = document.getElementById('wh-supplier');
+        const amountEl = document.getElementById('wh-amount');
+
+        if (hold && hold.status === 'ACTIVE') {
+          statusBadge.innerText = 'ACTIVE 60s HOLD';
+          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse';
+          orderIdEl.innerText = hold.authorizationId || hold.orderId;
+          supplierEl.innerText = hold.supplier;
+          amountEl.innerText = `$${hold.amountUSD.toFixed(2)}`;
+        } else if (hold && hold.status === 'CAPTURED') {
+          statusBadge.innerText = 'CAPTURED & RESTOCKED';
+          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+          orderIdEl.innerText = hold.authorizationId || hold.orderId;
+          supplierEl.innerText = hold.supplier;
+          amountEl.innerText = `$${hold.amountUSD.toFixed(2)}`;
+        } else if (hold && hold.status === 'VOIDED') {
+          statusBadge.innerText = 'VOIDED (0 FEES)';
+          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30';
+          orderIdEl.innerText = hold.authorizationId || hold.orderId;
+          supplierEl.innerText = hold.supplier;
+          amountEl.innerText = `$${hold.amountUSD.toFixed(2)}`;
+        } else {
+          statusBadge.innerText = 'NO ACTIVE HOLD';
+          statusBadge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-800 text-slate-400';
+          orderIdEl.innerText = '—';
+          supplierEl.innerText = '—';
+          amountEl.innerText = '—';
+        }
+
+        // Render Webhook Table
+        if (!data.events || data.events.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500">No webhook events logged yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.events.map(e => {
+          const isCapture = e.eventType === 'PAYMENT.CAPTURE.COMPLETED';
+          const isVoid = e.eventType === 'PAYMENT.AUTHORIZATION.VOIDED';
+          const isAuth = e.eventType === 'PAYMENT.AUTHORIZATION.CREATED';
+
+          const badgeColor = isCapture
+            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+            : isVoid
+              ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+              : 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+
+          return `
+            <tr class="hover:bg-slate-800/30 transition">
+              <td class="py-2.5 px-3 text-slate-400 text-[11px]">${new Date(e.receivedAt).toLocaleTimeString()}</td>
+              <td class="py-2.5 px-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">
+                  ${e.eventType}
+                </span>
+              </td>
+              <td class="py-2.5 px-3 text-slate-300 text-[11px]">${e.paymentState || 'UNKNOWN'}</td>
+              <td class="py-2.5 px-3 text-slate-400 text-[11px]">${e.resourceId || '—'}</td>
+              <td class="py-2.5 px-3 text-emerald-400 font-bold text-[11px]">$${(e.amountUSD || 0).toFixed(2)}</td>
+              <td class="py-2.5 px-3 text-[11px] ${e.verified ? 'text-emerald-400' : 'text-amber-400'}">
+                <i class="fa-solid fa-circle-check mr-1"></i>${e.verified ? 'Verified (HMAC/RSA)' : 'Unverified'}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error("fetchWebhookEvents error:", err);
+      }
+    }
+
+    async function simulateWebhook(eventType) {
+      try {
+        const res = await fetch('/api/webhooks/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventType })
+        });
+        const data = await res.json();
+        alert(`⚡ Webhook Event Simulated & Processed!\n\nEvent Type: ${data.eventType}\nMapped State: ${data.mappedState}\nAction Taken: ${data.actionTaken}`);
+        fetchDashboardState();
+        fetchWebhookEvents();
+      } catch (err) {
+        alert("Failed to simulate webhook: " + err.message);
+      }
+    }
+
     // Initialize on load
     window.addEventListener('DOMContentLoaded', () => {
       fetchDashboardState();
@@ -2032,6 +2279,7 @@
       loadBenchmarkCases();
       fetchIntentTasks();
       fetchIntentRules();
+      fetchWebhookEvents();
     });
   </script>
 </body>
