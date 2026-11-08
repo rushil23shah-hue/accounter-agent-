@@ -14,7 +14,9 @@
     "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts",
     "pdf": "node scripts/generate-pdf.js",
     "ui": "tsx src/server/app.ts",
-    "dev": "tsx src/server/app.ts"
+    "dev": "tsx src/server/app.ts",
+    "mcp": "tsx src/mcp/server.ts",
+    "test": "tsx scripts/run-all-tests.ts"
   },
   "repository": {
     "type": "git",

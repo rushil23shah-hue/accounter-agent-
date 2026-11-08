@@ -34,6 +34,34 @@
       50% { opacity: 0.85; transform: scale(0.98); }
     }
     .pulse-urgent { animation: pulse-slow 2s infinite ease-in-out; }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #111827 !important;
+      }
+      header, nav, #main-tabs-nav, #tab-autopilot, #tab-webscout, #tab-intent, #tab-shield, #tab-scout, #tab-webhooks, #tab-profile, #tab-vault, #dossier-input-col, .no-print {
+        display: none !important;
+      }
+      #tab-dossier {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #official-printable-dossier {
+        display: block !important;
+        position: static !important;
+        background: #ffffff !important;
+        color: #111827 !important;
+        border: 2px solid #003087 !important;
+        padding: 24px !important;
+        border-radius: 8px !important;
+      }
+      #dossier-meta-card, #dossier-report-text {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
@@ -958,7 +986,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Input Form -->
-        <div class="lg:col-span-5 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div id="dossier-input-col" class="lg:col-span-5 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
           <h3 class="text-sm font-bold text-white uppercase tracking-wider">Dispute Parameters</h3>
 
           <div>
@@ -995,15 +1023,25 @@
 
         <!-- Dossier Preview & Evidence Report -->
         <div class="lg:col-span-7 bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
-          <div class="flex justify-between items-center">
+          <div class="flex flex-wrap justify-between items-center gap-2">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
               <i class="fa-solid fa-receipt text-paypal-accent"></i>
               <span>Forensic Audit Evidence Packet</span>
             </h3>
-            <button onclick="copyDossierReport()" id="btn-copy-dossier" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center space-x-1">
-              <i class="fa-regular fa-copy"></i>
-              <span>Copy Evidence</span>
-            </button>
+            <div class="flex items-center space-x-2">
+              <button onclick="printDisputeDossier()" id="btn-print-dossier" class="px-3 py-1 rounded-lg bg-paypal-blue/20 hover:bg-paypal-blue/30 text-paypal-accent text-xs font-semibold border border-paypal-accent/30 transition flex items-center space-x-1.5 shadow-sm">
+                <i class="fa-solid fa-print"></i>
+                <span>Print / Save PDF</span>
+              </button>
+              <button onclick="downloadJsonDossier()" id="btn-json-dossier" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center space-x-1">
+                <i class="fa-solid fa-download"></i>
+                <span>JSON</span>
+              </button>
+              <button onclick="copyDossierReport()" id="btn-copy-dossier" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition flex items-center space-x-1">
+                <i class="fa-regular fa-copy"></i>
+                <span>Copy</span>
+              </button>
+            </div>
           </div>
 
           <div id="dossier-output-container" class="space-y-3">
@@ -1023,6 +1061,69 @@
             </div>
 
             <textarea id="dossier-report-text" readonly rows="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs text-slate-300 font-mono focus:ring-0 outline-none leading-relaxed" placeholder="Click 'Generate Cryptographic Dossier' to compile the complete evidentiary packet for PayPal Resolution Center..."></textarea>
+
+            <!-- Printable Formatted Court-Ready Evidence Dossier Document (Revealed on print) -->
+            <div id="official-printable-dossier" class="hidden font-sans text-slate-900 bg-white p-8 rounded-lg border border-slate-300 shadow-sm space-y-6">
+              <!-- Header -->
+              <div class="border-b-2 border-slate-900 pb-4 flex justify-between items-start">
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-2xl font-black tracking-tight text-[#003087]">PayPal</span>
+                    <span class="text-xl font-bold text-slate-800">Resolution Center</span>
+                  </div>
+                  <h1 class="text-sm font-bold uppercase tracking-wider text-slate-600 mt-1">Official Forensic Evidence Dossier & Non-Repudiation Certificate</h1>
+                  <p class="text-xs text-slate-500">Generated autonomously by Steward 2.0 Agentic Financial Guardian</p>
+                </div>
+                <div class="text-right">
+                  <div class="px-2.5 py-1 bg-red-100 border border-red-300 text-red-800 font-bold text-xs rounded uppercase inline-block" id="print-attack-badge">UNAUTHORIZED TAMPER ATTEMPT</div>
+                  <div class="text-[11px] text-slate-500 mt-1 font-mono" id="print-timestamp">2026-11-08 23:15:00 UTC</div>
+                </div>
+              </div>
+
+              <!-- Metadata Grid -->
+              <div class="grid grid-cols-2 gap-4 text-xs border border-slate-200 rounded p-4 bg-slate-50">
+                <div>
+                  <span class="font-bold text-slate-600 block">Dossier Reference ID:</span>
+                  <span class="font-mono text-slate-900 font-bold text-xs" id="print-dossier-id">-</span>
+                </div>
+                <div>
+                  <span class="font-bold text-slate-600 block">Owner Intent SHA-256 Digest:</span>
+                  <span class="font-mono text-slate-900 text-[10px] break-all" id="print-intent-hash">-</span>
+                </div>
+                <div>
+                  <span class="font-bold text-slate-600 block">PayPal Orders v2 Auth ID:</span>
+                  <span class="font-mono text-slate-900" id="print-auth-id">-</span>
+                </div>
+                <div>
+                  <span class="font-bold text-slate-600 block">Settlement Status:</span>
+                  <span class="font-mono font-bold text-emerald-700" id="print-settlement-status">VOIDED_IN_UNDO_WINDOW (0 FEES)</span>
+                </div>
+              </div>
+
+              <!-- Incident Narrative -->
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1 mb-2">1. Incident Summary & Threat Finding</h3>
+                <p class="text-xs text-slate-800 leading-relaxed bg-amber-50 p-3 rounded border border-amber-200 font-mono" id="print-incident-notes">-</p>
+              </div>
+
+              <!-- Technical Why-Trail Audit -->
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1 mb-2">2. Provenance & Cryptographic Audit Trail</h3>
+                <pre class="text-[11px] bg-slate-900 text-slate-100 p-4 rounded overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed" id="print-audit-trail">-</pre>
+              </div>
+
+              <!-- Legal Non-Repudiation Seal -->
+              <div class="border-t-2 border-slate-300 pt-4 flex justify-between items-end text-[11px] text-slate-600">
+                <div>
+                  <p class="font-bold text-slate-800">Steward 2.0 Cryptographic Non-Repudiation Invariant:</p>
+                  <p class="text-[10px] text-slate-500 max-w-md">This evidence packet was compiled from immutable on-device provenance records. The SHA-256 intent profile and deterministic policy gate logs establish that this transaction was blocked or contested due to unapproved divergence from merchant authorization.</p>
+                </div>
+                <div class="text-right space-y-1">
+                  <div class="font-bold text-slate-900 uppercase">Verification Seal</div>
+                  <div class="font-mono text-[9px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-300 font-bold">CRYPTOGRAPHICALLY SEALED ✓</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1562,6 +1663,8 @@
       }
     }
 
+    let lastGeneratedDossier = null;
+
     async function generateDisputeDossier() {
       const btn = document.getElementById('btn-generate-dossier');
       btn.disabled = true;
@@ -1587,6 +1690,7 @@
           })
         });
         const data = await res.json();
+        lastGeneratedDossier = data;
 
         document.getElementById('dossier-meta-card').classList.remove('hidden');
         document.getElementById('dos-uuid').innerText = data.dossier.dossierId;
@@ -1595,12 +1699,46 @@
 
         document.getElementById('dossier-report-text').value = data.auditReport;
 
+        // Populate printable view
+        document.getElementById('print-dossier-id').innerText = data.dossier.dossierId;
+        document.getElementById('print-intent-hash').innerText = data.dossier.ownerIntentHash;
+        document.getElementById('print-auth-id').innerText = data.dossier.paypalAuthorizationId || authorizationId;
+        document.getElementById('print-attack-badge').innerText = data.dossier.flaggedAttackType;
+        document.getElementById('print-timestamp').innerText = new Date(data.dossier.createdAt).toUTCString();
+        document.getElementById('print-settlement-status').innerText = captureId ? `CAPTURED (${captureId})` : 'VOIDED_IN_UNDO_WINDOW (0 FEES)';
+        document.getElementById('print-incident-notes').innerText = incidentDescription;
+        document.getElementById('print-audit-trail').innerText = data.auditReport;
+
       } catch (err) {
         alert("Failed to generate dossier: " + err.message);
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-stamp"></i><span>Generate Cryptographic Dossier</span>`;
       }
+    }
+
+    function printDisputeDossier() {
+      if (!lastGeneratedDossier) {
+        alert("Please generate a dossier first by clicking 'Generate Cryptographic Dossier'.");
+        return;
+      }
+      window.print();
+    }
+
+    function downloadJsonDossier() {
+      if (!lastGeneratedDossier) {
+        alert("Please generate a dossier first.");
+        return;
+      }
+      const blob = new Blob([JSON.stringify(lastGeneratedDossier, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `steward-dispute-dossier-${lastGeneratedDossier.dossier.dossierId.slice(0, 8)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
 
     function copyDossierReport() {
