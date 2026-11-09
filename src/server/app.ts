@@ -28,6 +28,7 @@ import {
   ProposedIntentDraftSchema,
   PriceSentinelEngine,
   UPIMandateEngine,
+  IntentAuditLedgerEngine,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -239,8 +240,9 @@ function generateWholesaleQuotesForQuery(query: string): { quotes: WholesaleSupp
   // Default / Universal Item Generator: Generates realistic quotes for any user query!
   const capitalizedQuery = query.charAt(0).toUpperCase() + query.slice(1);
   const hash = query.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  const isConsumerItem = q.includes("shoe") || q.includes("sneaker") || q.includes("nike") || q.includes("ticket") || q.includes("dress") || q.includes("watch") || q.includes("phone");
-  const estimatedUnitCost = isConsumerItem ? 7.50 : Number((3.5 + (hash % 15)).toFixed(2));
+  const isSugarOrGrocery = q.includes("sugar") || q.includes("rice") || q.includes("milk") || q.includes("flour") || q.includes("salt") || q.includes("grocery");
+  const isConsumerItem = isSugarOrGrocery || q.includes("shoe") || q.includes("sneaker") || q.includes("nike") || q.includes("ticket") || q.includes("dress") || q.includes("watch") || q.includes("phone");
+  const estimatedUnitCost = isSugarOrGrocery ? 0.55 : (isConsumerItem ? 7.50 : Number((3.5 + (hash % 15)).toFixed(2)));
   const shippingCost = isConsumerItem ? 0.0 : 20.0;
   const cleanSku = `SKU-${query.replace(/[^a-zA-Z0-9]/g, "").slice(0, 8).toUpperCase() || "GEN"}-01`;
 
@@ -250,9 +252,9 @@ function generateWholesaleQuotesForQuery(query: string): { quotes: WholesaleSupp
     baselineUnitCostUSD: Number((estimatedUnitCost * 1.35).toFixed(2)),
     quotes: [
       {
-        supplierId: isConsumerItem ? "sup_meesho" : "sup_direct_factory",
-        supplierName: isConsumerItem ? "Meesho Verified Merchant Direct" : `${capitalizedQuery} Certified Wholesale Direct`,
-        paypalReceiverEmail: isConsumerItem ? "merchant-payments@meesho.com" : "supplier-assam@teaestate.com",
+        supplierId: isSugarOrGrocery ? "sup_bigbasket" : (isConsumerItem ? "sup_meesho" : "sup_direct_factory"),
+        supplierName: isSugarOrGrocery ? "BigBasket Quick Direct" : (isConsumerItem ? "Meesho Verified Merchant Direct" : `${capitalizedQuery} Certified Wholesale Direct`),
+        paypalReceiverEmail: isSugarOrGrocery ? "merchant-payments@bigbasket.com" : (isConsumerItem ? "merchant-payments@meesho.com" : "supplier-assam@teaestate.com"),
         baseUnitCostUSD: estimatedUnitCost,
         volumeTiers: [
           { minUnits: 1, discountPercent: 0 },
@@ -341,6 +343,30 @@ const state = {
         paypalReceiverEmail: "payments@flipkart.com",
         category: "consumer_marketplace",
         maxSingleOrderLimitUSD: 2000.0,
+        isActive: true,
+      },
+      {
+        supplierId: "sup_bigbasket",
+        name: "BigBasket Quick Commerce Direct",
+        paypalReceiverEmail: "merchant-payments@bigbasket.com",
+        category: "grocery_pantry",
+        maxSingleOrderLimitUSD: 1000.0,
+        isActive: true,
+      },
+      {
+        supplierId: "sup_blinkit",
+        name: "Blinkit Instant Grocery",
+        paypalReceiverEmail: "payments@blinkit.com",
+        category: "grocery_pantry",
+        maxSingleOrderLimitUSD: 1000.0,
+        isActive: true,
+      },
+      {
+        supplierId: "sup_bookmyshow",
+        name: "BookMyShow Live Events Direct",
+        paypalReceiverEmail: "tickets@bookmyshow.com",
+        category: "events_tickets",
+        maxSingleOrderLimitUSD: 2500.0,
         isActive: true,
       },
     ],
@@ -651,6 +677,29 @@ const server = http.createServer(async (req, res) => {
           amountUSD: state.activeHold.amountUSD,
           receivedAt: new Date().toISOString(),
           verified: true,
+        });
+
+        // Record in AI Intent Audit Ledger for Small Business Memory
+        const pLedger = state.vault.getPrivateLedgerCopy();
+        const autoRunwayDays = pLedger.dailyBurnRateUSD > 0
+          ? (pLedger.liquidCashUSD - pLedger.reservedFloorUSD) / pLedger.dailyBurnRateUSD
+          : 999;
+
+        IntentAuditLedgerEngine.recordTransaction({
+          originalPrompt: body.userPrompt || `Order ${orderUnits} units of ${item.name}`,
+          sku: item.sku,
+          productName: item.name,
+          units: orderUnits,
+          unitPriceUSD: result.dealComparison?.recommendedDeal.effectiveUnitCostUSD || item.unitCostUSD,
+          grossTotalUSD: state.activeHold.amountUSD,
+          selectedPlatform: result.dealComparison?.recommendedDeal.supplierName || "Verified Direct",
+          paypalReceiverEmail: result.dealComparison?.recommendedDeal.paypalReceiverEmail || "merchant-payments@meesho.com",
+          crossWebComparisonSummary: result.dealComparison?.decisionReason || "Sourced lowest landed price deal.",
+          arbitrageSavingsUSD: result.dealComparison?.totalSavingsUSD || 0,
+          mandateCapUSD: result.dynamicMandate?.currentEffectiveMandateUSD || 800,
+          liquidRunwayDays: autoRunwayDays,
+          paypalOrderId: state.activeHold.orderId,
+          paypalAuthorizationId: state.activeHold.authorizationId,
         });
       }
 
@@ -1387,6 +1436,23 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));
     }
+    return;
+  }
+
+  // ── 20a. API: AI Intent Audit Ledger for Small Businesses ──────────────────
+  if (req.method === "GET" && url.pathname === "/api/audit/records") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ records: IntentAuditLedgerEngine.getAllRecords() }));
+    return;
+  }
+
+  if (req.method === "GET" && url.pathname === "/api/audit/export/csv") {
+    const csv = IntentAuditLedgerEngine.exportCSV();
+    res.writeHead(200, {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": 'attachment; filename="steward-intent-audit-ledger.csv"',
+    });
+    res.end(csv);
     return;
   }
 

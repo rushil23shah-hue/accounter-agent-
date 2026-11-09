@@ -12,3 +12,5 @@ export * from "./web-scout.js";
 export * from "./intent-agent.js";
 export * from "./price-sentinel.js";
 export * from "./upi-mandate-engine.js";
+
+export * from "./intent-audit-ledger.js";

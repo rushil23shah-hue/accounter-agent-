@@ -10,3 +10,5 @@ export * from "./dossier.js";
 export * from "./rag.js";
 export * from "./sentinel.js";
 export * from "./upi-mandate.js";
+
+export * from "./intent-audit.js";
