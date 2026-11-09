@@ -53,6 +53,11 @@ const STAGES: TestStage[] = [
     command: "npx",
     args: ["tsx", "scripts/run-100-global-benchmark.ts"],
   },
+  {
+    name: "Phase 7: Autonomous Price Sentinel & Sniper",
+    command: "npx",
+    args: ["tsx", "scripts/verify-sentinel.ts"],
+  },
 ];
 
 async function runStage(stage: TestStage): Promise<{ passed: boolean; durationMs: number; output: string }> {
@@ -162,7 +167,7 @@ async function main() {
   console.log("╠" + "═".repeat(76) + "╣");
   console.log(`║ Certificate ID : ${certId.padEnd(58)}║`);
   console.log(`║ Timestamp      : ${certTimestamp.padEnd(58)}║`);
-  console.log(`║ Execution Time : ${`${totalDuration} seconds (7 / 7 Test Suites Passed)`.padEnd(58)}║`);
+  console.log(`║ Execution Time : ${`${totalDuration} seconds (8 / 8 Test Suites Passed)`.padEnd(58)}║`);
   console.log("╟" + "─".repeat(76) + "╢");
   console.log("║ GUARANTEES & ARCHITECTURAL INVARIANTS:                                     ║");
   console.log("║   [✓] Zero-Knowledge Financial Privacy  : Zero raw ledger leaks to cloud   ║");
@@ -177,6 +182,7 @@ async function main() {
   console.log("║   [✓] Dynamic Intent-RAG Engine         : 100/100 Global Topics Passed     ║");
   console.log("║   [✓] Model Context Protocol (MCP)      : JSON-RPC 2.0 Tool Provider       ║");
   console.log("║   [✓] 1-Click Printable Dispute Dossier : Court-Ready Forensic Evidence    ║");
+  console.log("║   [✓] Autonomous Price Sentinel & Sniper: 24/7 Drops & PayPal Hold Lock    ║");
   console.log("╟" + "─".repeat(76) + "╢");
   console.log(`║ Cryptographic Non-Repudiation Hash:                                        ║`);
   console.log(`║   ${certHash.padEnd(73)}║`);

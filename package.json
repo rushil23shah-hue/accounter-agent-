@@ -17,7 +17,8 @@
     "ui": "tsx src/server/app.ts",
     "dev": "tsx src/server/app.ts",
     "mcp": "tsx src/mcp/server.ts",
-    "test": "tsx scripts/run-all-tests.ts"
+    "test": "tsx scripts/run-all-tests.ts",
+    "verify:sentinel": "tsx scripts/verify-sentinel.ts"
   },
   "repository": {
     "type": "git",

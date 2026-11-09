@@ -26,6 +26,7 @@ import {
   IntentGroundingEngine,
   ProposedIntentDraft,
   ProposedIntentDraftSchema,
+  PriceSentinelEngine,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -1424,7 +1425,100 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  res.writeHead(404, { "Content-Type": "text/plain" });
+
+  // ── 22. API: Autonomous Price Sentinels (List All Watchers) ───────────────
+  if (req.method === "GET" && url.pathname === "/api/sentinels") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ watchers: PriceSentinelEngine.getAllWatchers() }));
+    return;
+  }
+
+  // ── 23. API: Create Sentinel Watcher from Prompt or Schema ────────────────
+  if (req.method === "POST" && url.pathname === "/api/sentinels/create") {
+    try {
+      const body = await parseJsonBody(req);
+      const watcher = PriceSentinelEngine.createFromPrompt(body);
+
+      // Auto-index into high-trust knowledge base so Intent-RAG can recall it
+      state.knowledgeBase.addItem({
+        id: `kb_sentinel_${watcher.id}`,
+        text: `Sentinel Watcher: ${watcher.name}. Target: ${watcher.targetPriceUSD.toFixed(2)}. Ceiling: ${watcher.maxCeilingUSD.toFixed(2)}. Query: ${watcher.query}`,
+        aliases: [watcher.name.toLowerCase(), watcher.query.toLowerCase()],
+        tags: ["sentinel", watcher.category.toLowerCase()],
+      });
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, watcher }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 24. API: Simulate Drop & Trigger Autonomous PayPal Authorization ──────
+  if (req.method === "POST" && url.pathname === "/api/sentinels/simulate-trigger") {
+    try {
+      const body = await parseJsonBody(req);
+      const watcherId = String(body.watcherId || "");
+      const simulatedDropPriceUSD = body.simulatedDropPriceUSD !== undefined ? Number(body.simulatedDropPriceUSD) : undefined;
+      const simulatedMarketplace = body.simulatedMarketplace ? String(body.simulatedMarketplace) : undefined;
+
+      const evalResult = await PriceSentinelEngine.evaluateWatcher({
+        watcherId,
+        profile: state.profile,
+        vault: state.vault,
+        simulatedDropPriceUSD,
+        simulatedMarketplace,
+      });
+
+      if (evalResult.paypalHoldCreated && evalResult.watcher.paypalOrderId) {
+        state.activeHold = {
+          orderId: evalResult.watcher.paypalOrderId,
+          authorizationId: evalResult.watcher.paypalAuthId || `AUTH_SENTINEL_${Date.now()}`,
+          amountUSD: (evalResult.watcher.lastObservedPriceUSD || 0) * evalResult.watcher.quantity,
+          supplier: evalResult.watcher.bestMarketplace || "Marketplace Verified Partner",
+          sku: evalResult.watcher.name,
+          units: evalResult.watcher.quantity,
+          expiresAt: Date.now() + 60_000,
+          status: "ACTIVE",
+        };
+
+        state.webhookEvents.unshift({
+          id: `WH_SENTINEL_${Date.now()}`,
+          eventType: "PAYMENT.AUTHORIZATION.CREATED",
+          paymentState: "AUTHORIZED_HELD_IN_UNDO",
+          resourceId: state.activeHold.authorizationId,
+          amountUSD: state.activeHold.amountUSD,
+          receivedAt: new Date().toISOString(),
+          verified: true,
+        });
+      }
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(evalResult));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 25. API: Cancel Sentinel Watcher ──────────────────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/sentinels/cancel") {
+    try {
+      const body = await parseJsonBody(req);
+      const success = PriceSentinelEngine.cancelWatcher(String(body.id || ""));
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+    res.writeHead(404, { "Content-Type": "text/plain" });
   res.end("Not Found");
 });
 

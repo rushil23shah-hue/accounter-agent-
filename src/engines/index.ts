@@ -10,3 +10,4 @@ export * from "./autopilot.js";
 export * from "./dossier-generator.js";
 export * from "./web-scout.js";
 export * from "./intent-agent.js";
+export * from "./price-sentinel.js";

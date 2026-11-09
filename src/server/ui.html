@@ -244,6 +244,10 @@
         <i class="fa-solid fa-bullseye text-emerald-400"></i>
         <span>Dynamic Intent-RAG (100 Global Topics)</span>
       </button>
+      <button onclick="switchTab('sentinel')" id="tab-btn-sentinel" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fa-solid fa-satellite-dish text-amber-400"></i>
+        <span>Autonomous Price Sentinel (24/7 Drops)</span>
+      </button>
     </div>
 
     <!-- TAB 1: RESTOCK AUTOPILOT COMMAND CENTER -->
@@ -1296,6 +1300,88 @@
       </div>
     </section>
 
+    <!-- TAB 11: AUTONOMOUS PRICE SENTINEL & FUTURE DROP SNIPER (SLEEPING AUTOPILOT) -->
+    <section id="tab-sentinel" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-amber-950/40 to-slate-900 p-6 rounded-2xl border border-amber-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">24/7 Sleeping Autopilot</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">Asymmetric Hard Ceiling</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Pre-Flight Scam Shield</span>
+          </div>
+          <h2 class="text-2xl font-black text-white mt-2">Autonomous Price Sentinel & Future Event Sniper</h2>
+          <p class="text-sm text-slate-300 mt-1">Monitors tickets, flash sales, electronics, and commodity restocks while you sleep. Auto-authorizes PayPal the second prices drop.</p>
+        </div>
+        <button onclick="fetchSentinels()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center space-x-2">
+          <i class="fa-solid fa-arrows-rotate"></i>
+          <span>Refresh Watchers</span>
+        </button>
+      </div>
+
+      <!-- Main Sentinel Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Column 1: Create Standing Intent Watcher -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4 lg:col-span-1">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-radar text-amber-400"></i>
+              <span>Set Standing Watch Intent</span>
+            </h3>
+            <span class="text-xs text-amber-400 font-mono">Live Engine</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Instruct Steward in natural English. It locks an asymmetric hard ceiling, watches marketplaces 24/7, and triggers instant PayPal AUTHORIZE when conditions match.
+          </p>
+
+          <div>
+            <textarea id="sentinel-prompt-input" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500 transition font-sans" placeholder="e.g. Watch Coldplay tickets on BookMyShow. If listed under ₹7,500, buy 2 immediately."></textarea>
+          </div>
+
+          <!-- Quick Presets -->
+          <div class="space-y-1.5">
+            <span class="text-[11px] font-semibold text-slate-400">Quick Real-World Scenarios:</span>
+            <div class="flex flex-col gap-2 text-xs">
+              <button onclick="setSentinelPrompt('Watch Coldplay concert tickets on BookMyShow. If listed under ₹7,500, buy 2 tickets immediately.')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 text-left transition">
+                🎟️ <strong>Coldplay Concert:</strong> Under ₹7,500 (Buy 2)
+              </button>
+              <button onclick="setSentinelPrompt('Watch Sony WH-1000XM5 headphones across Amazon and Flipkart. If price drops below ₹22,000, buy lowest net price.')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-cyan-500/30 text-left transition">
+                🎧 <strong>Sony WH-1000XM5:</strong> Under ₹22,000
+              </button>
+              <button onclick="setSentinelPrompt('Watch direct flights from Mumbai to Delhi for Dec 20. If airfare drops below ₹6,000, hold booking.')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-blue-300 border border-blue-500/30 text-left transition">
+                ✈️ <strong>Flight Flash Drop:</strong> Under ₹6,000
+              </button>
+              <button onclick="setSentinelPrompt('Watch Ceremonial Matcha Uji bulk wholesale. If 1kg spot price drops below $180, restock 2 packs.')" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-emerald-500/30 text-left transition">
+                🍵 <strong>B2B Matcha Bulk:</strong> Under $180 (Restock 2)
+              </button>
+            </div>
+          </div>
+
+          <button onclick="createSentinelFromPrompt()" id="btn-create-sentinel" class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-amber-900/40 flex items-center justify-center space-x-2 transition cursor-pointer">
+            <i class="fa-solid fa-satellite-dish"></i>
+            <span>Activate 24/7 Sentinel Watcher</span>
+          </button>
+        </div>
+
+        <!-- Column 2 & 3: Active Watchers & Simulation Console -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4 lg:col-span-2">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-list-check text-paypal-accent"></i>
+                <span>Active 24/7 Watchers & Autonomous Snipers</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Simulate a price drop below threshold to witness live pre-flight checks, ZK solvency, and PayPal hold.</p>
+            </div>
+            <span id="sentinel-count-badge" class="px-2.5 py-0.5 rounded text-xs font-bold bg-slate-800 text-amber-300 border border-slate-700">3 Watchers Active</span>
+          </div>
+
+          <div id="sentinels-list" class="space-y-4">
+            <!-- Dynamically populated watchers -->
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Interactive JavaScript Logic -->
@@ -1338,7 +1424,7 @@
     };
 
     function switchTab(tab) {
-      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -1369,6 +1455,7 @@
         fetchWebhookEvents();
       } else if (tab === 'rag') {
         loadRagKnowledge();
+      fetchSentinels();
       }
     }
 
@@ -2677,6 +2764,181 @@
     }
 
     // Initialize on load
+    
+    function setSentinelPrompt(text) {
+      document.getElementById('sentinel-prompt-input').value = text;
+    }
+
+    async function fetchSentinels() {
+      try {
+        const res = await fetch('/api/sentinels');
+        const data = await res.json();
+        const container = document.getElementById('sentinels-list');
+        const badge = document.getElementById('sentinel-count-badge');
+        
+        if (badge && data.watchers) {
+          badge.innerText = `${data.watchers.length} Watcher${data.watchers.length === 1 ? '' : 's'} Active`;
+        }
+
+        if (container && data.watchers) {
+          container.innerHTML = data.watchers.map(w => {
+            const isTriggered = w.status === 'TRIGGERED_HOLD_ACTIVE';
+            const isCancelled = w.status === 'CANCELLED';
+
+            let statusClass = 'bg-amber-500/20 text-amber-300 border-amber-500/40';
+            let statusIcon = 'fa-satellite-dish animate-pulse';
+            let statusLabel = 'WATCHING 24/7';
+
+            if (isTriggered) {
+              statusClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+              statusIcon = 'fa-bolt';
+              statusLabel = 'TRIGGERED & HELD IN PAYPAL (60s UNDO)';
+            } else if (isCancelled) {
+              statusClass = 'bg-slate-800 text-slate-500 border-slate-700';
+              statusIcon = 'fa-ban';
+              statusLabel = 'CANCELLED';
+            }
+
+            return `
+              <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-900 pb-2.5">
+                  <div>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-900 text-slate-400 border border-slate-800">
+                      ${w.category}
+                    </span>
+                    <h4 class="text-sm font-bold text-white mt-1">${w.name}</h4>
+                    <p class="text-xs text-slate-400 font-mono mt-0.5">Query: "${w.query}" • Qty: ${w.quantity}</p>
+                  </div>
+                  <div class="flex flex-col sm:items-end">
+                    <span class="px-2.5 py-0.5 rounded text-[11px] font-bold border flex items-center space-x-1 ${statusClass}">
+                      <i class="fa-solid ${statusIcon}"></i>
+                      <span>${statusLabel}</span>
+                    </span>
+                    <span class="text-[11px] text-slate-500 mt-1 font-mono">
+                      Target: ${w.targetPriceUSD.toFixed(2)} ${w.targetPriceINR ? `(₹${w.targetPriceINR})` : ''} | Ceiling: ${w.maxCeilingUSD.toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div class="p-2 bg-slate-900/60 rounded-lg border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 uppercase block">Last Observed</span>
+                    <span class="font-bold text-slate-200 font-mono">${w.lastObservedPriceUSD ? w.lastObservedPriceUSD.toFixed(2) : '--'}</span>
+                  </div>
+                  <div class="p-2 bg-slate-900/60 rounded-lg border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 uppercase block">Target Price</span>
+                    <span class="font-bold text-amber-400 font-mono">${w.targetPriceUSD.toFixed(2)}</span>
+                  </div>
+                  <div class="p-2 bg-slate-900/60 rounded-lg border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 uppercase block">Asymmetric Ceiling</span>
+                    <span class="font-bold text-red-400 font-mono">${w.maxCeilingUSD.toFixed(2)}</span>
+                  </div>
+                  <div class="p-2 bg-slate-900/60 rounded-lg border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 uppercase block">Marketplace</span>
+                    <span class="font-bold text-slate-300 font-sans truncate block">${w.bestMarketplace || 'Web Scout'}</span>
+                  </div>
+                </div>
+
+                ${w.whyTrail && w.whyTrail.length > 0 ? `
+                  <div class="p-2.5 bg-slate-900 rounded-lg border border-slate-800 text-[11px] text-slate-400 font-mono space-y-1">
+                    <span class="text-slate-500 font-semibold block text-[10px] uppercase">Forensic Sentinel Why-Trail:</span>
+                    ${w.whyTrail.slice(-3).map(trail => `<div>• ${trail}</div>`).join('')}
+                  </div>
+                ` : ''}
+
+                <div class="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-900">
+                  <div class="text-[11px] text-slate-500">
+                    ${isTriggered ? `<span class="text-emerald-400 font-semibold">PayPal Hold: ${w.paypalOrderId}</span>` : 'Autonomous sniper standing by.'}
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    ${!isCancelled && !isTriggered ? `
+                      <button onclick="simulateSentinelDrop('${w.id}', ${w.targetPriceUSD * 0.92})" class="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer">
+                        <i class="fa-solid fa-bolt"></i>
+                        <span>Simulate Flash Drop (${(w.targetPriceUSD * 0.92).toFixed(2)})</span>
+                      </button>
+                    ` : ''}
+                    ${isTriggered ? `
+                      <button onclick="switchTab('autopilot')" class="px-3 py-1.5 bg-paypal-blue hover:bg-blue-600 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 transition">
+                        <i class="fa-brands fa-paypal"></i>
+                        <span>View Live 60s Undo Hold</span>
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (err) {
+        console.error("fetchSentinels error:", err);
+      }
+    }
+
+    async function createSentinelFromPrompt() {
+      const input = document.getElementById('sentinel-prompt-input');
+      const prompt = input.value.trim();
+      if (!prompt) {
+        alert("Please enter a natural prompt describing what item/ticket to watch.");
+        return;
+      }
+
+      const btn = document.getElementById('btn-create-sentinel');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i><span>Analyzing Intent & Locking Ceiling...</span>';
+
+      try {
+        const res = await fetch('/api/sentinels/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ naturalPrompt: prompt }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          input.value = '';
+          await fetchSentinels();
+          alert(`24/7 Sentinel Watcher activated for: "${data.watcher.name}"!\nTarget: ${data.watcher.targetPriceUSD.toFixed(2)}\nCeiling: ${data.watcher.maxCeilingUSD.toFixed(2)}`);
+        } else {
+          alert("Failed to create watcher: " + data.error);
+        }
+      } catch (err) {
+        alert("Error creating watcher: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-satellite-dish"></i><span>Activate 24/7 Sentinel Watcher</span>';
+      }
+    }
+
+    async function simulateSentinelDrop(id, dropPrice) {
+      if (!confirm(`Simulate an autonomous flash drop to ${dropPrice.toFixed(2)}?\n\nSteward will verify Pre-Flight Shield, solve ZK solvency, and auto-authorize a PayPal hold with a 60-second Undo Window.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/sentinels/simulate-trigger', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            watcherId: id,
+            simulatedDropPriceUSD: dropPrice,
+            simulatedMarketplace: 'Global Flash Sale Partner',
+          }),
+        });
+        const data = await res.json();
+        await fetchSentinels();
+        await fetchDashboardState();
+
+        if (data.paypalHoldCreated) {
+          if (confirm(`🎉 SNIPED! Deal autonomously captured at ${dropPrice.toFixed(2)} via PayPal AUTHORIZE!\n\nActive 60-second Undo Window countdown started.\n\nSwitch to Autopilot tab to inspect the hold?`)) {
+            switchTab('autopilot');
+          }
+        } else {
+          alert(`Evaluation completed: ${data.reason}`);
+        }
+      } catch (err) {
+        alert("Simulation failed: " + err.message);
+      }
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       fetchDashboardState();
       loadAttackPreset('injection');
