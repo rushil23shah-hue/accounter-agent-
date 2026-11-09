@@ -7,3 +7,4 @@ export * from "./autonomy.js";
 export * from "./payment.js";
 export * from "./adversarial.js";
 export * from "./dossier.js";
+export * from "./rag.js";

@@ -22,6 +22,10 @@ import {
   PayPalOrders,
   mapEventToPaymentState,
   PayPalWebhookListener,
+  HighTrustKnowledgeBase,
+  IntentGroundingEngine,
+  ProposedIntentDraft,
+  ProposedIntentDraftSchema,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -412,6 +416,49 @@ const state = {
     receivedAt: string;
     verified: boolean;
   }>,
+
+  knowledgeBase: new HighTrustKnowledgeBase([
+    {
+      id: "kb_init_01",
+      sku: "TEA-EG-001",
+      aliases: ["earl grey reserve", "organic earl grey", "best selling earl grey"],
+      text: "Organic Earl Grey Reserve (SKU: TEA-EG-001). Single-Estate Assam black tea infused with natural Calabrian bergamot oil.",
+      preferredSupplierId: "sup_assam_direct",
+      defaultOrderUnits: 100,
+      maxBudgetUSD: 800.0,
+      tags: ["tea", "earl-grey", "catalog"],
+    },
+    {
+      id: "kb_init_02",
+      sku: "MATCHA-CEREM-100G",
+      aliases: ["ceremonial matcha", "popular matcha", "matcha ceremonial grade"],
+      text: "Matcha Ceremonial Grade Uji 100g (SKU: MATCHA-CEREM-100G). High margin morning item from Uji, Kyoto.",
+      preferredSupplierId: "sup_pac_tea",
+      defaultOrderUnits: 60,
+      maxBudgetUSD: 900.0,
+      tags: ["tea", "matcha", "japan"],
+    },
+    {
+      id: "kb_init_03",
+      sku: "PKG-KRAFT-250",
+      aliases: ["kraft pouches", "stand up pouches", "eco packaging"],
+      text: "Eco-Friendly Kraft Stand-Up Pouches 250g (SKU: PKG-KRAFT-250). Degassing valve packaging for dry goods.",
+      preferredSupplierId: "sup_packaging_eco",
+      defaultOrderUnits: 200,
+      maxBudgetUSD: 400.0,
+      tags: ["packaging", "eco", "pouches"],
+    },
+    {
+      id: "kb_init_04",
+      sku: "TEA-SENCHA-002",
+      aliases: ["organic sencha fukamushi", "japanese green tea sencha"],
+      text: "Organic Sencha Fukamushi Green Tea (SKU: TEA-SENCHA-002). Deep-steamed Japanese sencha.",
+      preferredSupplierId: "sup_pac_tea",
+      defaultOrderUnits: 50,
+      maxBudgetUSD: 600.0,
+      tags: ["tea", "green-tea", "sencha"],
+    },
+  ]),
 };
 
 function parseJsonBody(req: http.IncomingMessage): Promise<any> {
@@ -791,6 +838,21 @@ const server = http.createServer(async (req, res) => {
 
       state.inventory.push(newItem);
 
+      // Dynamically index new item into RAG High-Trust Knowledge Base
+      state.knowledgeBase.addItem({
+        id: `kb_item_${newItem.sku.toLowerCase()}`,
+        sku: newItem.sku,
+        text: `${newItem.name} (SKU: ${newItem.sku}). Baseline cost: $${newItem.unitCostUSD.toFixed(2)}. Lead time: ${newItem.leadTimeDays}d.`,
+        aliases: [
+          newItem.name.toLowerCase(),
+          newItem.name.toLowerCase().replace(/[^a-z0-9]/g, " ").trim(),
+        ],
+        preferredSupplierId: newItem.supplierId,
+        defaultOrderUnits: Math.max(25, Math.round(newItem.leadTimeDays * newItem.velocity.ema14Days)),
+        maxBudgetUSD: state.profile.hardCeilingUSD,
+        tags: ["catalog", "inventory"],
+      });
+
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ success: true, item: newItem }));
     } catch (err: any) {
@@ -1002,6 +1064,14 @@ const server = http.createServer(async (req, res) => {
       }
 
       const newRule = SelfLearningIntentAgent.teachRule(ruleText);
+
+      // Dynamically index newly taught policy into RAG Knowledge Base
+      state.knowledgeBase.addItem({
+        id: `kb_learned_${newRule.id}`,
+        text: newRule.ruleText,
+        aliases: [newRule.ruleText.toLowerCase()],
+        tags: ["learned_rule", newRule.category],
+      });
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ success: true, rule: newRule }));
     } catch (err: any) {
@@ -1246,6 +1316,83 @@ const server = http.createServer(async (req, res) => {
           activeHold: state.activeHold,
         })
       );
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 20. API: Ground Natural Language Intent via Dynamic Intent-RAG ──────────
+  if (req.method === "POST" && url.pathname === "/api/rag/ground") {
+    try {
+      const body = await parseJsonBody(req);
+      const userPrompt = String(body.userPrompt || "");
+
+      const privateLedger = state.vault.getPrivateLedgerCopy();
+      const runwayDays =
+        privateLedger.dailyBurnRateUSD > 0
+          ? (privateLedger.liquidCashUSD - privateLedger.reservedFloorUSD) /
+            privateLedger.dailyBurnRateUSD
+          : 999;
+
+      const mandate = DynamicMandateEngine.evaluateMandate(
+        state.profile,
+        privateLedger.averageDailyRevenueUSD,
+        runwayDays,
+        state.autonomyState
+      );
+
+      const result = IntentGroundingEngine.ground({
+        userPrompt,
+        knowledgeBase: state.knowledgeBase,
+        mandateAllowanceCapUSD: mandate.currentEffectiveMandateUSD,
+      });
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          ...result,
+          mandateEffectiveUSD: mandate.currentEffectiveMandateUSD,
+          liquidRunwayDays: Number(runwayDays.toFixed(1)),
+        })
+      );
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 21. API: Dynamic RAG Knowledge Base (Inspect & Ingest) ─────────────────
+  if (req.method === "GET" && url.pathname === "/api/rag/knowledge") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        total: state.knowledgeBase.getItems().length,
+        items: state.knowledgeBase.getItems(),
+      })
+    );
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/rag/knowledge/add") {
+    try {
+      const body = await parseJsonBody(req);
+      const item = {
+        id: body.id || `kb_dyn_${Date.now()}`,
+        sku: body.sku,
+        text: String(body.text || ""),
+        aliases: Array.isArray(body.aliases) ? body.aliases : [],
+        preferredSupplierId: body.preferredSupplierId,
+        defaultOrderUnits: Number(body.defaultOrderUnits) || 50,
+        maxBudgetUSD: Number(body.maxBudgetUSD) || state.profile.hardCeilingUSD,
+        tags: Array.isArray(body.tags) ? body.tags : ["custom_ingested"],
+      };
+
+      state.knowledgeBase.addItem(item);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, item, totalItems: state.knowledgeBase.getItems().length }));
     } catch (err: any) {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));
