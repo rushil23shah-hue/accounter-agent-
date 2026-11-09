@@ -2563,6 +2563,38 @@
       }
     }
 
+    let latestGroundedDraft = null;
+
+    async function executeGroundedDraft() {
+      if (!latestGroundedDraft) {
+        alert("No grounded draft available to execute.");
+        return;
+      }
+
+      if (!confirm(`Execute PayPal Autonomous Authorization for ${latestGroundedDraft.targetUnits} units of ${latestGroundedDraft.sku} (Budget: ${latestGroundedDraft.maxBudgetUSD.toFixed(2)})?\n\nThis will initiate a 60-second reversible Undo Window.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/autopilot/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sku: latestGroundedDraft.sku,
+            customUnits: latestGroundedDraft.targetUnits,
+            oneTimeMandateOverrideUSD: latestGroundedDraft.maxBudgetUSD,
+          }),
+        });
+        const data = await res.json();
+        
+        // Switch to the autopilot tab where the 60s Undo Window is active
+        switchTab('autopilot');
+        await fetchDashboardState();
+      } catch (err) {
+        alert("Execution failed: " + err.message);
+      }
+    }
+
     async function executeRagGrounding() {
       const input = document.getElementById('rag-prompt-input');
       const prompt = input.value.trim();
@@ -2595,7 +2627,25 @@
         if (data.status === 'GROUNDED' && data.draft) {
           badge.innerText = `GROUNDED (TIER ${data.targetTier})`;
           badge.className = 'px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
-          resultBox.innerHTML = `<pre class="text-xs text-emerald-300 whitespace-pre-wrap">${JSON.stringify(data.draft, null, 2)}</pre>`;
+          latestGroundedDraft = data.draft;
+          resultBox.innerHTML = `
+            <pre class="text-xs text-emerald-300 whitespace-pre-wrap">${JSON.stringify(data.draft, null, 2)}</pre>
+            <div class="mt-4 pt-3 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-emerald-950/20 p-3 rounded-lg border border-emerald-500/20">
+              <div>
+                <div class="text-xs font-bold text-white flex items-center space-x-1.5">
+                  <i class="fa-brands fa-paypal text-paypal-accent"></i>
+                  <span>Ready for Autonomous Execution</span>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-0.5">
+                  ${data.draft.targetUnits} units of ${data.draft.sku} • Max budget capped at ${data.draft.maxBudgetUSD.toFixed(2)}
+                </div>
+              </div>
+              <button onclick="executeGroundedDraft()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-900/40 flex items-center space-x-2 transition cursor-pointer">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Execute PayPal Hold (60s Undo)</span>
+              </button>
+            </div>
+          `;
           notes.innerText = `Resolved SKU: ${data.draft.sku}. Mode: ${data.draft.intentMode}. Units: ${data.draft.targetUnits}. Budget capped at $${data.draft.maxBudgetUSD.toFixed(2)} with zero LLM math.`;
         } else if (data.status === 'AMBIGUOUS_ABSTAIN') {
           badge.innerText = 'AMBIGUOUS: DROPPED TO TIER 0';

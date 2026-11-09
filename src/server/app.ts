@@ -540,7 +540,31 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await parseJsonBody(req);
       const sku = body.sku || "TEA-EG-001";
-      const item = state.inventory.find((i) => i.sku === sku) || state.inventory[0];
+      let matchedItem = state.inventory.find((i) => i.sku === sku);
+      if (!matchedItem) {
+        const kbItem = state.knowledgeBase.getItemBySku(sku);
+        if (kbItem && kbItem.sku) {
+          const defaultUnits = kbItem.defaultOrderUnits || 50;
+          const estimatedUnitCost = kbItem.maxBudgetUSD ? Math.round((kbItem.maxBudgetUSD / defaultUnits) * 100) / 100 : 12.5;
+          matchedItem = {
+            sku: kbItem.sku,
+            name: kbItem.text.split(".")[0] || kbItem.sku,
+            currentStockUnits: 12,
+            leadTimeDays: 5,
+            safetyBufferDays: 3,
+            unitCostUSD: estimatedUnitCost,
+            sellingPriceUSD: Number((estimatedUnitCost * 2.2).toFixed(2)),
+            velocity: {
+              ema7Days: 5.0,
+              ema14Days: 4.5,
+              ema30Days: 4.0,
+            },
+            supplierId: kbItem.preferredSupplierId || "sup_assam_direct",
+          };
+          state.inventory.push(matchedItem);
+        }
+      }
+      const item = matchedItem || state.inventory[0];
 
       const dynamicQuotes = generateWholesaleQuotesForQuery(item.name).quotes;
 
