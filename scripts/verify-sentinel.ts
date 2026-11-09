@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import {
   PriceSentinelEngine,
   OwnerIntentProfile,
@@ -13,10 +14,12 @@ console.log("══════════════════════�
 
 async function runTests() {
   const profile: OwnerIntentProfile = {
-    businessName: "Global Intent Retailer",
-    defaultMandateUSD: 500,
+    profileId: crypto.randomUUID(),
+    ownerName: "Global Intent Retailer",
+    mode: "BUSINESS_CFO",
     hardCeilingUSD: 1000,
-    lowStockReorderFloorUnits: 15,
+    reservedCashFloorUSD: 2000,
+    targetCashRunwayDays: 30,
     maxSlowMovingItemOrderUSD: 300,
     whitelistedPayees: [
       {
@@ -71,7 +74,7 @@ async function runTests() {
     watcherId: watcher1.id,
     profile,
     vault,
-    simulatedDropPriceUSD: 110.0, // Above target ~$86
+    simulatedDropPriceUSD: 110.0,
   });
 
   assert.equal(evalAbove.triggered, false, "Must not trigger when price > target");
@@ -81,7 +84,6 @@ async function runTests() {
 
   // ── TEST 4: Asymmetric Limit Invariant: Block when Price Exceeds Hard Ceiling
   console.log("\n▶ [Test 4] Asymmetric Limit Invariant: Block purchase if scalper price > ceiling");
-  // Force a watcher with a small ceiling
   const watcherTight = PriceSentinelEngine.createFromPrompt({
     name: "Tight Ceiling Item",
     query: "Rare Item",
@@ -91,8 +93,6 @@ async function runTests() {
     quantity: 1,
   });
 
-  // Simulate a price that satisfies condition if loose, but breaches ceiling
-  // (e.g. simulateDropPrice = 110 when ceiling is 105)
   const evalCeiling = await PriceSentinelEngine.evaluateWatcher({
     watcherId: watcherTight.id,
     profile,
@@ -109,7 +109,7 @@ async function runTests() {
     watcherId: watcher1.id,
     profile,
     vault,
-    simulatedDropPriceUSD: 78.5, // Well below target ~$86
+    simulatedDropPriceUSD: 78.5,
     simulatedMarketplace: "BookMyShow Verified Flash Drop",
   });
 
@@ -125,7 +125,7 @@ async function runTests() {
   console.log("\n▶ [Test 6] ZK-Vault Solvency Gate: Refuse purchase when cash would breach floor");
   const brokeVault = new ZKVault({
     liquidCashUSD: 2050,
-    reservedFloorUSD: 2000, // Only $50 available cash!
+    reservedFloorUSD: 2000,
     dailyBurnRateUSD: 50,
     averageDailyRevenueUSD: 200,
     grossMarginPercent: 40,
@@ -145,7 +145,7 @@ async function runTests() {
     watcherId: watcherExpensive.id,
     profile,
     vault: brokeVault,
-    simulatedDropPriceUSD: 220, // Price is good, but merchant only has $50 free cash!
+    simulatedDropPriceUSD: 220,
   });
 
   assert.equal(evalSolvency.paypalHoldCreated, false, "Must block purchase when solvency fails");

@@ -9,3 +9,4 @@ export * from "./adversarial.js";
 export * from "./dossier.js";
 export * from "./rag.js";
 export * from "./sentinel.js";
+export * from "./upi-mandate.js";

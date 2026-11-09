@@ -135,6 +135,50 @@
       </div>
     </div>
 
+    <!-- 3-Minute Guided Interactive Hackathon Demo Tour Banner -->
+    <div id="hackathon-demo-banner" class="p-4 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-purple-950 border border-indigo-500/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div class="flex items-center space-x-3.5">
+        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-play"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">JUDGES &amp; AUDITORS</span>
+            <span class="text-xs font-bold text-white">3-Minute Championship Demo Walkthrough</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-0.5">Tour the 5 breakthrough pillars: Agentic UPI Mandate QR ➔ Voice Intent-RAG ➔ 0.34ms Security Shield ➔ 24/7 Price Sentinel ➔ PayPal 60s Undo.</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 w-full md:w-auto">
+        <button onclick="launchDemoStep(1)" class="w-full md:w-auto px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-900/40 flex items-center justify-center space-x-2 transition cursor-pointer">
+          <i class="fa-solid fa-circle-play"></i>
+          <span>Launch Interactive Demo</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Demo Modal Drawer -->
+    <div id="demo-modal" class="hidden p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/80 to-slate-900 border-2 border-indigo-500/60 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-indigo-500/30 pb-3">
+        <div class="flex items-center space-x-2">
+          <span id="demo-step-badge" class="px-2.5 py-0.5 rounded text-xs font-black bg-indigo-500 text-white">STEP 1 / 5</span>
+          <h3 id="demo-step-title" class="text-sm font-bold text-white">Authorize Agentic UPI AutoPay Mandate</h3>
+        </div>
+        <button onclick="closeDemoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-800 rounded-lg">✕ Close</button>
+      </div>
+      <p id="demo-step-desc" class="text-xs text-slate-300 leading-relaxed"></p>
+      <div class="flex items-center justify-between pt-2">
+        <button id="demo-btn-prev" onclick="prevDemoStep()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">Previous</button>
+        <div class="flex items-center space-x-2">
+          <button id="demo-btn-action" onclick="executeDemoAction()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center space-x-1.5">
+            <i class="fa-solid fa-bolt"></i>
+            <span id="demo-action-label">Run Live Action</span>
+          </button>
+          <button id="demo-btn-next" onclick="nextDemoStep()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs">Next Step ➔</button>
+        </div>
+      </div>
+    </div>
+
     <!-- CFO Metric Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
       <!-- Card 1: Liquid Cash -->
@@ -247,6 +291,10 @@
       <button onclick="switchTab('sentinel')" id="tab-btn-sentinel" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
         <i class="fa-solid fa-satellite-dish text-amber-400"></i>
         <span>Autonomous Price Sentinel (24/7 Drops)</span>
+      </button>
+      <button onclick="switchTab('upi')" id="tab-btn-upi" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
+        <i class="fa-solid fa-qrcode text-indigo-400"></i>
+        <span>Agentic UPI AutoPay (NPCI Mandate)</span>
       </button>
     </div>
 
@@ -1219,7 +1267,13 @@
               <i class="fa-solid fa-terminal text-emerald-400"></i>
               <span>Natural Language Restock Input</span>
             </h3>
-            <span class="text-xs text-slate-400">Any Worldwide Topic</span>
+            <div class="flex items-center space-x-2">
+              <button onclick="toggleVoiceRecognition('rag-prompt-input', 'rag-mic-btn')" id="rag-mic-btn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 text-xs font-semibold flex items-center space-x-1 transition cursor-pointer">
+                <i class="fa-solid fa-microphone"></i>
+                <span>Speak Intent</span>
+              </button>
+              <span class="text-xs text-slate-400">100 Global Topics</span>
+            </div>
           </div>
           <p class="text-xs text-slate-400 leading-relaxed">
             Enter any restock prompt across any industry (coffee, electronics, medical, cloud compute, packaging). The engine resolves exact SKUs, rejects ambiguous queries to Tier 0, and derives budgets with zero LLM math.
@@ -1327,7 +1381,13 @@
               <i class="fa-solid fa-radar text-amber-400"></i>
               <span>Set Standing Watch Intent</span>
             </h3>
-            <span class="text-xs text-amber-400 font-mono">Live Engine</span>
+            <div class="flex items-center space-x-2">
+              <button onclick="toggleVoiceRecognition('sentinel-prompt-input', 'sentinel-mic-btn')" id="sentinel-mic-btn" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs font-semibold flex items-center space-x-1 transition cursor-pointer">
+                <i class="fa-solid fa-microphone"></i>
+                <span>Speak Intent</span>
+              </button>
+              <span class="text-xs text-amber-400 font-mono">24/7 Loop</span>
+            </div>
           </div>
           <p class="text-xs text-slate-400 leading-relaxed">
             Instruct Steward in natural English. It locks an asymmetric hard ceiling, watches marketplaces 24/7, and triggers instant PayPal AUTHORIZE when conditions match.
@@ -1382,6 +1442,137 @@
       </div>
     </section>
 
+    <!-- TAB 12: AGENTIC UPI AUTOPAY MANDATE HUB (NPCI COMPLIANCE) -->
+    <section id="tab-upi" class="hidden space-y-6">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/50 to-slate-900 p-6 rounded-2xl border border-indigo-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">NPCI UPI AutoPay Certified</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">Dual-Currency FX Bridge (₹ ⇄ $)</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">1-Tap NPCI Kill-Switch</span>
+          </div>
+          <h2 class="text-2xl font-black text-white mt-2">Agentic UPI AutoPay Mandate Hub</h2>
+          <p class="text-sm text-slate-300 mt-1">Autonomous delegated spending mandate • Unique Mandate Number (UMN) • Scannable QR Code • 100% Revocable at any time.</p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="fetchUpiMandate()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center space-x-2">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Refresh Mandate</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Mandate Viewport Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- QR Code & VPA Authentication Card -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4 lg:col-span-1 flex flex-col items-center text-center">
+          <div class="w-full flex items-center justify-between border-b border-slate-800 pb-2">
+            <span class="text-xs font-bold text-slate-400">Scannable Mandate QR</span>
+            <span id="mandate-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">ACTIVE</span>
+          </div>
+
+          <div id="mandate-qr-container" class="my-2 flex items-center justify-center">
+            <!-- Dynamic SVG QR injected here -->
+          </div>
+
+          <div class="space-y-1 w-full text-left bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">Payer VPA:</span>
+              <span class="font-mono text-white font-bold" id="mandate-payer-vpa">owner@okhdfcbank</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">Agent VPA:</span>
+              <span class="font-mono text-paypal-accent font-bold" id="mandate-agent-vpa">steward.autopilot@paypal</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500">NPCI UMN:</span>
+              <span class="font-mono text-emerald-400 text-[11px] truncate max-w-[160px]" id="mandate-umn">UMN-IND-2026-AE3B...</span>
+            </div>
+          </div>
+
+          <!-- Deep Link Intent Button -->
+          <a id="mandate-deep-link" href="#" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-xl text-xs font-bold border border-indigo-500/30 flex items-center justify-center space-x-2 transition">
+            <i class="fa-solid fa-mobile-screen"></i>
+            <span>Open in UPI App (GPay / PhonePe)</span>
+          </a>
+        </div>
+
+        <!-- Mandate Limits & Kill-Switch Controls -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-5 lg:col-span-2">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                <span>Authorized Financial Boundaries</span>
+              </h3>
+              <p class="text-xs text-slate-400 mt-0.5">Asymmetric Invariant: Agent can only tighten limits, never loosen above owner ceiling.</p>
+            </div>
+            <span class="text-xs font-mono text-slate-400">FX Rate: 1 USD = ₹86.50 INR</span>
+          </div>
+
+          <!-- Limit Display Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+              <span class="text-[11px] text-slate-500 uppercase block">Single Transaction Cap</span>
+              <div class="text-xl font-black text-white mt-1" id="mandate-single-cap">₹15,000</div>
+              <span class="text-xs text-slate-400 font-mono" id="mandate-single-usd">$173.41 USD</span>
+            </div>
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+              <span class="text-[11px] text-slate-500 uppercase block">Monthly Cumulative Limit</span>
+              <div class="text-xl font-black text-white mt-1" id="mandate-monthly-cap">₹50,000</div>
+              <span class="text-xs text-slate-400 font-mono" id="mandate-monthly-usd">$578.03 USD</span>
+            </div>
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800">
+              <span class="text-[11px] text-slate-500 uppercase block">Spent This Month</span>
+              <div class="text-xl font-black text-emerald-400 mt-1" id="mandate-spent-inr">₹12,500</div>
+              <span class="text-xs text-slate-400 font-mono" id="mandate-spent-usd">$144.51 USD</span>
+            </div>
+          </div>
+
+          <!-- Monthly Progress Bar -->
+          <div class="space-y-1.5">
+            <div class="flex justify-between text-xs text-slate-400">
+              <span>Monthly Budget Utilization</span>
+              <span id="mandate-utilization-text">25.0% utilized</span>
+            </div>
+            <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+              <div id="mandate-utilization-bar" class="h-full bg-gradient-to-r from-emerald-500 to-indigo-500" style="width: 25%"></div>
+            </div>
+          </div>
+
+          <!-- 1-Tap NPCI Mandate Controls -->
+          <div class="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center space-x-2">
+              <button onclick="pauseUpiMandate()" id="btn-pause-mandate" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
+                <i class="fa-solid fa-pause"></i>
+                <span>Pause Mandate (1-Tap Kill-Switch)</span>
+              </button>
+              <button onclick="resumeUpiMandate()" id="btn-resume-mandate" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
+                <i class="fa-solid fa-play"></i>
+                <span>Resume Mandate</span>
+              </button>
+              <button onclick="revokeUpiMandate()" class="px-4 py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
+                <i class="fa-solid fa-ban"></i>
+                <span>Revoke Permanently</span>
+              </button>
+            </div>
+            <button onclick="promptTightenMandate()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold border border-slate-700 transition">
+              <i class="fa-solid fa-arrow-down mr-1 text-emerald-400"></i>
+              <span>Tighten Cap</span>
+            </button>
+          </div>
+
+          <!-- Audit Trail Accordion -->
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5">
+            <span class="text-[11px] text-slate-500 font-semibold uppercase block">NPCI Mandate Non-Repudiation Audit Trail:</span>
+            <div id="mandate-audit-trail" class="space-y-1 text-[11px] font-mono text-slate-400 max-h-32 overflow-y-auto">
+              <!-- Dynamically populated audit records -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Interactive JavaScript Logic -->
@@ -1424,7 +1615,7 @@
     };
 
     function switchTab(tab) {
-      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -1456,6 +1647,7 @@
       } else if (tab === 'rag') {
         loadRagKnowledge();
       fetchSentinels();
+      fetchUpiMandate();
       }
     }
 
@@ -2937,6 +3129,247 @@
       } catch (err) {
         alert("Simulation failed: " + err.message);
       }
+    }
+
+    
+    // ── NATIVE VOICE-TO-INTENT RECOGNITION (WEB SPEECH API) ────────────────
+    let speechRecognitionInstance = null;
+    let activeVoiceTargetId = null;
+
+    function toggleVoiceRecognition(targetInputId, btnId) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Native Web Speech API is supported in Google Chrome and Microsoft Edge. Please use Chrome/Edge to speak natural restock intents.");
+        return;
+      }
+
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(targetInputId);
+
+      if (speechRecognitionInstance && activeVoiceTargetId === targetInputId) {
+        speechRecognitionInstance.stop();
+        return;
+      }
+
+      speechRecognitionInstance = new SpeechRecognition();
+      speechRecognitionInstance.continuous = false;
+      speechRecognitionInstance.interimResults = true;
+      speechRecognitionInstance.lang = 'en-IN'; // English (India) with Hinglish support
+
+      activeVoiceTargetId = targetInputId;
+      btn.classList.add('bg-rose-600', 'text-white', 'animate-pulse');
+      btn.innerHTML = '<i class="fa-solid fa-circle-dot"></i><span>Listening... Speak Now</span>';
+
+      speechRecognitionInstance.onresult = (event) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        input.value = transcript;
+      };
+
+      speechRecognitionInstance.onend = () => {
+        btn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+        btn.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Speak Intent</span>';
+        activeVoiceTargetId = null;
+      };
+
+      speechRecognitionInstance.onerror = (event) => {
+        console.error("SpeechRecognition error:", event.error);
+        btn.classList.remove('bg-rose-600', 'text-white', 'animate-pulse');
+        btn.innerHTML = '<i class="fa-solid fa-microphone"></i><span>Speak Intent</span>';
+        activeVoiceTargetId = null;
+      };
+
+      speechRecognitionInstance.start();
+    }
+
+    // ── AGENTIC UPI AUTOPAY MANDATE JAVASCRIPT LOGIC ───────────────────────
+    let currentUpiMandate = null;
+
+    async function fetchUpiMandate() {
+      try {
+        const res = await fetch('/api/upi/mandate');
+        const data = await res.json();
+        currentUpiMandate = data.mandate;
+
+        document.getElementById('mandate-qr-container').innerHTML = data.qrSvg;
+        document.getElementById('mandate-payer-vpa').innerText = data.mandate.payerVpa;
+        document.getElementById('mandate-agent-vpa').innerText = data.mandate.agentVpa;
+        document.getElementById('mandate-umn').innerText = data.mandate.umn;
+        document.getElementById('mandate-deep-link').href = data.mandate.qrPayloadUri;
+
+        const statusBadge = document.getElementById('mandate-status-badge');
+        statusBadge.innerText = data.mandate.status;
+        if (data.mandate.status === 'ACTIVE') {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+        } else if (data.mandate.status === 'PAUSED') {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        } else {
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40';
+        }
+
+        document.getElementById('mandate-single-cap').innerText = `₹${data.mandate.maxAmountINR.toLocaleString('en-IN')}`;
+        document.getElementById('mandate-single-usd').innerText = `${data.mandate.maxAmountUSD.toFixed(2)} USD`;
+        document.getElementById('mandate-monthly-cap').innerText = `₹${data.mandate.cumulativeMonthlyCapINR.toLocaleString('en-IN')}`;
+        document.getElementById('mandate-monthly-usd').innerText = `${data.mandate.cumulativeMonthlyCapUSD.toFixed(2)} USD`;
+        document.getElementById('mandate-spent-inr').innerText = `₹${data.mandate.spentThisMonthINR.toLocaleString('en-IN')}`;
+        document.getElementById('mandate-spent-usd').innerText = `${data.mandate.spentThisMonthUSD.toFixed(2)} USD`;
+
+        const pct = Math.min(100, Math.round((data.mandate.spentThisMonthINR / data.mandate.cumulativeMonthlyCapINR) * 100));
+        document.getElementById('mandate-utilization-text').innerText = `${pct}% utilized (Remaining: ₹${(data.mandate.cumulativeMonthlyCapINR - data.mandate.spentThisMonthINR).toLocaleString('en-IN')})`;
+        document.getElementById('mandate-utilization-bar').style.width = `${pct}%`;
+
+        const auditBox = document.getElementById('mandate-audit-trail');
+        if (data.mandate.auditTrail) {
+          auditBox.innerHTML = data.mandate.auditTrail.map(a => `<div>• ${a}</div>`).join('');
+        }
+      } catch (err) {
+        console.error("fetchUpiMandate error:", err);
+      }
+    }
+
+    async function pauseUpiMandate() {
+      if (!confirm("Activate 1-Tap NPCI Kill-Switch to PAUSE this UPI AutoPay Mandate?\n\nAll autonomous transactions will be halted instantly.")) return;
+      const res = await fetch('/api/upi/mandate/pause', { method: 'POST' });
+      await fetchUpiMandate();
+      alert("Mandate PAUSED. Autonomous agent transactions are strictly halted.");
+    }
+
+    async function resumeUpiMandate() {
+      const res = await fetch('/api/upi/mandate/resume', { method: 'POST' });
+      await fetchUpiMandate();
+      alert("Mandate RESUMED. Autonomous transactions re-enabled.");
+    }
+
+    async function revokeUpiMandate() {
+      if (!confirm("PERMANENTLY REVOKE this UPI AutoPay Mandate?\n\nThis will terminate all agent spending rights per NPCI guidelines. Cannot be undone.")) return;
+      const res = await fetch('/api/upi/mandate/revoke', { method: 'POST' });
+      await fetchUpiMandate();
+      alert("Mandate REVOKED permanently.");
+    }
+
+    async function promptTightenMandate() {
+      const current = currentUpiMandate ? currentUpiMandate.maxAmountINR : 15000;
+      const val = prompt(`Enter new tightened single transaction cap in INR (Must be lower than current ₹${current}):`, String(Math.round(current * 0.8)));
+      if (!val) return;
+      const num = Number(val);
+      if (num >= current) {
+        alert("Asymmetric Invariant Violation: AI or Owner can only tighten limits downwards, never loosen above owner authorized ceiling.");
+        return;
+      }
+      const res = await fetch('/api/upi/mandate/tighten', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newCapINR: num, reason: "Manual risk mitigation tightening" })
+      });
+      await fetchUpiMandate();
+      alert(`Mandate successfully contracted to ₹${num.toLocaleString('en-IN')}!`);
+    }
+
+    // ── INTERACTIVE 3-MINUTE HACKATHON DEMO TOUR ───────────────────────────
+    let currentDemoStep = 1;
+    const demoSteps = [
+      {
+        step: 1,
+        title: "Pillar 1: Authorize Agentic UPI AutoPay Mandate",
+        desc: "Steward uses NPCI-compliant UPI AutoPay delegated mandates. The owner authorizes an asymmetric hard ceiling (₹15,000 / $173) with a scannable QR Code and cryptographic UMN.",
+        tab: "upi",
+        actionLabel: "Inspect Mandate & QR",
+        action: () => switchTab('upi'),
+      },
+      {
+        step: 2,
+        title: "Pillar 2: Conversational Natural Intent Grounding (Zero-LLM Math)",
+        desc: "The merchant or consumer speaks or types a natural request ('Reorder our popular matcha for next month, keep budget tight'). The Intent-RAG grounds the exact SKU and derives units/budgets with Zero-LLM Math.",
+        tab: "rag",
+        actionLabel: "Load & Ground Matcha Intent",
+        action: () => {
+          switchTab('rag');
+          setRagPrompt('Reorder our popular matcha for next month, keep budget tight');
+          executeRagGrounding();
+        },
+      },
+      {
+        step: 3,
+        title: "Pillar 3: Pre-Flight Payment Security Shield (0.34ms Firewall)",
+        desc: "Before any funds leave, the Pre-Flight Shield inspects invoices for prompt injections, payee substitution, and stealth Unicode exploits with 100% block rate across 65 red-team attacks.",
+        tab: "shield",
+        actionLabel: "Test Prompt Injection Attack",
+        action: () => {
+          switchTab('shield');
+          loadAttackPreset('injection');
+          runShieldScan();
+        },
+      },
+      {
+        step: 4,
+        title: "Pillar 4: 24/7 Price Sentinel Snipes a Drop While Sleeping",
+        desc: "The owner sets a standing watch intent (e.g. Coldplay tickets under ₹7,500 or Sony XM5 headphones). The sentinel runs in the background and auto-authorizes PayPal the second a drop occurs.",
+        tab: "sentinel",
+        actionLabel: "Simulate Coldplay Flash Drop",
+        action: () => {
+          switchTab('sentinel');
+          simulateSentinelDrop('sentinel_coldplay_01', 78.50);
+        },
+      },
+      {
+        step: 5,
+        title: "Pillar 5: Reversible 60s Undo Window & Court-Ready Dispute Dossier",
+        desc: "All transactions route through PayPal Orders v2 with an interactive 60-Second Undo Window (void at $0 fees). If fraud occurs, 1-click generates a court-ready PayPal Resolution Center dispute package.",
+        tab: "dossier",
+        actionLabel: "Generate Dispute Dossier",
+        action: () => {
+          switchTab('dossier');
+          generateDossier();
+        },
+      },
+    ];
+
+    function launchDemoStep(stepNum) {
+      currentDemoStep = stepNum;
+      const modal = document.getElementById('demo-modal');
+      modal.classList.remove('hidden');
+      renderDemoStep();
+    }
+
+    function renderDemoStep() {
+      const stepData = demoSteps[currentDemoStep - 1];
+      document.getElementById('demo-step-badge').innerText = `STEP ${stepData.step} / 5`;
+      document.getElementById('demo-step-title').innerText = stepData.title;
+      document.getElementById('demo-step-desc').innerText = stepData.desc;
+      document.getElementById('demo-action-label').innerText = stepData.actionLabel;
+
+      document.getElementById('demo-btn-prev').disabled = (currentDemoStep === 1);
+      document.getElementById('demo-btn-next').innerText = (currentDemoStep === 5) ? 'Finish Tour 🏁' : 'Next Step ➔';
+
+      switchTab(stepData.tab);
+    }
+
+    function executeDemoAction() {
+      const stepData = demoSteps[currentDemoStep - 1];
+      if (stepData.action) stepData.action();
+    }
+
+    function nextDemoStep() {
+      if (currentDemoStep < 5) {
+        currentDemoStep++;
+        renderDemoStep();
+      } else {
+        closeDemoModal();
+        alert("🎉 3-Minute Championship Demo Completed! Steward 2.0 has verified all 5 architectural pillars.");
+      }
+    }
+
+    function prevDemoStep() {
+      if (currentDemoStep > 1) {
+        currentDemoStep--;
+        renderDemoStep();
+      }
+    }
+
+    function closeDemoModal() {
+      document.getElementById('demo-modal').classList.add('hidden');
     }
 
     window.addEventListener('DOMContentLoaded', () => {

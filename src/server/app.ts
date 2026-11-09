@@ -27,6 +27,7 @@ import {
   ProposedIntentDraft,
   ProposedIntentDraftSchema,
   PriceSentinelEngine,
+  UPIMandateEngine,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -1511,6 +1512,93 @@ const server = http.createServer(async (req, res) => {
       const success = PriceSentinelEngine.cancelWatcher(String(body.id || ""));
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ success }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  
+  // ── 26. API: Get Agentic UPI AutoPay Mandate & Live QR ────────────────────
+  if (req.method === "GET" && url.pathname === "/api/upi/mandate") {
+    const mandate = UPIMandateEngine.getMandate();
+    const qrSvg = UPIMandateEngine.generateMandateQRCodeSVG(mandate.qrPayloadUri);
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ mandate, qrSvg }));
+    return;
+  }
+
+  // ── 27. API: Register New Agentic UPI Mandate ─────────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/upi/mandate/create") {
+    try {
+      const body = await parseJsonBody(req);
+      const mandate = UPIMandateEngine.createMandate({
+        payerVpa: String(body.payerVpa || "owner@okhdfcbank"),
+        payerName: String(body.payerName || "Merchant Owner"),
+        maxAmountINR: Number(body.maxAmountINR) || 15000,
+        cumulativeMonthlyCapINR: body.cumulativeMonthlyCapINR ? Number(body.cumulativeMonthlyCapINR) : undefined,
+        validityDays: Number(body.validityDays) || 365,
+        frequency: body.frequency,
+      });
+      const qrSvg = UPIMandateEngine.generateMandateQRCodeSVG(mandate.qrPayloadUri);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, mandate, qrSvg }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 28. API: 1-Tap NPCI Mandate Pause Kill-Switch ─────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/upi/mandate/pause") {
+    try {
+      const mandate = UPIMandateEngine.pauseMandate();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, mandate }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 29. API: 1-Tap NPCI Mandate Resume ────────────────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/upi/mandate/resume") {
+    try {
+      const mandate = UPIMandateEngine.resumeMandate();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, mandate }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 30. API: 1-Tap NPCI Mandate Permanent Revocation ──────────────────────
+  if (req.method === "POST" && url.pathname === "/api/upi/mandate/revoke") {
+    try {
+      const mandate = UPIMandateEngine.revokeMandate();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, mandate }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 31. API: Tighten Mandate Limit (Asymmetric Invariant) ─────────────────
+  if (req.method === "POST" && url.pathname === "/api/upi/mandate/tighten") {
+    try {
+      const body = await parseJsonBody(req);
+      const newCapINR = Number(body.newCapINR);
+      const reason = String(body.reason || "Owner tightened limit via console");
+      const mandate = UPIMandateEngine.tightenMandateCap(newCapINR, reason);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, mandate }));
     } catch (err: any) {
       res.writeHead(400, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: err.message }));
