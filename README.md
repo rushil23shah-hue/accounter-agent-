@@ -1,4 +1,4 @@
-## 🤖 How the Steward Agent Works
+## How the Steward Agent Works
 
 The Steward Agent coordinates the purchasing process, from understanding the owner's request to preparing and executing a purchase.
 
@@ -36,7 +36,7 @@ This means an external agent can handle the conversation while Steward takes car
 
 ---
 
-## ⚡ Quickstart & Setup
+## Quickstart & Setup
 
 ### Prerequisites
 
@@ -127,7 +127,7 @@ To use it from Claude Desktop, Cursor or another MCP client, add this to the cli
 
 ---
 
-## 🎬 Try the Steward Demo
+## Try the Steward Demo
 
 Once the dashboard is running, here's a suggested walkthrough of the main features.
 
