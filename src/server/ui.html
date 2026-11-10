@@ -554,11 +554,16 @@
       </div>
     </div>
 
-    <button class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" onclick="connectPayPal()">
+    <button class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px;cursor:pointer" onclick="connectPayPal()">
       <i class="fa-brands fa-paypal"></i>
       Connect PayPal Account
     </button>
-    <div style="margin-top:12px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px">
+    <div style="margin-top:10px;text-align:center">
+      <button onclick="connectPayPal()" style="background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:12px;padding:4px 8px;text-decoration:underline">
+        Or enter dashboard directly as Guest / Judge &rarr;
+      </button>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px">
       <i class="fa-solid fa-lock" style="color:var(--pp-accent)"></i>
       Sandbox mode · Your real money is never at risk
     </div>
@@ -4040,26 +4045,39 @@
 function connectPayPal() {
   const overlay = document.getElementById('paypal-connect-overlay');
   const app = document.getElementById('app-shell');
-  const limit = document.getElementById('pp-limit-slider').value;
+  const limitInput = document.getElementById('pp-limit-slider');
+  const limit = limitInput ? limitInput.value : '500';
 
-  overlay.style.opacity = '0';
-  overlay.style.transform = 'scale(1.03)';
-  overlay.style.transition = 'all 0.4s ease';
+  if (overlay) {
+    overlay.style.opacity = '0';
+    overlay.style.transform = 'scale(1.03)';
+    overlay.style.transition = 'all 0.3s ease';
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.style.display = 'none';
+    }, 300);
+  }
+
+  if (app) {
+    app.classList.remove('opacity-0', 'pointer-events-none');
+    app.style.opacity = '1';
+    app.style.pointerEvents = 'auto';
+  }
+
+  localStorage.setItem('steward_pp_connected', '1');
+  localStorage.setItem('steward_pp_limit', limit);
+  toast('PayPal connected · Sandbox mode active', 'success');
+  fetchDashboardState();
+  animateStatCards();
+
+  if (typeof confetti !== 'undefined') {
+    confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 }, colors: ['#0070BA', '#00CF92', '#003087'] });
+  }
 
   setTimeout(() => {
-    overlay.classList.add('hidden');
-    overlay.style.opacity = '';
-    overlay.style.transform = '';
-    app.classList.remove('opacity-0', 'pointer-events-none');
-    localStorage.setItem('steward_pp_connected', '1');
-    localStorage.setItem('steward_pp_limit', limit);
-    toast('PayPal connected · Sandbox mode active', 'success');
-    fetchDashboardState();
-    setTimeout(() => launchFeatureTour(), 600);
-    if (typeof confetti !== 'undefined') {
-      confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 }, colors: ['#0070BA', '#00CF92', '#003087'] });
-    }
-  }, 380);
+    const toured = localStorage.getItem('steward_toured');
+    if (!toured) launchFeatureTour();
+  }, 600);
 }
 
 // ── EMERGENCY KILL SWITCH ───────────────────────────────
@@ -4094,7 +4112,7 @@ window.alert = (msg) => {
 const tourSteps = [
   {
     title: 'Smart Restock — set it and forget it',
-    desc: 'Steward monitors your stock levels and automatically orders supplies when you're running low, hunting the best prices across verified suppliers.',
+    desc: 'Steward monitors your stock levels and automatically orders supplies when you\'re running low, hunting the best prices across verified suppliers.',
     tab: 'autopilot'
   },
   {
