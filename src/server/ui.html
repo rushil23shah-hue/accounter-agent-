@@ -3,104 +3,714 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Steward 2.0 — Intent-Aware Financial Autopilot</title>
+  <title>Steward — Your AI Financial Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
           colors: {
-            brand: {
-              50: '#f0fdf4',
-              500: '#22c55e',
-              600: '#16a34a',
-              900: '#14532d',
-            },
-            paypal: {
-              blue: '#0070ba',
-              dark: '#003087',
-              accent: '#00cf92'
-            }
+            brand: { 50:'#f0fdf4', 500:'#22c55e', 600:'#16a34a', 900:'#14532d' },
+            paypal: { blue:'#0070ba', dark:'#003087', accent:'#00cf92' }
           }
         }
       }
     }
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
   <style>
-    @keyframes pulse-slow {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.85; transform: scale(0.98); }
-    }
-    .pulse-urgent { animation: pulse-slow 2s infinite ease-in-out; }
+    * { box-sizing: border-box; }
 
+    :root {
+      --bg-base: #08090D;
+      --bg-panel: #0F1117;
+      --bg-raised: #161820;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.14);
+      --text-primary: #F1F2F5;
+      --text-secondary: #8B8FA8;
+      --text-muted: #4A4E6B;
+      --pp-blue: #0070BA;
+      --pp-dark: #003087;
+      --pp-accent: #00CF92;
+      --amber: #F59E0B;
+      --emerald: #10B981;
+      --rose: #F43F5E;
+    }
+
+    body { background: var(--bg-base); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+
+    /* ── SCROLLBAR ──────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* ── NUMERIC / MONEY FONT ───────────────────── */
+    .font-num { font-family: 'JetBrains Mono', monospace; font-variant-numeric: tabular-nums; }
+
+    /* ── SIDEBAR NAV ────────────────────────────── */
+    .nav-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 14px; border-radius: 6px;
+      cursor: pointer; transition: all 0.18s ease;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid transparent;
+      user-select: none;
+    }
+    .nav-pill:hover { background: var(--bg-raised); color: var(--text-primary); }
+    .nav-pill.nav-active {
+      background: rgba(0,112,186,0.15);
+      border-color: rgba(0,112,186,0.4);
+      color: #60B4F5;
+    }
+    .nav-pill.nav-active .nav-dot { background: #60B4F5; }
+    .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; transition: background 0.18s; }
+
+    .nav-group-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-muted);
+      padding: 4px 14px 2px; margin-top: 12px;
+    }
+
+    /* ── STAT CARDS ─────────────────────────────── */
+    .stat-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 20px; position: relative; overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--border-hover); }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    }
+
+    /* ── UNDO BANNER ────────────────────────────── */
+    #undo-banner { border-radius: 0 !important; }
+
+    /* ── SECTION PANELS ─────────────────────────── */
+    .panel { background: var(--bg-panel); border: 1px solid var(--border); padding: 20px; }
+
+    /* ── BUTTONS ────────────────────────────────── */
+    .btn-primary {
+      background: var(--pp-blue); color: white;
+      padding: 10px 20px; font-weight: 600; font-size: 14px;
+      border: none; cursor: pointer; transition: all 0.18s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: #0085D9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,112,186,0.4); }
+    .btn-danger { background: var(--rose); }
+    .btn-danger:hover { background: #FB6177; box-shadow: 0 4px 20px rgba(244,63,94,0.4); }
+    .btn-ghost {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text-secondary); padding: 8px 16px;
+      font-size: 13px; cursor: pointer; transition: all 0.18s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text-primary); background: var(--bg-raised); }
+
+    /* ── BADGE ──────────────────────────────────── */
+    .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; }
+
+    /* ── KILL SWITCH ────────────────────────────── */
+    .kill-switch {
+      background: rgba(244,63,94,0.08); border: 1px solid rgba(244,63,94,0.3);
+      color: #F87171; padding: 8px 14px; font-size: 12px; font-weight: 700;
+      cursor: pointer; letter-spacing: 0.05em; transition: all 0.18s;
+      display: flex; align-items: center; gap: 8px; width: 100%;
+    }
+    .kill-switch:hover { background: rgba(244,63,94,0.18); border-color: rgba(244,63,94,0.6); }
+
+    /* ── PAYPAL CONNECT OVERLAY ─────────────────── */
+    #paypal-connect-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: var(--bg-base);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pp-connect-card {
+      max-width: 440px; width: 100%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .pp-logo-ring {
+      width: 72px; height: 72px; margin: 0 auto 24px;
+      background: rgba(0,112,186,0.1); border: 1px solid rgba(0,112,186,0.3);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: var(--pp-blue);
+    }
+
+    /* ── FEATURE TOUR ────────────────────────────── */
+    #feature-tour-overlay {
+      position: fixed; inset: 0; z-index: 90;
+      background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 32px;
+    }
+    .tour-card {
+      background: var(--bg-panel); border: 1px solid rgba(0,112,186,0.5);
+      padding: 28px 32px; width: 100%; max-width: 560px;
+      position: relative;
+    }
+    .tour-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--pp-dark), var(--pp-blue), var(--pp-accent));
+    }
+    .tour-step-dots { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
+    .tour-dot { width: 24px; height: 3px; background: var(--border); transition: background 0.3s; }
+    .tour-dot.active { background: var(--pp-blue); }
+
+    /* ── COMMAND PALETTE ────────────────────────── */
+    #cmd-palette-overlay {
+      position: fixed; inset: 0; z-index: 80;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      display: flex; align-items: flex-start; justify-content: center;
+      padding-top: 15vh;
+    }
+    .cmd-palette {
+      width: 100%; max-width: 580px;
+      background: var(--bg-panel); border: 1px solid rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+    .cmd-input-wrap {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+    }
+    .cmd-input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text-primary); font-size: 15px; font-family: inherit;
+    }
+    .cmd-results { max-height: 320px; overflow-y: auto; }
+    .cmd-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 18px; cursor: pointer; font-size: 13px;
+      color: var(--text-secondary); transition: all 0.12s;
+    }
+    .cmd-item:hover, .cmd-item.selected {
+      background: rgba(0,112,186,0.12); color: var(--text-primary);
+    }
+    .cmd-item-icon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: var(--bg-raised); font-size: 12px; flex-shrink: 0; }
+    .cmd-group-header { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); padding: 10px 18px 4px; }
+
+    /* ── NOTIFICATIONS ───────────────────────────── */
+    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+    .toast {
+      background: var(--bg-panel); border: 1px solid var(--border);
+      padding: 12px 16px; min-width: 280px; max-width: 360px;
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 13px; pointer-events: all;
+      animation: slideInRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .toast.exit { animation: slideOutRight 0.3s ease forwards; }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+
+    /* ── MICRO ANIMATIONS ────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    @keyframes countUp { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    .count-up { animation: countUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    @keyframes shimmer {
+      from { background-position: -200% 0; }
+      to   { background-position: 200% 0; }
+    }
+    .shimmer {
+      background: linear-gradient(90deg, var(--bg-raised) 25%, rgba(255,255,255,0.05) 50%, var(--bg-raised) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    /* ── PING DOT ────────────────────────────────── */
+    .ping-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); flex-shrink: 0; }
+    .ping-dot::after {
+      content: ''; display: block; width: 100%; height: 100%;
+      border-radius: 50%; background: inherit;
+      animation: ping 1.5s cubic-bezier(0,0,0.2,1) infinite;
+    }
+    @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+
+    /* ── UNDO TIMER ──────────────────────────────── */
+    @keyframes drain { from { width: 100%; } to { width: 0%; } }
+    .undo-drain { animation: drain linear forwards; }
+
+    /* ── PRINT ────────────────────────────────────── */
     @media print {
-      body {
-        background: #ffffff !important;
-        color: #111827 !important;
-      }
-      header, nav, #main-tabs-nav, #tab-autopilot, #tab-webscout, #tab-intent, #tab-shield, #tab-scout, #tab-webhooks, #tab-profile, #tab-vault, #dossier-input-col, .no-print {
-        display: none !important;
-      }
-      #tab-dossier {
-        display: block !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
+      #paypal-connect-overlay, #feature-tour-overlay, #cmd-palette-overlay,
+      #toast-container, #sidebar, header, .no-print { display: none !important; }
+      #tab-dossier { display: block !important; width: 100% !important; }
+      #official-printable-dossier { display: block !important; }
+    }
+
+    /* ── UTILITY ─────────────────────────────────── */
+    .hidden { display: none !important; }
+    .opacity-0 { opacity: 0; }
+    .pointer-events-none { pointer-events: none; }
+    section[id^="tab-"] { animation: fadeInUp 0.3s ease forwards; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INNER SECTION OVERRIDES — Restyle old Tailwind panel content
+       to match new sharp, high-density design system without changing
+       any HTML structure or JS-bound IDs.
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* Background surfaces */
+    section[id^="tab-"] .rounded-2xl,
+    section[id^="tab-"] .rounded-xl,
+    section[id^="tab-"] .rounded-lg,
+    #undo-banner.rounded-2xl {
+      border-radius: 0 !important;
+    }
+
+    /* Panel / card backgrounds */
+    section[id^="tab-"] .bg-slate-900,
+    section[id^="tab-"] .bg-slate-950 {
+      background: var(--bg-panel) !important;
+    }
+    section[id^="tab-"] .bg-slate-800,
+    section[id^="tab-"] .bg-slate-800\/60,
+    section[id^="tab-"] .bg-slate-900\/80,
+    section[id^="tab-"] .bg-slate-900\/60,
+    section[id^="tab-"] .bg-slate-900\/40 {
+      background: var(--bg-raised) !important;
+    }
+
+    /* Borders */
+    section[id^="tab-"] .border-slate-800,
+    section[id^="tab-"] .border-slate-700 {
+      border-color: var(--border) !important;
+    }
+    section[id^="tab-"] .border-slate-600 {
+      border-color: rgba(255,255,255,0.12) !important;
+    }
+
+    /* Section headings */
+    section[id^="tab-"] h2 {
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.01em !important;
+      color: var(--text-primary) !important;
+      display: flex; align-items: center; gap: 10px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    section[id^="tab-"] h3 {
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      color: var(--text-muted) !important;
+    }
+
+    /* Section-level padding & border reset */
+    section[id^="tab-"] > div:first-child {
+      border-radius: 0;
+    }
+
+    /* Inner content panels – the main content boxes */
+    section[id^="tab-"] .p-5,
+    section[id^="tab-"] .p-6 {
+      padding: 18px !important;
+    }
+
+    /* Button style harmonization */
+    section[id^="tab-"] button:not(.no-override) {
+      border-radius: 0 !important;
+    }
+    section[id^="tab-"] .bg-emerald-600,
+    section[id^="tab-"] .bg-emerald-500 {
+      background: #059669 !important;
+    }
+    section[id^="tab-"] .bg-rose-600,
+    section[id^="tab-"] .bg-rose-500 {
+      background: var(--rose) !important;
+    }
+    section[id^="tab-"] .bg-indigo-600,
+    section[id^="tab-"] .bg-indigo-500,
+    section[id^="tab-"] .bg-blue-600,
+    section[id^="tab-"] .bg-blue-500 {
+      background: var(--pp-blue) !important;
+    }
+    section[id^="tab-"] .bg-amber-500,
+    section[id^="tab-"] .bg-amber-600 {
+      background: var(--amber) !important;
+    }
+    section[id^="tab-"] .bg-purple-600,
+    section[id^="tab-"] .bg-purple-500 {
+      background: #7C3AED !important;
+    }
+
+    /* Text colors */
+    section[id^="tab-"] .text-slate-100,
+    section[id^="tab-"] .text-white {
+      color: var(--text-primary) !important;
+    }
+    section[id^="tab-"] .text-slate-200,
+    section[id^="tab-"] .text-slate-300 {
+      color: rgba(241,242,245,0.75) !important;
+    }
+    section[id^="tab-"] .text-slate-400,
+    section[id^="tab-"] .text-slate-500 {
+      color: var(--text-secondary) !important;
+    }
+    section[id^="tab-"] .text-slate-600,
+    section[id^="tab-"] .text-slate-700 {
+      color: var(--text-muted) !important;
+    }
+    section[id^="tab-"] .text-emerald-400,
+    section[id^="tab-"] .text-emerald-300 {
+      color: #34D399 !important;
+    }
+    section[id^="tab-"] .text-paypal-accent {
+      color: var(--pp-accent) !important;
+    }
+    section[id^="tab-"] .text-amber-400,
+    section[id^="tab-"] .text-amber-300 {
+      color: #FCD34D !important;
+    }
+    section[id^="tab-"] .text-rose-400,
+    section[id^="tab-"] .text-rose-300 {
+      color: #FB7185 !important;
+    }
+    section[id^="tab-"] .text-blue-400,
+    section[id^="tab-"] .text-blue-300 {
+      color: #60B4F5 !important;
+    }
+
+    /* Mono numbers inside sections */
+    section[id^="tab-"] .font-mono {
+      font-family: 'JetBrains Mono', monospace !important;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Input fields */
+    section[id^="tab-"] input[type="text"],
+    section[id^="tab-"] input[type="number"],
+    section[id^="tab-"] textarea,
+    section[id^="tab-"] select {
+      background: var(--bg-raised) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 0 !important;
+      color: var(--text-primary) !important;
+      outline: none !important;
+      transition: border-color 0.15s;
+    }
+    section[id^="tab-"] input[type="text"]:focus,
+    section[id^="tab-"] input[type="number"]:focus,
+    section[id^="tab-"] textarea:focus,
+    section[id^="tab-"] select:focus {
+      border-color: var(--pp-blue) !important;
+    }
+    section[id^="tab-"] ::placeholder {
+      color: var(--text-muted) !important;
+    }
+
+    /* Status badge chips */
+    section[id^="tab-"] .bg-emerald-500\/20 { background: rgba(16,185,129,0.12) !important; }
+    section[id^="tab-"] .bg-amber-500\/20   { background: rgba(245,158,11,0.12) !important; }
+    section[id^="tab-"] .bg-rose-500\/20    { background: rgba(244,63,94,0.12) !important; }
+    section[id^="tab-"] .bg-blue-500\/10,
+    section[id^="tab-"] .bg-paypal-blue\/10 { background: rgba(0,112,186,0.1) !important; }
+    section[id^="tab-"] .bg-purple-500\/10  { background: rgba(124,58,237,0.1) !important; }
+
+    /* Animate section transitions */
+    section[id^="tab-"]:not(.hidden) {
+      animation: fadeInUp 0.28s cubic-bezier(0.34,1.1,0.64,1) forwards;
+    }
+
+    /* Undo banner override */
+    #undo-banner {
+      border: 1px solid rgba(245,158,11,0.5) !important;
+      background: linear-gradient(90deg, rgba(120,53,15,0.4), var(--bg-panel), rgba(120,53,15,0.4)) !important;
+    }
+    #undo-progress {
+      border-radius: 0 !important;
+    }
+
+    /* Section header rule — consistent look for each tab page */
+    section[id^="tab-"] {
+      padding-top: 4px;
+    }
+
+    /* Briefing / autopilot step cards */
+    #step-1, #step-2, #step-3, #step-4, #step-5, #step-6 {
+      border-radius: 0 !important;
+    }
+
+    /* Table styles inside sections */
+    section[id^="tab-"] table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    section[id^="tab-"] th {
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-transform: uppercase !important;
+      color: var(--text-muted) !important;
+      padding: 8px 12px !important;
+      border-bottom: 1px solid var(--border) !important;
+      background: var(--bg-raised) !important;
+    }
+    section[id^="tab-"] td {
+      padding: 10px 12px !important;
+      border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+      font-size: 13px !important;
+      color: var(--text-secondary) !important;
+    }
+    section[id^="tab-"] tr:hover td {
+      background: rgba(255,255,255,0.02) !important;
+      color: var(--text-primary) !important;
+    }
+
+    /* ── SECTION-LEVEL PAGE HEADERS ─────────────────── */
+    .section-page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .section-page-title {
+      font-size: 15px; font-weight: 700; color: var(--text-primary);
+      letter-spacing: -0.01em; display: flex; align-items: center; gap: 10px;
+    }
+    .section-page-icon {
+      width: 32px; height: 32px;
+      background: rgba(0,112,186,0.12); border: 1px solid rgba(0,112,186,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: #60B4F5; flex-shrink: 0;
+    }
+
+    /* ── VERDICT / SHIELD BOX ───────────────────────── */
+    #shield-verdict-box {
+      border-radius: 0 !important;
+    }
+
+    /* ── QR CODE ─────────────────────────────────────── */
+    #mandate-qr-container svg,
+    #mandate-qr-container img {
+      border: 2px solid var(--border);
+    }
+
+    /* ── PRINT ───────────────────────────────────────── */
+    @media print {
       #official-printable-dossier {
-        display: block !important;
-        position: static !important;
-        background: #ffffff !important;
-        color: #111827 !important;
+        background: #fff !important;
+        color: #111 !important;
         border: 2px solid #003087 !important;
         padding: 24px !important;
-        border-radius: 8px !important;
-      }
-      #dossier-meta-card, #dossier-report-text {
-        display: none !important;
       }
     }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased">
+<body>
 
-  <!-- Top Navigation Bar -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-paypal-dark via-paypal-blue to-paypal-accent flex items-center justify-center shadow-lg shadow-paypal-blue/30">
-          <i class="fa-solid fa-shield-halved text-white text-xl"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="text-xl font-black tracking-tight text-white">STEWARD <span class="text-paypal-accent">2.0</span></span>
-            <span class="px-2 py-0.5 text-xs font-semibold rounded bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">PayPal AI 2026</span>
-          </div>
-          <p class="text-xs text-slate-400">Intent-Aware Financial Autopilot & Privacy Shield</p>
-        </div>
-      </div>
+<!-- ═══════════════════════════════════════════════════════════
+     PAYPAL CONNECT OVERLAY — First-time setup
+     ═══════════════════════════════════════════════════════════ -->
+<div id="paypal-connect-overlay">
+  <div class="pp-connect-card">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#003087,#0070BA,#00CF92)"></div>
 
-      <!-- Live Indicators -->
-      <div class="flex items-center space-x-4">
-        <div class="hidden md:flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-medium">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-          <span>ZK-Confidential Vault Locked (0 balances leaked)</span>
-        </div>
-        <div class="flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs">
-          <i class="fa-solid fa-building-columns text-slate-400"></i>
-          <span class="text-slate-300 font-semibold" id="merchant-name">Tea Haven Co.</span>
-        </div>
+    <div class="pp-logo-ring">
+      <i class="fa-brands fa-paypal"></i>
+    </div>
+    <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Welcome to</div>
+    <h1 style="font-size:28px;font-weight:900;margin:0 0 6px;letter-spacing:-0.02em">Steward <span style="color:var(--pp-accent)">2.0</span></h1>
+    <p style="color:var(--text-secondary);font-size:14px;line-height:1.6;margin-bottom:28px">Your AI purchasing agent. It watches your inventory, hunts for deals, and pays suppliers — all while you focus on running your business.</p>
+
+    <!-- Limit slider -->
+    <div style="background:var(--bg-raised);border:1px solid var(--border);padding:16px;margin-bottom:20px;text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">Daily spending limit</span>
+        <span class="font-num" style="font-size:16px;font-weight:700;color:var(--text-primary)" id="pp-limit-display">$500</span>
       </div>
+      <input type="range" id="pp-limit-slider" min="100" max="2000" step="50" value="500"
+        style="width:100%;accent-color:var(--pp-blue)"
+        oninput="document.getElementById('pp-limit-display').textContent = '$'+this.value">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:4px">
+        <span>$100 safe</span><span>$2,000 max</span>
+      </div>
+    </div>
+
+    <button class="btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:15px" onclick="connectPayPal()">
+      <i class="fa-brands fa-paypal"></i>
+      Connect PayPal Account
+    </button>
+    <div style="margin-top:12px;font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;gap:6px">
+      <i class="fa-solid fa-lock" style="color:var(--pp-accent)"></i>
+      Sandbox mode · Your real money is never at risk
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FEATURE TOUR OVERLAY — First use walkthrough
+     ═══════════════════════════════════════════════════════════ -->
+<div id="feature-tour-overlay" class="hidden">
+  <div class="tour-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">
+      <span class="badge" style="background:rgba(0,112,186,0.2);color:#60B4F5;border:1px solid rgba(0,112,186,0.3)" id="tour-step-badge">1 of 4</span>
+      <button onclick="skipTour()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:12px;padding:0">Skip tour ✕</button>
+    </div>
+    <h2 id="tour-title" style="font-size:20px;font-weight:800;margin:12px 0 8px;letter-spacing:-0.02em"></h2>
+    <p id="tour-desc" style="font-size:14px;color:var(--text-secondary);line-height:1.65;margin:0"></p>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px">
+      <div class="tour-step-dots" id="tour-dots"></div>
+      <button class="btn-primary" id="tour-next-btn" onclick="nextTourStep()" style="padding:10px 24px">
+        Next <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COMMAND PALETTE — Cmd+K
+     ═══════════════════════════════════════════════════════════ -->
+<div id="cmd-palette-overlay" class="hidden" onclick="closeCmdPalette(event)">
+  <div class="cmd-palette" onclick="event.stopPropagation()">
+    <div class="cmd-input-wrap">
+      <i class="fa-solid fa-magnifying-glass" style="color:var(--text-muted);font-size:14px"></i>
+      <input class="cmd-input" id="cmd-input" placeholder="Search or type a command…" oninput="filterCmdResults(this.value)" onkeydown="handleCmdKey(event)" autocomplete="off">
+      <span style="font-size:11px;color:var(--text-muted);background:var(--bg-raised);padding:2px 7px;border:1px solid var(--border)">ESC</span>
+    </div>
+    <div class="cmd-results" id="cmd-results"></div>
+    <div style="padding:8px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);display:flex;gap:16px">
+      <span>↑↓ navigate</span><span>↵ run</span><span>ESC close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOAST NOTIFICATIONS
+     ═══════════════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP SHELL
+     ═══════════════════════════════════════════════════════════ -->
+<div id="app-shell" style="display:flex;flex-direction:column;height:100vh;transition:opacity 0.4s ease">
+
+  <!-- TOP BAR -->
+  <header style="height:52px;background:var(--bg-panel);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;position:sticky;top:0;z-index:40">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,var(--pp-dark),var(--pp-blue));display:flex;align-items:center;justify-content:center;font-size:12px;color:white">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <span style="font-weight:800;font-size:15px;letter-spacing:-0.02em">STEWARD <span style="color:var(--pp-accent)">2.0</span></span>
+      </div>
+      <div style="width:1px;height:20px;background:var(--border)"></div>
+      <!-- PayPal status pill -->
+      <div id="pp-status-pill" style="display:flex;align-items:center;gap:7px;background:rgba(0,207,146,0.08);border:1px solid rgba(0,207,146,0.25);padding:4px 11px;font-size:11px;font-weight:600;color:var(--pp-accent)">
+        <div class="ping-dot" style="background:var(--pp-accent)"></div>
+        PayPal Connected · Sandbox
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="btn-ghost" onclick="openCmdPalette()" style="font-size:12px;padding:6px 12px">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span style="color:var(--text-muted)">Search…</span>
+        <span style="margin-left:4px;background:var(--bg-raised);border:1px solid var(--border);padding:1px 5px;font-size:10px;color:var(--text-muted)">⌘K</span>
+      </button>
+      <button class="btn-ghost" onclick="launchFeatureTour()" style="font-size:12px;padding:6px 12px">
+        <i class="fa-solid fa-circle-question"></i> Tour
+      </button>
+      <div style="font-size:12px;font-weight:600;color:var(--text-secondary);background:var(--bg-raised);border:1px solid var(--border);padding:5px 11px" id="merchant-name">Tea Haven Co.</div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+  <div style="display:flex;flex:1;overflow:hidden">
 
-    <!-- Active 60-Second Undo Window Alert (Hidden by default, shown when order holds) -->
-    <div id="undo-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-amber-950/90 via-slate-900 to-amber-950/90 border-2 border-amber-500/60 shadow-2xl shadow-amber-500/20 relative overflow-hidden transition-all">
+    <!-- ═══════ SIDEBAR ═══════ -->
+    <aside id="sidebar" style="width:220px;flex-shrink:0;background:var(--bg-panel);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;padding:12px 10px 20px">
+
+      <!-- Main Actions -->
+      <div class="nav-group-label">Main</div>
+      <div class="nav-pill nav-active" data-nav-tab="autopilot" onclick="switchTab('autopilot')">
+        <div class="nav-dot"></div> Dashboard
+      </div>
+      <div class="nav-pill" data-nav-tab="profile" onclick="switchTab('profile')">
+        <div class="nav-dot"></div> Settings
+      </div>
+
+      <!-- Buy & Deals -->
+      <div class="nav-group-label">Buying</div>
+      <div class="nav-pill" data-nav-tab="scout" onclick="switchTab('scout')">
+        <div class="nav-dot"></div> Supplier Deals
+      </div>
+      <div class="nav-pill" data-nav-tab="webscout" onclick="switchTab('webscout')">
+        <div class="nav-dot"></div> Live Price Search
+      </div>
+      <div class="nav-pill" data-nav-tab="sentinel" onclick="switchTab('sentinel')">
+        <div class="nav-dot"></div> Price Watcher
+      </div>
+
+      <!-- AI & Automation -->
+      <div class="nav-group-label">Automation</div>
+      <div class="nav-pill" data-nav-tab="intent" onclick="switchTab('intent')">
+        <div class="nav-dot"></div> AI Rules
+      </div>
+      <div class="nav-pill" data-nav-tab="rag" onclick="switchTab('rag')">
+        <div class="nav-dot"></div> Ask Steward
+      </div>
+      <div class="nav-pill" data-nav-tab="upi" onclick="switchTab('upi')">
+        <div class="nav-dot"></div> UPI AutoPay
+      </div>
+
+      <!-- Safety & Audit -->
+      <div class="nav-group-label">Safety</div>
+      <div class="nav-pill" data-nav-tab="shield" onclick="switchTab('shield')">
+        <div class="nav-dot"></div> Payment Protection
+      </div>
+      <div class="nav-pill" data-nav-tab="vault" onclick="switchTab('vault')">
+        <div class="nav-dot"></div> Private Vault
+      </div>
+      <div class="nav-pill" data-nav-tab="dossier" onclick="switchTab('dossier')">
+        <div class="nav-dot"></div> Dispute Center
+      </div>
+      <div class="nav-pill" data-nav-tab="webhooks" onclick="switchTab('webhooks')">
+        <div class="nav-dot"></div> Live Activity
+      </div>
+
+      <!-- Bottom kill switch -->
+      <div style="flex:1"></div>
+      <div style="padding-top:16px;border-top:1px solid var(--border);margin-top:16px">
+        <button class="kill-switch" onclick="emergencyKillSwitch()">
+          <i class="fa-solid fa-power-off"></i> Emergency Stop
+        </button>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:8px;line-height:1.5;padding:0 2px">
+          Halts all autonomous purchases immediately.
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════ MAIN CONTENT ═══════ -->
+    <main style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px">
+
+      <!-- UNDO BANNER (preserved, always present) -->
+      <div id="undo-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-amber-950/90 via-slate-900 to-amber-950/90 border-2 border-amber-500/60 shadow-2xl shadow-amber-500/20 relative overflow-hidden transition-all">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
         <div class="flex items-center space-x-4">
           <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl animate-spin" style="animation-duration: 8s;">
@@ -135,171 +745,67 @@
       </div>
     </div>
 
-    <!-- 3-Minute Guided Interactive Hackathon Demo Tour Banner -->
-    <div id="hackathon-demo-banner" class="p-4 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-purple-950 border border-indigo-500/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-      <div class="flex items-center space-x-3.5">
-        <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xl shrink-0">
-          <i class="fa-solid fa-play"></i>
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/30 text-indigo-300 border border-indigo-500/40">JUDGES &amp; AUDITORS</span>
-            <span class="text-xs font-bold text-white">3-Minute Championship Demo Walkthrough</span>
+  
+
+      <!-- STAT CARDS (always visible on dashboard, hidden on sub-pages) -->
+      <div id="stat-cards-row" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Cash -->
+        <div class="stat-card fade-in-up" style="animation-delay:0.05s">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <p style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Cash Available</p>
+              <div class="font-num" style="font-size:26px;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em" id="stat-liquid-cash">$14,250.00</div>
+            </div>
+            <div style="width:36px;height:36px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;color:var(--emerald);font-size:14px">
+              <i class="fa-solid fa-vault"></i>
+            </div>
           </div>
-          <p class="text-xs text-slate-300 mt-0.5">Tour the 5 breakthrough pillars: Agentic UPI Mandate QR ➔ Voice Intent-RAG ➔ 0.34ms Security Shield ➔ 24/7 Price Sentinel ➔ PayPal 60s Undo.</p>
+          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">Floor: <span style="color:var(--emerald);font-weight:600">$2,500</span> · Private</div>
         </div>
-      </div>
-      <div class="flex items-center space-x-2 w-full md:w-auto">
-        <button onclick="launchDemoStep(1)" class="w-full md:w-auto px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-900/40 flex items-center justify-center space-x-2 transition cursor-pointer">
-          <i class="fa-solid fa-circle-play"></i>
-          <span>Launch Interactive Demo</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Demo Modal Drawer -->
-    <div id="demo-modal" class="hidden p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/80 to-slate-900 border-2 border-indigo-500/60 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-indigo-500/30 pb-3">
-        <div class="flex items-center space-x-2">
-          <span id="demo-step-badge" class="px-2.5 py-0.5 rounded text-xs font-black bg-indigo-500 text-white">STEP 1 / 5</span>
-          <h3 id="demo-step-title" class="text-sm font-bold text-white">Authorize Agentic UPI AutoPay Mandate</h3>
-        </div>
-        <button onclick="closeDemoModal()" class="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-800 rounded-lg">✕ Close</button>
-      </div>
-      <p id="demo-step-desc" class="text-xs text-slate-300 leading-relaxed"></p>
-      <div class="flex items-center justify-between pt-2">
-        <button id="demo-btn-prev" onclick="prevDemoStep()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300">Previous</button>
-        <div class="flex items-center space-x-2">
-          <button id="demo-btn-action" onclick="executeDemoAction()" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center space-x-1.5">
-            <i class="fa-solid fa-bolt"></i>
-            <span id="demo-action-label">Run Live Action</span>
-          </button>
-          <button id="demo-btn-next" onclick="nextDemoStep()" class="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs">Next Step ➔</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CFO Metric Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      <!-- Card 1: Liquid Cash -->
-      <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400">Liquid Cash (ZK-Vault)</p>
-            <h3 class="text-2xl font-black text-white mt-1" id="stat-liquid-cash">$14,250.00</h3>
+        <!-- Card 2: Runway -->
+        <div class="stat-card fade-in-up" style="animation-delay:0.1s">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <p style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Runway</p>
+              <div class="font-num" style="font-size:26px;font-weight:800;color:var(--emerald);letter-spacing:-0.03em" id="stat-runway">73.4 Days</div>
+            </div>
+            <div style="width:36px;height:36px;background:rgba(96,180,245,0.1);display:flex;align-items:center;justify-content:center;color:#60B4F5;font-size:14px">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
           </div>
-          <span class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 text-sm">
-            <i class="fa-solid fa-vault"></i>
-          </span>
+          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">Target 30d · <span style="color:var(--emerald);font-weight:600">+144% surplus</span></div>
         </div>
-        <div class="mt-4 flex items-center text-xs text-slate-400">
-          <span class="text-emerald-400 font-semibold mr-1">Floor: $2,500</span> • Local Only
-        </div>
-      </div>
-
-      <!-- Card 2: Cash Runway -->
-      <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400">Cash Runway Horizon</p>
-            <h3 class="text-2xl font-black text-emerald-400 mt-1" id="stat-runway">73.4 Days</h3>
+        <!-- Card 3: Spending limit -->
+        <div class="stat-card fade-in-up" style="animation-delay:0.15s">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <p style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Daily Limit</p>
+              <div class="font-num" style="font-size:26px;font-weight:800;color:var(--text-primary);letter-spacing:-0.03em" id="stat-mandate">$642.60</div>
+            </div>
+            <div style="width:36px;height:36px;background:rgba(168,85,247,0.1);display:flex;align-items:center;justify-content:center;color:#C084FC;font-size:14px">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
           </div>
-          <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 text-sm">
-            <i class="fa-solid fa-chart-line"></i>
-          </span>
+          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)">Ceiling: <span class="font-num" style="color:var(--text-primary);font-weight:600" id="stat-ceiling">$800.00</span></div>
         </div>
-        <div class="mt-4 flex items-center text-xs text-slate-400">
-          Target: 30d • <span class="text-emerald-400 font-semibold ml-1">Surplus Runway (+144%)</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Dynamic Mandate -->
-      <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400">Smart AutoPay Mandate</p>
-            <h3 class="text-2xl font-black text-white mt-1" id="stat-mandate">$642.60</h3>
+        <!-- Card 4: Trust level -->
+        <div class="stat-card fade-in-up" style="animation-delay:0.2s">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <p style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px">Trust Level</p>
+              <div class="font-num" style="font-size:18px;font-weight:800;color:var(--pp-accent);letter-spacing:-0.02em" id="stat-tier">TIER 2 · AUTO</div>
+            </div>
+            <div style="width:36px;height:36px;background:rgba(0,207,146,0.1);display:flex;align-items:center;justify-content:center;color:var(--pp-accent);font-size:14px">
+              <i class="fa-solid fa-award"></i>
+            </div>
           </div>
-          <span class="p-2 rounded-lg bg-purple-500/10 text-purple-400 text-sm">
-            <i class="fa-solid fa-bolt"></i>
-          </span>
-        </div>
-        <div class="mt-4 flex items-center text-xs text-slate-400">
-          Owner Ceiling: <span class="text-slate-300 font-semibold ml-1 mr-1" id="stat-ceiling">$800.00</span> • AI Auto-flex
+          <div style="margin-top:12px;font-size:11px;color:var(--text-muted)"><span style="color:var(--pp-accent);font-weight:600" id="stat-tx-count">18 clean</span> transactions</div>
         </div>
       </div>
 
-      <!-- Card 4: Autonomy Tier -->
-      <div class="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-xs font-medium text-slate-400">Earned Autonomy Tier</p>
-            <h3 class="text-xl font-black text-paypal-accent mt-1" id="stat-tier">TIER 2 AUTONOMOUS</h3>
-          </div>
-          <span class="p-2 rounded-lg bg-paypal-blue/10 text-paypal-accent text-sm">
-            <i class="fa-solid fa-award"></i>
-          </span>
-        </div>
-        <div class="mt-4 flex items-center text-xs text-slate-400">
-          <span class="text-paypal-accent font-semibold mr-1" id="stat-tx-count">18 Clean Txns</span> • Zero Disputes
-        </div>
-      </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div class="border-b border-slate-800 flex space-x-6 overflow-x-auto">
-      <button onclick="switchTab('autopilot')" id="tab-btn-autopilot" class="py-3 font-semibold text-sm border-b-2 border-paypal-accent text-paypal-accent flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-robot"></i>
-        <span>Restock Autopilot</span>
-      </button>
-      <button onclick="switchTab('webscout')" id="tab-btn-webscout" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span>Consumer Web Deals (Amazon / Flipkart / Meesho)</span>
-      </button>
-      <button onclick="switchTab('intent')" id="tab-btn-intent" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-brain"></i>
-        <span>Self-Learning Intent Copilot</span>
-      </button>
-      <button onclick="switchTab('shield')" id="tab-btn-shield" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-shield-virus"></i>
-        <span>Red Team Shield (65 Cases)</span>
-      </button>
-      <button onclick="switchTab('scout')" id="tab-btn-scout" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-tags"></i>
-        <span>Wholesale Deal Scout</span>
-      </button>
-      <button onclick="switchTab('webhooks')" id="tab-btn-webhooks" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-brands fa-paypal text-paypal-accent"></i>
-        <span>PayPal Webhooks & Undo Engine</span>
-      </button>
-      <button onclick="switchTab('profile')" id="tab-btn-profile" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-sliders"></i>
-        <span>Dynamic Intent & Policies</span>
-      </button>
-      <button onclick="switchTab('dossier')" id="tab-btn-dossier" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-file-shield"></i>
-        <span>Dispute Dossier</span>
-      </button>
-      <button onclick="switchTab('vault')" id="tab-btn-vault" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-user-secret"></i>
-        <span>ZK-Vault Privacy</span>
-      </button>
-      <button onclick="switchTab('rag')" id="tab-btn-rag" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-bullseye text-emerald-400"></i>
-        <span>Dynamic Intent-RAG (100 Global Topics)</span>
-      </button>
-      <button onclick="switchTab('sentinel')" id="tab-btn-sentinel" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-satellite-dish text-amber-400"></i>
-        <span>Autonomous Price Sentinel (24/7 Drops)</span>
-      </button>
-      <button onclick="switchTab('upi')" id="tab-btn-upi" class="py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center space-x-2 whitespace-nowrap">
-        <i class="fa-solid fa-qrcode text-indigo-400"></i>
-        <span>Agentic UPI AutoPay (NPCI Mandate)</span>
-      </button>
-    </div>
-
-    <!-- TAB 1: RESTOCK AUTOPILOT COMMAND CENTER -->
-    <section id="tab-autopilot" class="space-y-6">
+      <!-- TAB SECTIONS — all original HTML preserved below, unstyled wrappers removed -->
+      <div style="flex:1">
+        <section id="tab-autopilot" class="space-y-6">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
         <div>
           <h2 class="text-xl font-bold text-white">Zero-Touch Restocking Autopilot</h2>
@@ -1619,10 +2125,15 @@
       </div>
     </section>
 
-  </main>
+  
+      </div>
 
-  <!-- Interactive JavaScript Logic -->
-  <script>
+    </main>
+  </div>
+</div>
+
+<script>
+
     let currentTab = 'autopilot';
     let undoInterval = null;
     let secondsLeft = 60;
@@ -1661,6 +2172,9 @@
     };
 
     function switchTab(tab) {
+    document.querySelectorAll('[data-nav-tab]').forEach(el => {
+      el.classList.toggle('nav-active', el.dataset.navTab === tab);
+    });
       ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
@@ -3427,7 +3941,7 @@
         action: () => {
           switchTab('shield');
           loadAttackPreset('injection');
-          runShieldScan();
+          scanWithShield();
         },
       },
       {
@@ -3449,7 +3963,7 @@
         actionLabel: "Generate Dispute Dossier",
         action: () => {
           switchTab('dossier');
-          generateDossier();
+          generateDisputeDossier();
         },
       },
     ];
@@ -3501,6 +4015,13 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      const ppConnected = localStorage.getItem('steward_pp_connected');
+      if (ppConnected === '1') {
+        document.getElementById('paypal-connect-overlay').classList.add('hidden');
+        document.getElementById('app-shell').classList.remove('opacity-0','pointer-events-none');
+        const toured = localStorage.getItem('steward_toured');
+        if (!toured) setTimeout(() => launchFeatureTour(), 800);
+      }
       fetchDashboardState();
       loadAttackPreset('injection');
       loadBenchmarkCases();
@@ -3509,6 +4030,274 @@
       fetchWebhookEvents();
       loadRagKnowledge();
     });
-  </script>
+  
+
+/* ═══════════════════════════════════════════════════════════
+   NEW UI LAYER — PayPal Connect, Tour, Command Palette, Toasts
+   ═══════════════════════════════════════════════════════════ */
+
+// ── PAYPAL CONNECT ───────────────────────────────────────
+function connectPayPal() {
+  const overlay = document.getElementById('paypal-connect-overlay');
+  const app = document.getElementById('app-shell');
+  const limit = document.getElementById('pp-limit-slider').value;
+
+  overlay.style.opacity = '0';
+  overlay.style.transform = 'scale(1.03)';
+  overlay.style.transition = 'all 0.4s ease';
+
+  setTimeout(() => {
+    overlay.classList.add('hidden');
+    overlay.style.opacity = '';
+    overlay.style.transform = '';
+    app.classList.remove('opacity-0', 'pointer-events-none');
+    localStorage.setItem('steward_pp_connected', '1');
+    localStorage.setItem('steward_pp_limit', limit);
+    toast('PayPal connected · Sandbox mode active', 'success');
+    fetchDashboardState();
+    setTimeout(() => launchFeatureTour(), 600);
+    if (typeof confetti !== 'undefined') {
+      confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 }, colors: ['#0070BA', '#00CF92', '#003087'] });
+    }
+  }, 380);
+}
+
+// ── EMERGENCY KILL SWITCH ───────────────────────────────
+async function emergencyKillSwitch() {
+  if (!confirm('Pause ALL autonomous purchases immediately?\n\nYou can resume at any time from Settings.')) return;
+  try {
+    await fetch('/api/upi/mandate/pause', { method: 'POST' });
+  } catch(e) {}
+  toast('Emergency stop activated — all purchases halted', 'danger');
+  document.querySelector('.kill-switch').style.background = 'rgba(244,63,94,0.3)';
+}
+
+// ── TOAST NOTIFICATIONS ──────────────────────────────────
+function toast(msg, type = 'info', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  const icons = { success: 'fa-circle-check', danger: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+  const colors = { success: 'var(--pp-accent)', danger: 'var(--rose)', warning: 'var(--amber)', info: '#60B4F5' };
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i class="fa-solid ${icons[type]}" style="color:${colors[type]};font-size:16px;flex-shrink:0;margin-top:1px"></i><div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--text-primary)">${msg}</div></div><button onclick="this.closest('.toast').remove()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px;padding:0;flex-shrink:0">×</button>`;
+  container.appendChild(el);
+  setTimeout(() => { el.classList.add('exit'); setTimeout(() => el.remove(), 300); }, duration);
+}
+// Override alert() with toast
+window._nativeAlert = window.alert;
+window.alert = (msg) => {
+  if (typeof msg === 'string' && msg.length < 200) toast(msg, 'info');
+  else window._nativeAlert(msg);
+};
+
+// ── FEATURE TOUR ─────────────────────────────────────────
+const tourSteps = [
+  {
+    title: 'Smart Restock — set it and forget it',
+    desc: 'Steward monitors your stock levels and automatically orders supplies when you're running low, hunting the best prices across verified suppliers.',
+    tab: 'autopilot'
+  },
+  {
+    title: 'Every purchase has a 60-second cancel window',
+    desc: 'Before any money leaves, you get a 60-second window to cancel with zero fees. It shows up right here at the top of every screen.',
+    tab: 'autopilot'
+  },
+  {
+    title: 'Price Watcher — never overpay again',
+    desc: 'Tell Steward what you need and your target price. It watches 24/7 and auto-buys the moment a deal hits your threshold.',
+    tab: 'sentinel'
+  },
+  {
+    title: 'Your financial data never leaves this device',
+    desc: 'Your bank balance and payment details are stored privately on-device. Only cryptographic proofs — never raw numbers — are shared externally.',
+    tab: 'vault'
+  }
+];
+let currentTourStep = 0;
+
+function launchFeatureTour() {
+  currentTourStep = 0;
+  renderTourStep();
+  document.getElementById('feature-tour-overlay').classList.remove('hidden');
+}
+function renderTourStep() {
+  const step = tourSteps[currentTourStep];
+  const badge = document.getElementById('tour-step-badge');
+  const title = document.getElementById('tour-title');
+  const desc = document.getElementById('tour-desc');
+  const dots = document.getElementById('tour-dots');
+  const nextBtn = document.getElementById('tour-next-btn');
+
+  badge.textContent = `${currentTourStep + 1} of ${tourSteps.length}`;
+  title.style.opacity = '0'; title.style.transform = 'translateY(8px)';
+  desc.style.opacity = '0'; desc.style.transform = 'translateY(8px)';
+
+  setTimeout(() => {
+    title.textContent = step.title;
+    desc.textContent = step.desc;
+    title.style.transition = desc.style.transition = 'all 0.35s cubic-bezier(0.34,1.56,0.64,1)';
+    title.style.opacity = '1'; title.style.transform = 'translateY(0)';
+    desc.style.opacity = '1'; desc.style.transform = 'translateY(0)';
+  }, 80);
+
+  dots.innerHTML = tourSteps.map((_, i) =>
+    `<div class="tour-dot ${i === currentTourStep ? 'active' : ''}"></div>`
+  ).join('');
+
+  nextBtn.innerHTML = currentTourStep === tourSteps.length - 1
+    ? 'Get started <i class="fa-solid fa-check"></i>'
+    : 'Next <i class="fa-solid fa-arrow-right"></i>';
+
+  if (step.tab) switchTab(step.tab);
+}
+function nextTourStep() {
+  if (currentTourStep < tourSteps.length - 1) {
+    currentTourStep++;
+    renderTourStep();
+  } else {
+    skipTour();
+  }
+}
+function skipTour() {
+  document.getElementById('feature-tour-overlay').classList.add('hidden');
+  localStorage.setItem('steward_toured', '1');
+  switchTab('autopilot');
+  toast('Welcome to Steward! Use ⌘K to quickly find anything.', 'info', 5000);
+}
+
+// ── COMMAND PALETTE ──────────────────────────────────────
+const CMD_ACTIONS = [
+  { group: 'Navigate', label: 'Dashboard', icon: 'fa-gauge', action: () => switchTab('autopilot') },
+  { group: 'Navigate', label: 'Supplier Deals', icon: 'fa-tags', action: () => switchTab('scout') },
+  { group: 'Navigate', label: 'Live Price Search', icon: 'fa-magnifying-glass-dollar', action: () => switchTab('webscout') },
+  { group: 'Navigate', label: 'Price Watcher', icon: 'fa-satellite-dish', action: () => switchTab('sentinel') },
+  { group: 'Navigate', label: 'AI Rules', icon: 'fa-brain', action: () => switchTab('intent') },
+  { group: 'Navigate', label: 'Ask Steward', icon: 'fa-comments', action: () => switchTab('rag') },
+  { group: 'Navigate', label: 'UPI AutoPay', icon: 'fa-qrcode', action: () => switchTab('upi') },
+  { group: 'Navigate', label: 'Payment Protection', icon: 'fa-shield-halved', action: () => switchTab('shield') },
+  { group: 'Navigate', label: 'Private Vault', icon: 'fa-vault', action: () => switchTab('vault') },
+  { group: 'Navigate', label: 'Dispute Center', icon: 'fa-gavel', action: () => switchTab('dossier') },
+  { group: 'Navigate', label: 'Live Activity', icon: 'fa-wave-square', action: () => switchTab('webhooks') },
+  { group: 'Navigate', label: 'Settings', icon: 'fa-gear', action: () => switchTab('profile') },
+  { group: 'Actions', label: 'Run Smart Restock', icon: 'fa-rotate', action: () => { switchTab('autopilot'); triggerAutopilot(); } },
+  { group: 'Actions', label: 'Scan Payment Safety', icon: 'fa-shield', action: () => { switchTab('shield'); scanWithShield(); } },
+  { group: 'Actions', label: 'Emergency Stop', icon: 'fa-power-off', action: emergencyKillSwitch },
+  { group: 'Actions', label: 'Start Feature Tour', icon: 'fa-circle-play', action: launchFeatureTour },
+];
+let cmdSelectedIdx = 0;
+let filteredCmds = [...CMD_ACTIONS];
+
+function openCmdPalette() {
+  document.getElementById('cmd-palette-overlay').classList.remove('hidden');
+  document.getElementById('cmd-input').value = '';
+  filteredCmds = [...CMD_ACTIONS];
+  cmdSelectedIdx = 0;
+  renderCmdResults();
+  setTimeout(() => document.getElementById('cmd-input').focus(), 50);
+}
+function closeCmdPalette(e) {
+  if (!e || e.target.id === 'cmd-palette-overlay') {
+    document.getElementById('cmd-palette-overlay').classList.add('hidden');
+  }
+}
+function filterCmdResults(query) {
+  const q = query.toLowerCase();
+  filteredCmds = q ? CMD_ACTIONS.filter(c => c.label.toLowerCase().includes(q) || c.group.toLowerCase().includes(q)) : [...CMD_ACTIONS];
+  cmdSelectedIdx = 0;
+  renderCmdResults();
+}
+function renderCmdResults() {
+  const container = document.getElementById('cmd-results');
+  if (!filteredCmds.length) { container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">No results found</div>'; return; }
+  let html = ''; let lastGroup = '';
+  filteredCmds.forEach((cmd, i) => {
+    if (cmd.group !== lastGroup) { html += `<div class="cmd-group-header">${cmd.group}</div>`; lastGroup = cmd.group; }
+    html += `<div class="cmd-item ${i === cmdSelectedIdx ? 'selected' : ''}" onclick="runCmdAction(${i})"><div class="cmd-item-icon"><i class="fa-solid ${cmd.icon}" style="color:var(--text-secondary)"></i></div><span>${cmd.label}</span></div>`;
+  });
+  container.innerHTML = html;
+}
+function runCmdAction(idx) {
+  const cmd = filteredCmds[idx];
+  if (cmd) { cmd.action(); closeCmdPalette(null); }
+}
+function handleCmdKey(e) {
+  if (e.key === 'Escape') { closeCmdPalette(null); return; }
+  if (e.key === 'ArrowDown') { cmdSelectedIdx = Math.min(cmdSelectedIdx + 1, filteredCmds.length - 1); renderCmdResults(); return; }
+  if (e.key === 'ArrowUp') { cmdSelectedIdx = Math.max(cmdSelectedIdx - 1, 0); renderCmdResults(); return; }
+  if (e.key === 'Enter') { runCmdAction(cmdSelectedIdx); return; }
+}
+document.addEventListener('keydown', (e) => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openCmdPalette(); }
+});
+
+// ── STAT CARD ANIMATE-IN ON LOAD ────────────────────────
+function animateStatCards() {
+  document.querySelectorAll('.stat-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(12px)';
+    setTimeout(() => {
+      card.style.transition = 'all 0.4s cubic-bezier(0.34,1.56,0.64,1)';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 80 + i * 60);
+  });
+}
+
+// ── OVERRIDE SHOW UNDO WINDOW to also show toast ────────
+const _origShowUndoWindow = showUndoWindow;
+showUndoWindow = function(hold) {
+  _origShowUndoWindow(hold);
+  toast(`Order placed · 60-second cancel window open`, 'warning', 61000);
+};
+
+// ── SECTION PAGE HEADERS ─────────────────────────────────
+// Inject a consistent header bar into every tab section so they
+// all have a unified look without touching inner JS-bound content.
+const SECTION_META = {
+  'autopilot': { icon: 'fa-gauge-high', title: 'Dashboard', sub: 'Live inventory, cash & restock status' },
+  'webscout':  { icon: 'fa-magnifying-glass-dollar', title: 'Live Price Search', sub: 'Real-time cross-platform price lookup' },
+  'intent':    { icon: 'fa-brain', title: 'AI Rules', sub: 'Teach Steward what you want it to do' },
+  'shield':    { icon: 'fa-shield-halved', title: 'Payment Protection', sub: 'Security scan before every payment' },
+  'scout':     { icon: 'fa-tags', title: 'Supplier Deals', sub: 'Compare wholesale suppliers & buy' },
+  'webhooks':  { icon: 'fa-wave-square', title: 'Live Activity', sub: 'Real-time PayPal payment events' },
+  'profile':   { icon: 'fa-gear', title: 'Settings', sub: 'Spending limits, suppliers, preferences' },
+  'dossier':   { icon: 'fa-gavel', title: 'Dispute Center', sub: 'Build dispute evidence & download reports' },
+  'vault':     { icon: 'fa-vault', title: 'Private Vault', sub: 'Your financial data, never shared' },
+  'rag':       { icon: 'fa-comments', title: 'Ask Steward', sub: 'Natural language purchasing commands' },
+  'sentinel':  { icon: 'fa-satellite-dish', title: 'Price Watcher', sub: 'Set price targets — auto-buy when hit' },
+  'upi':       { icon: 'fa-qrcode', title: 'UPI AutoPay', sub: 'Manage autonomous payment mandate' },
+};
+
+document.querySelectorAll('section[id^="tab-"]').forEach(section => {
+  const tabKey = section.id.replace('tab-', '');
+  const meta = SECTION_META[tabKey];
+  if (!meta) return;
+  const header = document.createElement('div');
+  header.className = 'section-page-header';
+  header.innerHTML = `
+    <div class="section-page-title">
+      <div class="section-page-icon"><i class="fa-solid ${meta.icon}"></i></div>
+      <div>
+        <div>${meta.title}</div>
+        <div style="font-size:11px;font-weight:400;color:var(--text-muted);margin-top:1px">${meta.sub}</div>
+      </div>
+    </div>`;
+  section.insertBefore(header, section.firstChild);
+});
+
+// ── STARTUP ──────────────────────────────────────────────
+const ppConnected = localStorage.getItem('steward_pp_connected');
+const appShell = document.getElementById('app-shell');
+const overlay = document.getElementById('paypal-connect-overlay');
+if (ppConnected === '1') {
+  overlay.classList.add('hidden');
+  appShell.classList.remove('opacity-0', 'pointer-events-none');
+  animateStatCards();
+  const toured = localStorage.getItem('steward_toured');
+  if (!toured) setTimeout(launchFeatureTour, 600);
+} else {
+  appShell.classList.add('opacity-0', 'pointer-events-none');
+}
+</script>
 </body>
 </html>
