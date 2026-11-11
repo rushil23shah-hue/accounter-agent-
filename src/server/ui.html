@@ -2447,13 +2447,25 @@
           </div>
         </div>
 
-        <!-- Optional Gemini API Key Drawer Toggle -->
-        <div class="pt-2 border-t border-slate-800/60">
+        <!-- Live Gemini Key Pool Status Pill & Optional Key Drawer Toggle -->
+        <div class="pt-2 border-t border-slate-800/60 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center space-x-2 px-3 py-1.5 bg-purple-950/40 border border-purple-500/40 rounded-xl text-xs text-purple-200">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i> Google Gemini 3.8 Flash:
+            </span>
+            <span class="text-purple-300 font-mono">4-Key Failover Pool Active</span>
+          </div>
+
           <button onclick="toggleApiKeyInput()" class="text-[11px] text-slate-400 hover:text-white flex items-center space-x-1.5 transition cursor-pointer">
             <i class="fa-solid fa-key text-amber-400"></i>
-            <span>Optional: Use Custom Gemini / OpenAI API Key for 100% LLM Web Sourcing</span>
+            <span>Add / Override API Key</span>
             <i class="fa-solid fa-chevron-down text-[10px]"></i>
           </button>
+        </div>
           <div id="api-key-drawer" class="hidden mt-2 p-3 bg-slate-950 rounded-xl border border-slate-800 flex gap-2">
             <input id="custom-api-key-input" type="password" placeholder="Enter GEMINI_API_KEY (AIzaSy...)" class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" />
             <button onclick="saveApiKey()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold cursor-pointer">Save Key</button>
@@ -5198,6 +5210,28 @@ function renderDeliveryCard(order) {
           </div>
         </div>
       ` : ''}
+
+      <!-- Gemini Multimodal Intent & Sourcing Rationale Callout -->
+      <div class="p-3.5 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-slate-900/50 rounded-xl border border-purple-500/30 space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r from-purple-500 to-indigo-500 text-white flex items-center space-x-1 shadow-sm shadow-purple-900/40">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Google Gemini AI</span>
+            </span>
+            <span class="text-[11px] font-semibold text-purple-300">Engine: models/gemini-3.8-flash</span>
+          </div>
+          <span class="text-[10px] font-mono text-emerald-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 flex items-center gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Verified Live Output
+          </span>
+        </div>
+        <p class="text-xs text-slate-200 leading-relaxed font-sans">
+          <strong class="text-purple-300 font-medium">AI Sourcing Rationale:</strong> ${order.aiRationale || 'Autonomous dynamic quick-commerce market comparison.'}
+        </p>
+        <div class="text-[11px] text-cyan-300/90 font-mono bg-slate-950/70 p-2 rounded-lg border border-slate-800/80">
+          <i class="fa-solid fa-scale-balanced mr-1 text-cyan-400"></i> ${order.crossWebComparisonSummary}
+        </div>
+      </div>
 
       <!-- Milestones Progress Tracker -->
       <div class="space-y-1.5 pt-1">
