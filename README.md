@@ -1,38 +1,116 @@
-## How the Steward Agent Works
+# Steward 2.0 (AgenticPay)
 
-The Steward Agent coordinates the purchasing process, from understanding the owner's request to preparing and executing a purchase.
+### The Intent-Aware Agentic Financial Autopilot for Small Businesses
+*Zero-Knowledge Financial Privacy • Google Gemini 3.8 Flash Failover Pool • 5-Day Autonomous Swarm • Pre-Flight Security Shield • Zero-Touch Doorstep Commerce on PayPal*
 
-For example, an owner might say:
+---
 
-> "Sales of matcha have increased. Reorder without risking payroll."
+## Overview
 
-The agent takes this request and coordinates the different components of Steward to turn it into a purchase.
+**Steward 2.0 (AgenticPay)** acts as an autonomous, privacy-preserving Chief Financial Officer for small businesses. It learns daily inventory burn rates, scouts dark-stores and wholesale suppliers for optimal pricing, and executes zero-touch restocking through dynamic PayPal mandates—all while keeping sensitive business financials locked behind an on-device Zero-Knowledge (ZK) Vault and neutralizing adversarial prompt injections before a single dollar moves.
 
-Its workflow includes:
+From a single natural-language merchant request such as:
 
-1. **Understanding the request:** Identifies the product, quantity, budget and purchasing preferences.
-2. **Planning the purchase:** Checks inventory, analyses sales trends and finds suitable suppliers.
-3. **Checking affordability:** Validates the proposed order against the owner's financial rules and available spending allowance.
-4. **Verifying the transaction:** Sends supplier information and payment details through the security shield.
-5. **Handling payment:** Initiates a PayPal authorization and starts the 60-second Undo Window.
-6. **Updating records:** Tracks the transaction, updates inventory and maintains supplier history after payment confirmation.
+> *"Sales of matcha have increased. Reorder without risking payroll."*
 
-The agent coordinates these steps but doesn't have unrestricted access to business funds. Financial calculations, spending limits and payment approvals are handled by separate deterministic components.
+Steward coordinates multi-agent intelligence, mathematical solvency verification, and PayPal authorization escrow to deliver end-to-end commerce with complete peace of mind.
 
-### Connecting External Agents
+---
 
-Steward can also be used by other AI agents through its MCP server.
+## Core Capabilities & Architecture
 
-We implemented MCP using JSON-RPC 2.0 over STDIO, allowing compatible applications such as Claude Desktop, Cursor and agent frameworks to access Steward's tools.
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                   LAYER 1: CONFIDENTIAL ZK-VAULT & DYNAMIC MANDATES                    │
+│  • On-Device Private Financial Ledger (Cash balance, margins, and payroll floors)      │
+│  • Local ZK-Constraint Solver (Solvency proofs: [Liquid Cash - Order] >= Cash Floor)   │
+│  • Dynamic Adaptive Mandates (Asymmetric spend limits that expand/contract with sales) │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │ Blinded Boolean Clearances
+                                            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│             LAYER 2: GOOGLE GEMINI 3.8 FLASH POOL & DYNAMIC INTENT-RAG                 │
+│  • 4-Key Round-Robin Failover Rotation Pool (Zero downtime, instant quota failover)    │
+│  • Universal Intent Grounding (/api/rag/ground) across 100+ global commercial topics   │
+│  • Multi-Factor Sourcing Rationale & Natural Language Intent Parsing                   │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │ Structured Restock Intent
+                                            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│           LAYER 3: 5-DAY AUTONOMOUS SWARM & OPERATIONS DIRECTOR (JARVIS)               │
+│  • Multi-Agent Collaborative DAG Orchestrator & Event Bus                              │
+│  • Continuous Business Heartbeat & Daily Sales Velocity Forecasting (EMA)              │
+│  • Long-Term Vector Memory for Supplier Track Records & Price Fluctuations             │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │ Verified Sourcing Plan
+                                            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│              LAYER 4: PRE-FLIGHT INBOUND PAYMENT SECURITY SHIELD                       │
+│  • Taint Isolator & Quarantined Data Envelope for untrusted external inputs            │
+│  • Multi-Vector Prompt Injection & Jailbreak Scanner (65-test red-team benchmark)      │
+│  • Strict Whitelist Payee Validation & Parameter Anomaly Detection                     │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │ Sanitized Order Payload
+                                            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│             LAYER 5: PAYPAL AUTONOMOUS COMMERCE & 60-SECOND UNDO WINDOW                │
+│  • PayPal Orders v2 API (intent: AUTHORIZE escrow hold)                                │
+│  • Active 60-Second Reversibility Window with 1-Tap Void (Zero Fees)                   │
+│  • Zero-Touch Doorstep Commerce: Dark-store routing (Blinkit/Zepto), Rider & ETA       │
+└───────────────────────────────────────────┬────────────────────────────────────────────┘
+                                            │ Execution Receipt & Cryptographic Hash
+                                            ▼
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                  LAYER 6: EXPLAINABLE WHY-TRAIL & DISPUTE DOSSIER                      │
+│  • Cryptographic SHA-256 Decision Ledger for non-repudiable auditability               │
+│  • 1-Click Printable Dispute Dossier for the PayPal Resolution Center                  │
+│  • Instant Emergency Stop Kill Switch                                                  │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
-These tools allow external agents to:
-- Inspect payments.
-- Evaluate spending mandates.
-- Find wholesale suppliers.
-- Compare consumer prices.
-- Simulate payment holds.
+### 1. Google Gemini 3.8 Flash with 4-Key Failover Rotation Pool
+Steward integrates Google’s state-of-the-art **Gemini 3.8 Flash** model (`gemini-3.8-flash`) for dynamic prompt parsing, universal intent grounding, and sourcing rationale generation. To guarantee uninterrupted production availability, the system implements an automated **4-key round-robin rotation pool**:
+- Seamlessly distributes requests across API keys.
+- Catches quota exhaustion and transient errors, automatically failing over to the next healthy key.
+- Surfaces active key pool health and rationale metrics directly in the commerce dashboard.
 
-This means an external agent can handle the conversation while Steward takes care of financial checks and payment security.
+### 2. Zero-Touch Doorstep Commerce & Live Delivery Routing
+Beyond traditional procurement, Steward connects directly to hyperlocal dark-stores (e.g. Blinkit, Zepto) and regional wholesale partners:
+- Translates natural-language intents into granular item quantities and specifications.
+- Dispatches orders with dynamic dark-store selection, live rider assignment, and simulated minute-by-minute ETA progression.
+- Backed by address profile management and live cash reconciliation with the ZK-Vault.
+
+### 3. 5-Day Autonomous Swarm & Operations Director (Jarvis)
+A Jarvis-grade multi-agent Directed Acyclic Graph (DAG) engine that simulates and automates 5 consecutive business days of operational oversight:
+- **Operations Director Agent**: Coordinates sub-agents, arbitrates conflicting priorities, and reports operational health.
+- **Agent Event Bus**: Enables asynchronous message passing between demand forecasters, inventory monitors, and pricing scouts.
+- **Vector Memory**: Retains supplier reliability history, pricing shifts, and past dispute resolutions.
+
+### 4. Zero-Knowledge (ZK) Confidential Financial Vault
+Business owners never have to expose their sensitive bank balances, revenue numbers, or supplier margins to cloud LLMs:
+- All sensitive financial ledgers remain stored locally on the merchant's machine.
+- Local ZK-constraint algorithms verify financial invariant rules (e.g., `(Liquid Cash - Order Cost) >= Reserved Cash Floor` and `Projected Runway >= 30 Days`).
+- Cloud agents receive only blinded boolean clearances (`budget_clearance_granted: true`).
+
+### 5. Pre-Flight Inbound Payment Security Shield
+Empowering AI agents to transact online introduces prompt injection and fraudulent payee vulnerabilities. Steward’s shield sanitizes all external inputs:
+- Quarantines incoming supplier memos and scrape payloads in isolated data envelopes.
+- Neutralizes prompt injection, delimiter collisions, and instruction overrides (validated against a 65-case red-team adversarial benchmark).
+- Enforces strict payee whitelisting to block rogue recipient tampering.
+
+### 6. PayPal Autonomous Escrow & The 60-Second Undo Window
+- Uses PayPal Orders v2 API with `intent: AUTHORIZE`.
+- Funds are placed in authorization escrow, triggering a prominent **Active 60-Second Undo Window**.
+- Merchants can cancel any automated order with a single click (**1-Tap Void with zero merchant fees**).
+- Once the timer expires, the payment auto-captures cleanly.
+
+### 7. MCP Server (Model Context Protocol) Integration
+Steward exposes its core financial verification and payment tools via an official **MCP STDIO server** (JSON-RPC 2.0), allowing external agents (such as Claude Desktop, Cursor, or custom multi-agent frameworks) to safely interact with Steward's tools:
+- `inspect_payment`
+- `evaluate_spending_mandate`
+- `find_wholesale_suppliers`
+- `compare_consumer_prices`
+- `simulate_payment_hold`
 
 ---
 
@@ -40,78 +118,93 @@ This means an external agent can handle the conversation while Steward takes car
 
 ### Prerequisites
 
-- Node.js 20.6+ (required for `--env-file`) / 24+
-- npm
+- **Node.js**: 20.6+ (required for native `--env-file`) or 22+ / 24+
+- **npm**: 9+
+- Modern web browser (Chrome, Edge, Firefox, Safari)
 
-### 1. Clone the repository
+### 1. Clone & Install
 
 ```bash
 git clone https://github.com/rushil23shah-hue/accounter-agent-.git
 cd accounter-agent-
-```
-
-### 2. Install dependencies
-
-```bash
 npm install
 ```
 
-### 3. Start Steward
+### 2. Configure Environment Variables (Optional)
+
+Create a `.env` file in the project root:
+
+```env
+# PayPal Sandbox Configuration
+PAYPAL_CLIENT_ID=your_paypal_sandbox_client_id
+PAYPAL_CLIENT_SECRET=your_paypal_sandbox_client_secret
+PAYPAL_CURRENCY=USD
+PAYPAL_PAYOUT_TO=your_sandbox_account_email
+PAYPAL_PAYEE_EMAIL=your_sandbox_payee_email
+PAYPAL_WEBHOOK_ID=your_sandbox_webhook_id
+
+# Google Gemini API Keys (Single key or 4-Key Failover Pool)
+GEMINI_API_KEY=your_primary_gemini_api_key
+GEMINI_API_KEY_1=your_gemini_key_1
+GEMINI_API_KEY_2=your_gemini_key_2
+GEMINI_API_KEY_3=your_gemini_key_3
+GEMINI_API_KEY_4=your_gemini_key_4
+
+# Server Configuration
+PORT=3000
+```
+
+> **Note:** Steward runs in **MOCK mode by default**. You can test every dashboard feature, ZK calculation, and payment flow out of the box without real API credentials.
+
+### 3. Run the Development Server
 
 ```bash
 npm run dev
+# or: npm start
 ```
 
-The dashboard will be available at:
+Open your browser and navigate to:
+```
+http://localhost:3000
+```
 
-`http://localhost:3000`
+### 4. Run the Full Verification Suite
 
-Steward runs in MOCK mode by default, so you can explore the application without configuring PayPal credentials.
-
-### 4. Run the verification suite
+Execute the master compliance test runner covering all 9 test stages:
 
 ```bash
 npm test
 ```
 
-This runs the nine test suites covering the project's core functionality and security checks.
+| Stage | Verification Scope | Command |
+|---|---|---|
+| **Stage 1** | Domain Contracts & Zod Type Invariants | `npm run verify:m1` |
+| **Stage 2** | Core Execution Engines (Taint, Inventory, Autonomy) | `npm run verify:m2` |
+| **Stage 3** | Native PayPal v2 Integration (Orders, Undo, Payouts) | `npm run verify:m3` |
+| **Stage 4** | ZK-Vault & Autopilot Orchestrator | `npm run verify:m4` |
+| **Stage 5** | 65-Case Red-Team Adversarial Security Benchmark | `npm run benchmark` |
+| **Stage 6** | Dynamic Intent-RAG (100 Global Topics Benchmark) | `npm run verify:rag` |
+| **Stage 7** | Autonomous Price Sentinel & Sniper Engine | `npm run verify:sentinel` |
+| **Stage 8** | Agentic UPI AutoPay Mandate Protocol | `npm run verify:upi` |
+| **Stage 9** | 5-Day Autonomous Swarm & Operations Director | `npm run verify:swarm` |
 
-### 5. Connect PayPal Sandbox (Optional)
+### 5. Run Live PayPal Sandbox Verification
 
-Create a `.env` file in the project root:
-
-```env
-PAYPAL_CLIENT_ID=your_paypal_sandbox_client_id
-PAYPAL_CLIENT_SECRET=your_paypal_sandbox_client_secret
-PAYPAL_CURRENCY=USD
-PAYPAL_PAYOUT_TO=your_sandbox_account_email
-```
-
-Optional variables:
-
-| Variable | Purpose |
-|---|---|
-| `PAYPAL_PAYEE_EMAIL` | Sandbox payee email for authorizations. |
-| `PAYPAL_WEBHOOK_ID` | Sandbox webhook ID, if verifying webhooks. |
-| `PORT` | Dashboard port (default `3000`). |
-
-> Never commit `.env`. It is gitignored; use sandbox credentials only.
-
-To run live sandbox verification:
+To execute live transactions against PayPal Sandbox:
 
 ```bash
 npm run live:m3
 ```
 
-### 6. Start the MCP Server (Optional)
+### 6. Connect to Claude Desktop or Cursor via MCP
 
-To allow external agents to interact with Steward:
+Start the standalone MCP server:
 
 ```bash
 npm run mcp
 ```
 
-To use it from Claude Desktop, Cursor or another MCP client, add this to the client's MCP config (set `cwd` to your local clone path):
+To configure Claude Desktop or Cursor, add this entry to your client configuration:
 
 ```json
 {
@@ -119,7 +212,7 @@ To use it from Claude Desktop, Cursor or another MCP client, add this to the cli
     "steward": {
       "command": "npx",
       "args": ["tsx", "src/mcp/server.ts"],
-      "cwd": "/path/to/accounter-agent-"
+      "cwd": "/absolute/path/to/accounter-agent-"
     }
   }
 }
@@ -127,32 +220,69 @@ To use it from Claude Desktop, Cursor or another MCP client, add this to the cli
 
 ---
 
-## Try the Steward Demo
+## Interactive Dashboard Walkthrough
 
-Once the dashboard is running, here's a suggested walkthrough of the main features.
-
-| Step | What to try | What to look for |
+| Tab / View | Feature | What to Explore |
 |---|---|---|
-| 1. Financial Vault | Open the CFO Dashboard | View the spending ceiling, cash floor and financial constraints. |
-| 2. Autonomous Restock | Run the restock pipeline | Watch demand forecasting, supplier selection and payment validation. |
-| 3. Undo Window | Initiate a PayPal authorization | See the 60-second countdown and try cancelling the payment. |
-| 4. Security Shield | Open the Red-Team Playground | Test how Steward handles malicious supplier instructions and suspicious payment details. |
-| 5. Intent Processing | Open the Intent interface | Try a natural-language shopping request and see how it is converted into an order. |
-| 6. Transaction Ledger | Open the audit ledger | Review transaction history and export records. |
-| 7. Price Sentinel | Open the Sentinel dashboard | Explore automated price monitoring and spending conditions. |
-| 8. Dispute Dossier | Open the Dispute Dossier | Generate a printable transaction evidence report. |
+| **Agent Home** | Conversational Omnibar & Treasury Advice | Enter natural shopping/restock prompts, use dynamic suggestion pills, and view real-time dark-store routing. |
+| **Doorstep Commerce** | Hyperlocal Zero-Touch Delivery | Watch live rider dispatch, minute-by-minute ETA countdowns, and Gemini sourcing rationales. |
+| **5-Day Swarm (Jarvis)** | Multi-Agent Operational Simulation | Inspect the DAG orchestrator running 5 days of demand forecasting, supplier negotiation, and heartbeat events. |
+| **Financial Health** | Treasury & Invariant Cockpit | Monitor liquid cash ($14,245.26), runway (73.4 days), reserved cash floors, and earned autonomy tier. |
+| **Private ZK-Vault** | Zero-Knowledge Constraint Verifier | Verify local mathematical solvency proofs without exposing private merchant data to the cloud. |
+| **Pre-Flight Shield** | Red-Team Playground | Test malicious supplier memos, instruction overrides, and watch the shield quarantine attacks in real time. |
+| **Dynamic Intent Rules** | Grounded Intent Processing | Review how unstructured human text maps to deterministic purchasing specifications. |
+| **UPI AutoPay Mandates** | Adaptive Mandate Engine | Inspect asymmetric spending limits that expand during high demand and contract during lulls. |
+| **Price Sentinels** | Autonomous Price Sniping | Set threshold alerts and automated buy triggers for fluctuating wholesale commodities. |
+| **Forensic Dispute Dossier** | Audit & Resolution Pack | Generate printable, cryptographic SHA-256 evidence dossiers tailored for the PayPal Resolution Center. |
+| **Emergency Stop** | Global Kill Switch | Instantly freeze all autonomous spending and agent operations with a single click. |
 
 ---
 
-## Demo Walkthrough
+## 3-Minute Demo Walkthrough
 
-For a quick overview of Steward's main capabilities, follow the three-minute demo:
-
-| Time | Demonstration | What to show |
+| Time | Section | Key Demonstration |
 |---|---|---|
-| 0:00–0:45 | Financial Vault | Show the owner intent profile, spending ceiling and protected financial information. |
-| 0:45–1:15 | Autonomous Restock | Run the restock pipeline and demonstrate the PayPal authorization and Undo Window. |
-| 1:15–1:45 | Security Shield | Inject a malicious supplier instruction and demonstrate how Steward blocks it. |
-| 1:45–2:15 | Intent Processing | Enter a shopping request and demonstrate product matching and price comparison. |
-| 2:15–2:40 | Transaction Ledger | Show the transaction history and export functionality. |
-| 2:40–3:00 | Price Sentinel and Dispute Dossier | Demonstrate automated monitoring and generate a transaction evidence report. |
+| `0:00 – 0:45` | **Agent Home & The Merchant's Dilemma** | Show the emotional friction of manual restocking; enter a natural-language intent in the omnibar; deploy autonomous sourcing. |
+| `0:45 – 1:30` | **Financial Health & ZK-Vault** | Showcase the 4 stat cards; explain why cloud LLMs shouldn't see balance sheets; demonstrate local ZK solvency proofs and dynamic mandates. |
+| `1:30 – 2:15` | **Pre-Flight Security Shield** | Load a sample prompt injection in the Red-Team Playground; demonstrate real-time quarantine and payee whitelist enforcement. |
+| `2:15 – 2:45` | **Autonomous PayPal Commerce & Undo Window** | Trigger restock; demonstrate the glowing 60-second amber undo banner with 1-Tap Void; open the Forensic Dispute Dossier. |
+| `2:45 – 3:00` | **Emergency Kill Switch & Closing Vision** | Highlight the emergency stop button; recap the zero-data-leak, fraud-proof vision of AgenticPay. |
+
+---
+
+## Repository Structure
+
+```
+accounter-agent-/
+├── docs/                                  # Specifications and design blueprints
+├── images/                                # Brand emblems and visual assets
+├── scripts/                               # Verification suites and benchmark runners
+│   ├── run-all-tests.ts                   # Master 9-phase compliance runner
+│   ├── run-benchmark.ts                   # 65-case red-team security benchmark
+│   ├── run-100-global-benchmark.ts        # 100-topic intent-RAG benchmark
+│   ├── verify-swarm-5day.ts               # Multi-agent swarm verification
+│   └── live-sandbox.ts                    # Live PayPal Sandbox verification
+├── src/
+│   ├── contracts/                         # Zod domain schemas (delivery, swarm, mandates)
+│   ├── engines/                           # Core business logic & AI orchestration
+│   │   ├── gemini-client.ts               # Gemini 3.8 Flash pool & failover manager
+│   │   ├── autonomous-purchase-engine.ts  # Zero-touch doorstep commerce & order routing
+│   │   ├── swarm-orchestrator.ts          # 5-day multi-agent DAG engine
+│   │   ├── business-heartbeat.ts          # Operations heartbeat & velocity tracker
+│   │   ├── vector-memory.ts               # Long-term semantic supplier memory
+│   │   ├── taint-engine.ts                # Inbound security shield & injection detector
+│   │   └── zk-vault.ts                    # Local zero-knowledge solvency verifier
+│   ├── mcp/                               # Model Context Protocol STDIO server
+│   ├── paypal/                            # Native PayPal Orders v2 & Payouts client
+│   └── server/
+│       ├── app.ts                         # Express application & API endpoints
+│       └── ui.html                        # AgenticPay interactive luxury UI
+├── package.json
+└── tsconfig.json
+```
+
+---
+
+## License
+
+This project is licensed under the [ISC License](LICENSE).

@@ -378,18 +378,23 @@
     @keyframes drain { from { width: 100%; } to { width: 0%; } }
     .undo-drain { animation: drain linear forwards; }
 
-    /* ── SCROLL-LINKED VIEWPORT PROGRESS BAR ─────── */
+    /* ── SCROLL-LINKED MULTI-COLOR LOADING BAR (UNLABELLED, TAB AREA ONLY) ── */
     #scroll-progress-container {
-      position: fixed; top: 0; left: 0; right: 0;
-      height: 3.5px; z-index: 200;
+      position: fixed; top: 0; left: 245px; right: 0;
+      height: 4px; z-index: 120;
       background: rgba(20, 3, 28, 0.4);
       pointer-events: none;
     }
+    @media (max-width: 1024px) {
+      #scroll-progress-container {
+        left: 0;
+      }
+    }
     #scroll-progress-bar {
       height: 100%; width: 0%;
-      background: linear-gradient(90deg, #D946EF 0%, #EC4899 40%, #38BDF8 80%, #34D399 100%);
-      box-shadow: 0 0 12px rgba(236, 72, 153, 0.9), 0 0 24px rgba(56, 189, 248, 0.6);
-      transition: width 0.08s ease-out;
+      background: linear-gradient(90deg, #06B6D4 0%, #38BDF8 25%, #D946EF 50%, #EC4899 75%, #10B981 100%);
+      box-shadow: 0 0 14px rgba(217, 70, 239, 0.9), 0 0 25px rgba(6, 182, 212, 0.7);
+      transition: width 0.08s cubic-bezier(0.22, 1, 0.36, 1);
     }
     #scroll-telemetry-badge {
       position: fixed; top: 12px; right: 24px; z-index: 201;
@@ -411,31 +416,34 @@
     }
 
     /* ── CURSOR-TRACKING SPOTLIGHT CARDS ─────────── */
-    .spotlight-card, .story-chapter {
+    .spotlight-card, .story-chapter, .bento-card, .stat-card, .card-3d-tilt, .bg-slate-900, .tour-card, section > div.rounded-2xl, section > div.rounded-3xl {
       position: relative;
       overflow: hidden;
       --mouse-x: 50%;
       --mouse-y: 50%;
-      --spotlight-color: rgba(255, 20, 147, 0.16);
-      --spotlight-border: rgba(244, 114, 182, 0.5);
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      --spotlight-color: rgba(217, 70, 239, 0.14);
+      --spotlight-border: rgba(244, 114, 182, 0.45);
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      transition: transform 0.15s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease;
+      will-change: transform;
     }
-    .spotlight-card::before, .story-chapter::before {
+    .spotlight-card::before, .story-chapter::before, .bento-card::before, .stat-card::before, .card-3d-tilt::before, .bg-slate-900::before, section > div.rounded-2xl::before, section > div.rounded-3xl::before {
       content: ''; position: absolute; inset: 0; border-radius: inherit;
-      background: radial-gradient(350px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-color), transparent 70%);
-      pointer-events: none; opacity: 0; transition: opacity 0.3s ease; z-index: 1;
+      background: radial-gradient(380px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-color), transparent 70%);
+      opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 1;
     }
-    .spotlight-card:hover::before, .story-chapter:hover::before {
+    .spotlight-card:hover::before, .story-chapter:hover::before, .bento-card:hover::before, .stat-card:hover::before, .card-3d-tilt:hover::before, .bg-slate-900:hover::before, section > div.rounded-2xl:hover::before, section > div.rounded-3xl:hover::before {
       opacity: 1;
     }
-    .spotlight-card::after, .story-chapter::after {
+    .spotlight-card::after, .story-chapter::after, .bento-card::after, .stat-card::after, .card-3d-tilt::after, .bg-slate-900::after, section > div.rounded-2xl::after, section > div.rounded-3xl::after {
       content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px;
-      background: radial-gradient(280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-border), transparent 70%);
+      background: radial-gradient(280px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), var(--spotlight-border), transparent 60%);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor; mask-composite: exclude;
-      pointer-events: none; opacity: 0; transition: opacity 0.3s ease; z-index: 2;
+      opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 2;
     }
-    .spotlight-card:hover::after, .story-chapter:hover::after {
+    .spotlight-card:hover::after, .story-chapter:hover::after, .bento-card:hover::after, .stat-card:hover::after, .card-3d-tilt:hover::after, .bg-slate-900:hover::after, section > div.rounded-2xl:hover::after, section > div.rounded-3xl:hover::after {
       opacity: 1;
     }
 
@@ -487,17 +495,111 @@
     }
 
     /* ── MAGNETIC BUTTON SPRING ANIMATIONS ───────── */
-    .btn-magnetic {
+    button, .btn-magnetic, .btn-primary, [role="button"], a.btn-primary {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.12s ease-out;
+      transition: transform 0.12s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, opacity 0.2s ease;
       will-change: transform;
+    }
+    button:hover, .btn-magnetic:hover, .btn-primary:hover {
+      box-shadow: 0 8px 24px -4px rgba(217, 70, 239, 0.35);
+    }
+    button:active, .btn-magnetic:active, .btn-primary:active {
+      transform: scale(0.96) !important;
     }
 
     /* ── LAYOUT AWARE SHARED TRANSITION ───────────── */
     .layout-transition {
       transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    
+    /* ── CRITICAL MOTION & HARDWARE EASING RULES ── */
+    :root {
+      --ease-hardware: cubic-bezier(0.22, 1, 0.36, 1);
+      --spring-damped: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .tabular-nums, .font-mono, #hud-stage-text, #hud-depth-percent, #hud-latency-val,
+    #bento-slider-amount, #receipt-amount, #receipt-utr, [class*="font-num"] {
+      font-variant-numeric: tabular-nums lining-nums !important;
+      -webkit-font-feature-settings: "tnum" 1;
+      font-feature-settings: "tnum" 1;
+    }
+
+    
+
+    /* ── MASKED LINE-BY-LINE TYPOGRAPHY ───────────────────────── */
+    .masked-line-wrap {
+      overflow: hidden;
+      display: block;
+    }
+    .masked-line {
+      display: block;
+      transform: translateY(100%);
+      animation: maskedLineUp 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes maskedLineUp {
+      0% { transform: translateY(100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    /* ── TACTILE 3D CARD TILT & NOISE TEXTURE ─────────────────── */
+    .card-3d-tilt {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      transition: transform 0.15s ease-out, box-shadow 0.25s ease-out;
+      will-change: transform;
+    }
+    .noise-overlay {
+      position: relative;
+    }
+    .noise-overlay::before {
+      content: ''; position: absolute; inset: 0; border-radius: inherit;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ── SVG BEAM FLOW ANIMATIONS ─────────────────────────────── */
+    @keyframes beamFlowDash {
+      from { stroke-dashoffset: 240; }
+      to { stroke-dashoffset: 0; }
+    }
+    .beam-flow-line {
+      stroke-dasharray: 14 20;
+      animation: beamFlowDash 2.4s linear infinite;
+    }
+
+    /* ── BENTO CARDS SPOTLIGHT ────────────────────────────────── */
+    .bento-card {
+      background: rgba(18, 18, 21, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.6);
+      transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .bento-card:hover {
+      border-color: rgba(244, 114, 182, 0.35);
+      box-shadow: 0 16px 44px -4px rgba(0, 0, 0, 0.75), 0 0 25px rgba(217, 70, 239, 0.18);
+    }
+
+    
+    /* Real-Time Tracking & Bottom Tab Streams Sit Seamlessly on the Background */
+    #live-deliveries-container,
+    #home-live-deliveries,
+    .delivery-tracking-row,
+    #home-stream-container {
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    #live-deliveries-container > div,
+    #home-live-deliveries > div {
+      background: transparent !important;
+      box-shadow: none !important;
     }
 
     /* ── PRINT ────────────────────────────────────── */
@@ -896,7 +998,7 @@
     <!-- Top badge -->
     <div style="display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:9999px;background:rgba(217,70,239,0.15);border:1px solid rgba(244,114,182,0.35);backdrop-filter:blur(10px);margin-bottom:18px">
       <span style="width:8px;height:8px;border-radius:50%;background:#34D399;box-shadow:0 0 10px #34D399;display:inline-block"></span>
-      <span style="font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#F5D0FE">WELCOME TO AGENTICPAY · THE AGENTIC UPI EXPERIENCE</span>
+      <span style="font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:#F5D0FE">WELCOME TO AGENTICPAY</span>
     </div>
 
     <!-- Big Emblem Logo (135px+ height, glowing drop shadow) -->
@@ -905,15 +1007,14 @@
       <img id="connect-hero-logo" class="pp-logo-emblem" src="data:image/png;base64,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" alt="AgenticPay Emblem" />
     </div>
 
-    <h1 class="font-editorial" style="font-size:36px;font-weight:900;color:#FFFFFF;margin:0 0 6px;letter-spacing:0.04em">Agentic<span style="color:#38BDF8">Pay</span></h1>
-    <div style="font-size:11px;font-weight:700;color:#F5D0FE;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:14px">The Agentic UPI Experience</div>
+
     <p style="color:#F5D0FE;font-size:14.5px;line-height:1.65;max-width:620px;margin:0 auto 26px;font-weight:500;text-shadow:0 2px 10px rgba(0,0,0,0.5)">
       Your autonomous financial co-pilot. It watches inventory, hunts supplier deals, verifies solvency, and executes payments with 60s reversible escrow holds.
     </p>
 
-    <!-- Dynamic Autonomous Mandate Console (AI Dynamic Solvency active) -->
-    <div class="spotlight-card" style="width:100%;max-width:640px;background:rgba(20,3,28,0.75);border:1px solid rgba(244,114,182,0.3);border-radius:22px;padding:22px 26px;margin-bottom:26px;box-shadow:0 18px 45px -8px rgba(0,0,0,0.7),0 0 25px rgba(217,70,239,0.15);backdrop-filter:blur(18px);text-align:left">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <!-- Autonomous AI Dynamic Mandate (Seamless Directly on Background) -->
+    <div style="width:100%;max-width:640px;background:transparent;border:none;box-shadow:none;backdrop-filter:none;padding:0 8px;margin-bottom:28px;text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;border-bottom:1px solid rgba(244,114,182,0.2);padding-bottom:12px">
         <div style="display:flex;align-items:center;gap:10px">
           <i class="fa-solid fa-brain-circuit" style="color:#D946EF;font-size:18px"></i>
           <div>
@@ -926,21 +1027,21 @@
         </span>
       </div>
 
-      <!-- Real-Time Mandate Tier Display -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px">
-        <div style="background:rgba(35,7,48,0.5);border:1px solid rgba(244,114,182,0.2);border-radius:14px;padding:12px">
+      <!-- Real-Time Mandate Tier Display Directly on Background -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:14px;border-bottom:1px solid rgba(244,114,182,0.15);padding-bottom:14px">
+        <div style="background:transparent;border:none;padding:0">
           <div style="font-size:10px;font-weight:700;color:rgba(245,208,254,0.7);text-transform:uppercase;letter-spacing:0.06em">Baseline Solvency</div>
-          <div class="font-num" style="font-size:20px;font-weight:900;color:#FFFFFF;margin-top:2px" id="mandate-baseline-val">$500</div>
+          <div class="font-num" style="font-size:22px;font-weight:900;color:#FFFFFF;margin-top:2px" id="mandate-baseline-val">$500</div>
           <div style="font-size:10px;color:#34D399;font-weight:600;margin-top:2px">Instant Auto-Settle</div>
         </div>
-        <div style="background:rgba(35,7,48,0.5);border:1px solid rgba(244,114,182,0.2);border-radius:14px;padding:12px">
+        <div style="background:transparent;border:none;border-left:1px solid rgba(244,114,182,0.18);padding:0 0 0 16px">
           <div style="font-size:10px;font-weight:700;color:rgba(245,208,254,0.7);text-transform:uppercase;letter-spacing:0.06em">Adaptive Burst Buffer</div>
-          <div class="font-num" style="font-size:20px;font-weight:900;color:#F472B6;margin-top:2px" id="mandate-burst-val">$2,500</div>
+          <div class="font-num" style="font-size:22px;font-weight:900;color:#F472B6;margin-top:2px" id="mandate-burst-val">$2,500</div>
           <div style="font-size:10px;color:#F5D0FE;font-weight:600;margin-top:2px">Dynamic Surge Tier</div>
         </div>
-        <div style="background:rgba(35,7,48,0.5);border:1px solid rgba(244,114,182,0.2);border-radius:14px;padding:12px">
+        <div style="background:transparent;border:none;border-left:1px solid rgba(244,114,182,0.18);padding:0 0 0 16px">
           <div style="font-size:10px;font-weight:700;color:rgba(245,208,254,0.7);text-transform:uppercase;letter-spacing:0.06em">Reversible Window</div>
-          <div class="font-num" style="font-size:20px;font-weight:900;color:#38BDF8;margin-top:2px">60s</div>
+          <div class="font-num" style="font-size:22px;font-weight:900;color:#38BDF8;margin-top:2px">60s</div>
           <div style="font-size:10px;color:#38BDF8;font-weight:600;margin-top:2px">1-Click Undo Hold</div>
         </div>
       </div>
@@ -961,9 +1062,7 @@
         Connect PayPal Business Sandbox
       </button>
 
-      <button class="btn-magnetic" onclick="startConnectTransition()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(244,114,182,0.25);color:#F5D0FE;padding:10px 22px;border-radius:12px;font-size:12px;font-weight:700;transition:all 0.2s ease">
-        Enter Dashboard Directly as Judge / Evaluator &rarr;
-      </button>
+
     </div>
 
     <div style="margin-top:20px;font-size:11.5px;color:rgba(245,208,254,0.75);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">
@@ -1024,11 +1123,6 @@
 <div id="scroll-progress-container">
   <div id="scroll-progress-bar"></div>
 </div>
-<div id="scroll-telemetry-badge">
-  <i class="fa-solid fa-compass-drafting" style="color:#D946EF"></i>
-  <span>MANDATE DEPTH: <strong id="scroll-depth-percent" style="color:#FFFFFF">0%</strong></span>
-</div>
-
 <div id="app-shell" style="display:flex;flex-direction:column;height:100vh;transition:opacity 0.4s ease">
 
   <!-- TOP BAR (Luxury Editorial Velvet Navigation) -->
@@ -1209,6 +1303,7 @@
   
 
       <!-- STAT CARDS (hidden on Agent Home, shown on Financial Health tab) -->
+      <!-- STAT CARDS (hidden on Agent Home, shown on Financial Health tab) -->
       <div id="stat-cards-row" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 hidden">
         <!-- Card 1: Cash -->
         <div class="stat-card fade-in-up" style="animation-delay:0.05s">
@@ -1216,17 +1311,17 @@
             <div>
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
                 <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <p style="font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin:0">Available Cash</p>
+                <p style="font-size:11px;font-weight:800;color:#E2E8F0;text-transform:uppercase;letter-spacing:0.08em;margin:0">Available Cash</p>
               </div>
-              <div class="font-num" style="font-size:27px;font-weight:900;color:#0F172A;letter-spacing:-0.03em" id="stat-liquid-cash">$14,245.26</div>
+              <div class="font-num" style="font-size:28px;font-weight:900;color:#10B981;text-shadow:0 0 18px rgba(16,185,129,0.4);letter-spacing:-0.03em" id="stat-liquid-cash">$14,245.26</div>
             </div>
-            <div style="width:42px;height:42px;border-radius:13px;background:#DCFCE7;border:1px solid #BBF7D0;display:flex;align-items:center;justify-content:center;color:#15803D;font-size:17px;box-shadow:0 2px 8px rgba(16,185,129,0.15)">
+            <div style="width:42px;height:42px;border-radius:13px;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.4);display:flex;align-items:center;justify-content:center;color:#34D399;font-size:17px;box-shadow:0 2px 8px rgba(16,185,129,0.15)">
               <i class="fa-solid fa-vault"></i>
             </div>
           </div>
           <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px">
-            <span style="color:#64748B">Reserved Floor: <strong style="color:#0F172A;font-family:'JetBrains Mono'">$2,500</strong></span>
-            <span style="background:#DCFCE7;color:#15803D;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid #BBF7D0">ZK-SHIELDED</span>
+            <span style="color:#CBD5E1">Reserved Floor: <strong style="color:#FFFFFF;font-family:'JetBrains Mono'">$2,500</strong></span>
+            <span style="background:rgba(16,185,129,0.15);color:#34D399;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid rgba(16,185,129,0.35)">ZK-SHIELDED</span>
           </div>
         </div>
 
@@ -1236,17 +1331,17 @@
             <div>
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
                 <span class="w-2 h-2 rounded-full bg-sky-500"></span>
-                <p style="font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin:0">Financial Runway</p>
+                <p style="font-size:11px;font-weight:800;color:#E2E8F0;text-transform:uppercase;letter-spacing:0.08em;margin:0">Financial Runway</p>
               </div>
-              <div class="font-num" style="font-size:27px;font-weight:900;color:#0369A1;letter-spacing:-0.03em" id="stat-runway">73.4 Days</div>
+              <div class="font-num" style="font-size:28px;font-weight:900;color:#38BDF8;text-shadow:0 0 18px rgba(56,189,248,0.4);letter-spacing:-0.03em" id="stat-runway">73.4 Days</div>
             </div>
-            <div style="width:42px;height:42px;border-radius:13px;background:#E0F2FE;border:1px solid #BAE6FD;display:flex;align-items:center;justify-content:center;color:#0284C7;font-size:17px;box-shadow:0 2px 8px rgba(2,132,199,0.15)">
+            <div style="width:42px;height:42px;border-radius:13px;background:rgba(56,189,248,0.18);border:1px solid rgba(56,189,248,0.4);display:flex;align-items:center;justify-content:center;color:#38BDF8;font-size:17px;box-shadow:0 2px 8px rgba(2,132,199,0.15)">
               <i class="fa-solid fa-chart-line"></i>
             </div>
           </div>
           <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px">
-            <span style="color:#64748B">Target: 30 Days</span>
-            <span style="background:#E0F2FE;color:#0369A1;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid #BAE6FD">+144% SURPLUS</span>
+            <span style="color:#CBD5E1">Target: <strong style="color:#FFFFFF;font-family:'JetBrains Mono'">30 Days</strong></span>
+            <span style="background:rgba(56,189,248,0.15);color:#38BDF8;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid rgba(56,189,248,0.35)">+144% SURPLUS</span>
           </div>
         </div>
 
@@ -1256,40 +1351,40 @@
             <div>
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
                 <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-                <p style="font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin:0">Dynamic Mandate</p>
+                <p style="font-size:11px;font-weight:800;color:#E2E8F0;text-transform:uppercase;letter-spacing:0.08em;margin:0">Dynamic Mandate</p>
               </div>
-              <div class="font-num" style="font-size:27px;font-weight:900;color:#7C3AED;letter-spacing:-0.03em" id="stat-mandate">$642.60</div>
+              <div class="font-num" style="font-size:28px;font-weight:900;color:#D946EF;text-shadow:0 0 18px rgba(217,70,239,0.4);letter-spacing:-0.03em" id="stat-mandate">$642.60</div>
             </div>
-            <div style="width:42px;height:42px;border-radius:13px;background:#F3E8FF;border:1px solid #E9D5FF;display:flex;align-items:center;justify-content:center;color:#7E22CE;font-size:17px;box-shadow:0 2px 8px rgba(126,34,206,0.15)">
+            <div style="width:42px;height:42px;border-radius:13px;background:rgba(217,70,239,0.18);border:1px solid rgba(217,70,239,0.4);display:flex;align-items:center;justify-content:center;color:#F472B6;font-size:17px;box-shadow:0 2px 8px rgba(126,34,206,0.15)">
               <i class="fa-solid fa-bolt"></i>
             </div>
           </div>
           <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px">
-            <span style="color:#64748B">Ceiling: <strong style="color:#0F172A;font-family:'JetBrains Mono'" id="stat-ceiling">$800.00</strong></span>
-            <span style="background:#F3E8FF;color:#7E22CE;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid #E9D5FF">ZERO-LLM MATH</span>
+            <span style="color:#CBD5E1">Ceiling: <strong style="color:#FFFFFF;font-family:'JetBrains Mono'" id="stat-ceiling">$800.00</strong></span>
+            <span style="background:rgba(217,70,239,0.15);color:#F472B6;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid rgba(217,70,239,0.35)">ZERO-LLM MATH</span>
           </div>
         </div>
 
-        <!-- Card 4: Trust level -->
+        <!-- Card 4: Daily Burn -->
         <div class="stat-card fade-in-up" style="animation-delay:0.2s">
           <div style="display:flex;justify-content:space-between;align-items:flex-start">
             <div>
               <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
                 <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                <p style="font-size:11px;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.08em;margin:0">Autonomy Tier</p>
+                <p style="font-size:11px;font-weight:800;color:#E2E8F0;text-transform:uppercase;letter-spacing:0.08em;margin:0">Daily Burn Rate</p>
               </div>
-              <div class="font-num" style="font-size:21px;font-weight:900;color:#B45309;letter-spacing:-0.02em" id="stat-tier">TIER 2 · AUTO</div>
+              <div class="font-num" style="font-size:22px;font-weight:900;color:#FBBF24;text-shadow:0 0 18px rgba(251,191,36,0.4);letter-spacing:-0.02em" id="stat-tier">TIER 2 · AUTO</div>
             </div>
-            <div style="width:42px;height:42px;border-radius:13px;background:#FEF3C7;border:1px solid #FDE68A;display:flex;align-items:center;justify-content:center;color:#B45309;font-size:17px;box-shadow:0 2px 8px rgba(217,119,6,0.15)">
-              <i class="fa-solid fa-award"></i>
+            <div style="width:42px;height:42px;border-radius:13px;background:rgba(251,191,36,0.18);border:1px solid rgba(251,191,36,0.4);display:flex;align-items:center;justify-content:center;color:#FBBF24;font-size:17px;box-shadow:0 2px 8px rgba(180,83,9,0.15)">
+              <i class="fa-solid fa-gauge-high"></i>
             </div>
           </div>
           <div style="margin-top:14px;display:flex;align-items:center;justify-content:space-between;font-size:11.5px">
-            <span style="color:#64748B"><strong style="color:#0F172A" id="stat-tx-count">18 clean</strong> orders</span>
-            <span style="background:#FEF3C7;color:#B45309;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid #FDE68A">0 COMPROMISES</span>
+            <span style="color:#CBD5E1">Policy Mode: <strong style="color:#FFFFFF;font-family:'JetBrains Mono'">CONSERVATIVE</strong></span>
+            <span style="background:rgba(251,191,36,0.15);color:#FBBF24;font-weight:700;padding:2px 8px;border-radius:6px;font-size:10px;border:1px solid rgba(251,191,36,0.35)">ACTIVE</span>
           </div>
         </div>
-      </div>
+      </div>div>
 
       <!-- TAB SECTIONS — all original HTML preserved below -->
       <div style="flex:1">
@@ -1307,14 +1402,20 @@
             </div>
             
             <div style="text-align:center;padding:6px 0 14px">
-              <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:clamp(42px, 6.5vw, 76px);font-weight:900;letter-spacing:0.06em;color:#FFFFFF;text-transform:uppercase;line-height:0.95;text-shadow:0 4px 30px rgba(0,0,0,0.5)">
-                MAKE TODAY
+              <div class="masked-line-wrap">
+                <div class="masked-line" style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:clamp(42px, 6.5vw, 76px);font-weight:900;letter-spacing:0.06em;color:#FFFFFF;text-transform:uppercase;line-height:0.95;text-shadow:0 4px 30px rgba(0,0,0,0.5);animation-delay:0s">
+                  MAKE TODAY
+                </div>
               </div>
-              <div style="font-family:'Italianno',cursive;font-size:clamp(54px, 8.5vw, 98px);font-weight:400;color:#F472B6;line-height:0.8;margin-top:2px;text-shadow:0 0 35px rgba(244,114,182,0.45)">
-                Amazing
+              <div class="masked-line-wrap" style="margin-top:2px">
+                <div class="masked-line" style="font-family:'Italianno',cursive;font-size:clamp(54px, 8.5vw, 98px);font-weight:400;color:#F472B6;line-height:0.8;text-shadow:0 0 35px rgba(244,114,182,0.45);animation-delay:0.06s">
+                  Amazing
+                </div>
               </div>
-              <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:16px;color:rgba(253,242,248,0.82);margin-top:14px;letter-spacing:0.02em">
-                What is your purchasing &amp; restocking plan for today?
+              <div class="masked-line-wrap" style="margin-top:14px">
+                <div class="masked-line" style="font-family:'Playfair Display',serif;font-style:italic;font-size:16px;color:rgba(253,242,248,0.82);letter-spacing:0.02em;animation-delay:0.12s">
+                  What is your purchasing &amp; restocking plan for today?
+                </div>
               </div>
             </div>
             
@@ -1336,50 +1437,48 @@
             </div>
           </div>
 
-          <!-- Grand Agent Prompt Omnibar -->
-          <div class="p-6 rounded-3xl bg-slate-900/80 border border-fuchsia-500/30 shadow-2xl shadow-fuchsia-950/60 relative overflow-hidden backdrop-blur-2xl">
-            <div class="absolute -right-20 -top-20 w-72 h-72 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -left-20 -bottom-20 w-72 h-72 bg-pink-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                                <!-- ═══════════════════════════════════════════════════════
+               GRAND AUTONOMOUS SOURCING OMNIBAR CARD (TACTILE 3D CARD)
+               ═══════════════════════════════════════════════════════ -->
+          <div id="home-prompt-card" class="max-w-3xl mx-auto my-6 p-6 rounded-3xl spotlight-card bento-card card-3d-tilt noise-overlay" style="background:rgba(18,18,21,0.92);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(20px);box-shadow:0 16px 44px -8px rgba(0,0,0,0.8),0 0 30px rgba(217,70,239,0.14)">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4">
+              <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-fuchsia-400 animate-pulse"></span>
+                <h3 class="font-editorial text-2xl font-black text-white tracking-wide" style="font-family:'Bodoni Moda','Playfair Display',serif;font-style:italic">What's your order, Sir?</h3>
+              </div>
+              <span class="badge" style="background:rgba(217,70,239,0.15);border:1px solid rgba(244,114,182,0.35);color:#F472B6;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:9999px;align-self:flex-start">
+                PAYPAL ESCROW ACTIVE
+              </span>
+            </div>
 
-            <div class="relative z-10 space-y-4">
-              <div class="flex items-center justify-between text-xs">
-                <div class="flex items-center space-x-2">
-                  <span class="px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-500/35">
-                    Dynamic Mandate
-                  </span>
-                </div>
-                <div class="text-[11px] font-mono text-fuchsia-200/90 tracking-wider uppercase">
-                  PayPal Escrow Sandbox Active
-                </div>
+            <!-- Main Textarea Input -->
+            <div class="relative mb-4">
+              <textarea id="home-prompt-input" rows="3" placeholder="Tell AgenticPay what to buy, restock, or negotiate..." class="w-full p-4 pl-4 pr-20 bg-black/50 border border-white/10 rounded-2xl text-base text-white placeholder-fuchsia-200/40 focus:outline-none focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-500/30 font-medium transition shadow-inner resize-none"></textarea>
+              <button type="button" onclick="startVoiceHomePrompt()" class="btn-magnetic absolute right-3.5 top-3.5 px-3 py-1 bg-fuchsia-950/70 hover:bg-fuchsia-900 border border-fuchsia-500/35 rounded-lg text-xs font-bold text-fuchsia-300 hover:text-white transition cursor-pointer tracking-wider uppercase" title="Voice Input">VOICE</button>
+            </div>
+
+            <!-- Quick Prompts & Action Row -->
+            <div class="space-y-3">
+              <div class="flex flex-wrap items-center gap-2">
+                <span style="font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,114,182,0.85);margin-right:2px">
+                  Quick Prompts:
+                </span>
+                <button type="button" onclick="setHomePromptAndRun('order me a pack of baloons of golden and black colour for my houseparty')" class="btn-magnetic px-3 py-1.5 bg-fuchsia-950/50 hover:bg-fuchsia-900/70 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
+                  Black &amp; Gold Balloons
+                </button>
+                <button type="button" onclick="setHomePromptAndRun('order 1 kg chilli powder for me')" class="btn-magnetic px-3 py-1.5 bg-fuchsia-950/50 hover:bg-fuchsia-900/70 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
+                  1 kg Chilli Powder
+                </button>
+                <button type="button" onclick="setHomePromptAndRun('order a logitech wireless mouse under 1000')" class="btn-magnetic px-3 py-1.5 bg-fuchsia-950/50 hover:bg-fuchsia-900/70 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
+                  Wireless Mouse
+                </button>
+                <button type="button" onclick="setHomePromptAndRun('buy 2 packs of organic green tea')" class="btn-magnetic px-3 py-1.5 bg-fuchsia-950/50 hover:bg-fuchsia-900/70 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
+                  Organic Green Tea
+                </button>
               </div>
 
-              <!-- Main Textarea Input -->
-              <div class="relative">
-                <textarea id="home-prompt-input" rows="3" placeholder="Tell AgenticPay what to buy, restock, or negotiate..." class="w-full p-4 pl-4 pr-20 bg-black/40 border border-fuchsia-500/30 rounded-2xl text-base text-white placeholder-fuchsia-300/40 focus:outline-none focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-500/30 font-medium transition shadow-inner resize-none"></textarea>
-                <button onclick="startVoiceHomePrompt()" class="absolute right-3.5 top-3.5 px-3 py-1 bg-fuchsia-950/70 hover:bg-fuchsia-900 border border-fuchsia-500/35 rounded-lg text-xs font-bold text-fuchsia-300 hover:text-white transition cursor-pointer tracking-wider uppercase" title="Voice Input">VOICE</button>
-              </div>
-
-              <!-- Bottom Action Row -->
-              <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-1">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span style="font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:rgba(244,114,182,0.85);margin-right:4px">
-                    Suggestions:
-                  </span>
-                  <button onclick="setHomePromptAndRun('order me a pack of baloons of golden and black colour for my houseparty')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
-                    Black &amp; Gold Balloons
-                  </button>
-                  <button onclick="setHomePromptAndRun('order 1 kg chilli powder for me')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
-                    1 kg Chilli Powder
-                  </button>
-                  <button onclick="setHomePromptAndRun('order a logitech wireless mouse under 1000')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
-                    Wireless Mouse
-                  </button>
-                  <button onclick="setHomePromptAndRun('buy 2 packs of organic green tea')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">
-                    Organic Green Tea
-                  </button>
-                </div>
-
-                <button id="btn-home-execute" onclick="executeFromHomePrompt()" class="btn-primary px-7 py-3 rounded-xl text-xs font-black tracking-wider uppercase flex items-center justify-center flex-shrink-0 cursor-pointer shadow-lg shadow-fuchsia-600/40" style="letter-spacing:0.08em">
+              <div class="pt-2 flex justify-end">
+                <button id="btn-home-execute" type="button" onclick="executeFromHomePrompt()" class="btn-primary btn-magnetic px-7 py-3 rounded-xl text-xs font-black tracking-wider uppercase flex items-center justify-center cursor-pointer shadow-lg shadow-fuchsia-600/40" style="letter-spacing:0.08em">
                   <span>Deploy Autonomous Sourcing &rarr;</span>
                 </button>
               </div>
@@ -1399,26 +1498,20 @@
             </div>
             
             <!-- Live orders rendered dynamically -->
-            <div id="home-live-deliveries" class="space-y-3">
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="p-6 rounded-2xl bg-fuchsia-950/30 border border-fuchsia-500/20 backdrop-blur-xl space-y-3">
-                  <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:26px;font-weight:900;color:#F472B6;letter-spacing:0.04em;line-height:1">
-                    01
-                  </div>
-                  <h4 class="font-editorial text-base font-bold text-white tracking-wide">Instant Cross-Dark-Store Scout</h4>
-                  <p class="text-xs text-fuchsia-200/70 leading-relaxed font-sans">Scours Blinkit, Zepto, Meesho, and regional wholesale suppliers for the fastest ETA and lowest landed price.</p>
+            <div id="home-live-deliveries" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-6 py-4 border-b border-fuchsia-500/20" style="background:transparent;">
+                <div class="py-3 space-y-2" style="background:transparent;">
+                  <div class="font-mono text-xs font-bold text-fuchsia-400 tracking-wider">01 // AUTONOMOUS_SCOUT</div>
+                  <h4 class="font-editorial text-base font-bold text-white tracking-wide">Cross-Dark-Store Discovery</h4>
+                  <p class="text-xs text-fuchsia-200/70 leading-relaxed font-sans">Scours Blinkit, Zepto, Meesho, and wholesale suppliers for lowest landed price and fastest ETA.</p>
                 </div>
-                <div class="p-6 rounded-2xl bg-fuchsia-950/30 border border-fuchsia-500/20 backdrop-blur-xl space-y-3">
-                  <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:26px;font-weight:900;color:#34D399;letter-spacing:0.04em;line-height:1">
-                    02
-                  </div>
-                  <h4 class="font-editorial text-base font-bold text-white tracking-wide">Zero-LLM Math Guardrails</h4>
-                  <p class="text-xs text-fuchsia-200/70 leading-relaxed font-sans">Budgets are derived through pure Zod type invariants and treasury checks. Zero LLM hallucinations.</p>
+                <div class="py-3 space-y-2 border-l border-fuchsia-500/15 pl-0 md:pl-6" style="background:transparent;">
+                  <div class="font-mono text-xs font-bold text-emerald-400 tracking-wider">02 // MATHEMATICAL_GUARDRAIL</div>
+                  <h4 class="font-editorial text-base font-bold text-white tracking-wide">Zero-LLM Solvency Invariants</h4>
+                  <p class="text-xs text-fuchsia-200/70 leading-relaxed font-sans">Budgets enforce pure Zod schema invariants and dynamic reserve limits with 0 LLM hallucination risk.</p>
                 </div>
-                <div class="p-6 rounded-2xl bg-fuchsia-950/30 border border-fuchsia-500/20 backdrop-blur-xl space-y-3">
-                  <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:26px;font-weight:900;color:#38BDF8;letter-spacing:0.04em;line-height:1">
-                    03
-                  </div>
+                <div class="py-3 space-y-2 border-l border-fuchsia-500/15 pl-0 md:pl-6" style="background:transparent;">
+                  <div class="font-mono text-xs font-bold text-cyan-400 tracking-wider">03 // REVERSIBLE_ESCROW</div>
                   <h4 class="font-editorial text-base font-bold text-white tracking-wide">PayPal 60s Reversible Hold</h4>
                   <p class="text-xs text-fuchsia-200/70 leading-relaxed font-sans">Funds are held in sandbox authorization escrow with a 60-second undo window before final capture.</p>
                 </div>
@@ -1427,6 +1520,242 @@
           </div>
 
           <!-- ═══════════════════════════════════════════════════════
+               ANIMATED PAYMENT RAIL ARCHITECTURE (SVG BEAM FLOW)
+               ═══════════════════════════════════════════════════════ -->
+          <div id="payment-rail-architecture" class="py-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-cyan-950/80 text-cyan-300 border border-cyan-500/35 tracking-wider">
+                    Autonomous Routing Rail
+                  </span>
+                  <span class="text-xs text-slate-400 font-mono">Real-Time Event Bus</span>
+                </div>
+                <h3 class="font-editorial text-xl font-bold text-white tracking-wide uppercase">Payment Rail Architecture &bull; 4-Node Autonomous Pipeline</h3>
+              </div>
+              <div class="flex items-center gap-2 font-mono text-xs text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>ALL RAILS HEALTHY</span>
+              </div>
+            </div>
+
+            <!-- 4 Connected Glass Cards with SVG Flow Beams -->
+            <div class="relative">
+              <!-- SVG Connector Overlay (Desktop) -->
+              <svg class="absolute inset-0 w-full h-full pointer-events-none hidden md:block" style="z-index: 1;" preserveAspectRatio="none" viewBox="0 0 1000 120">
+                <defs>
+                  <linearGradient id="beamGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.8"/>
+                    <stop offset="50%" stop-color="#D946EF" stop-opacity="1"/>
+                    <stop offset="100%" stop-color="#10B981" stop-opacity="0.9"/>
+                  </linearGradient>
+                </defs>
+                <!-- Base lines -->
+                <line x1="220" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="4 4"/>
+                <line x1="470" y1="60" x2="530" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="4 4"/>
+                <line x1="720" y1="60" x2="780" y2="60" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="4 4"/>
+
+                <!-- Animated flowing beams -->
+                <line x1="220" y1="60" x2="280" y2="60" stroke="url(#beamGradient)" stroke-width="3" class="beam-flow-line"/>
+                <line x1="470" y1="60" x2="530" y2="60" stroke="url(#beamGradient)" stroke-width="3" class="beam-flow-line" style="animation-delay: 0.6s"/>
+                <line x1="720" y1="60" x2="780" y2="60" stroke="url(#beamGradient)" stroke-width="3" class="beam-flow-line" style="animation-delay: 1.2s"/>
+              </svg>
+
+              <!-- 4 Glass Cards Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 relative" style="z-index: 2;">
+                <!-- Node 1 -->
+                <div class="bento-card spotlight-card p-5 space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-cyan-400 font-bold uppercase tracking-wider">Node 01</span>
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                  </div>
+                  <h4 class="font-editorial text-sm font-bold text-white">User / AI Agent</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans">Natural language command parsed via Gemini 3.8 Flash into structured intent payload.</p>
+                  <div class="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 p-1.5 rounded border border-cyan-500/20">
+                    DELEGATED_SESSION_KEY
+                  </div>
+                </div>
+
+                <!-- Node 2 -->
+                <div class="bento-card spotlight-card p-5 space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-fuchsia-400 font-bold uppercase tracking-wider">Node 02</span>
+                    <span class="w-2 h-2 rounded-full bg-fuchsia-400"></span>
+                  </div>
+                  <h4 class="font-editorial text-sm font-bold text-white">Policy &amp; Guardrail Engine</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans">Zero-LLM mathematical checks enforce spend ceilings, fraud velocity, and solvency proofs.</p>
+                  <div class="text-[10px] font-mono text-fuchsia-300 bg-fuchsia-950/60 p-1.5 rounded border border-fuchsia-500/20">
+                    ZK_SOLVENCY_INVARIANTS
+                  </div>
+                </div>
+
+                <!-- Node 3 -->
+                <div class="bento-card spotlight-card p-5 space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-wider">Node 03</span>
+                    <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                  </div>
+                  <h4 class="font-editorial text-sm font-bold text-white">NPCI / UPI Switch</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans">High-throughput sub-200ms VPA routing with 256-bit TLS handshake to core banking rails.</p>
+                  <div class="text-[10px] font-mono text-amber-300 bg-amber-950/60 p-1.5 rounded border border-amber-500/20">
+                    DUAL_STAGE_AUTH_HOLD
+                  </div>
+                </div>
+
+                <!-- Node 4 -->
+                <div class="bento-card spotlight-card p-5 space-y-2.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Node 04</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  </div>
+                  <h4 class="font-editorial text-sm font-bold text-white">Merchant Settlement</h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans">Immediate credit with 60-second reversible escrow protection and cryptographic UTR ledger.</p>
+                  <div class="text-[10px] font-mono text-emerald-300 bg-emerald-950/60 p-1.5 rounded border border-emerald-500/20">
+                    INSTANT_SETTLEMENT_UTR
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══════════════════════════════════════════════════════
+               INTERACTIVE DELEGATED GUARDRAIL SLIDER (BENTO GRID)
+               ═══════════════════════════════════════════════════════ -->
+          <div id="delegated-guardrails-bento" class="py-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-500/35 tracking-wider">
+                    Autonomous Guardrails
+                  </span>
+                  <span class="text-xs text-slate-400 font-mono">Bento Control Deck</span>
+                </div>
+                <h3 class="font-editorial text-xl font-bold text-white tracking-wide uppercase">Delegated Spending Limits &amp; MCC Controls</h3>
+              </div>
+              <div class="text-xs font-mono text-fuchsia-300">
+                <i class="fa-solid fa-sliders mr-1 text-fuchsia-400"></i> LIVE ADAPTIVE POLICY
+              </div>
+            </div>
+
+            <!-- Asymmetrical 3-Card Bento Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+              <!-- Primary Card: Interactive Spending Guardrail Slider (Span 6) -->
+              <div class="lg:col-span-6 bento-card spotlight-card p-6 flex flex-col justify-between space-y-4">
+                <div>
+                  <div class="flex items-center justify-between gap-2 mb-3">
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-wallet text-cyan-400 text-lg"></i>
+                      <h4 class="font-editorial text-base font-bold text-white">Agent Spending Guardrail</h4>
+                    </div>
+                    <!-- Dynamically updated animated layout badge -->
+                    <span id="bento-guardrail-badge" class="badge layout-transition" style="background:rgba(217,70,239,0.18);border:1px solid rgba(244,114,182,0.45);color:#F472B6;font-size:10px;font-weight:800;padding:4px 10px;border-radius:9999px">
+                      <i class="fa-solid fa-fingerprint mr-1"></i> DELEGATED MANDATE // BIOMETRIC
+                    </span>
+                  </div>
+
+                  <p class="text-xs text-slate-300 leading-relaxed font-sans mb-4">
+                    Set the single-transaction auto-approve limit. Orders within this cap execute autonomously without requesting interactive PIN or biometric authorization.
+                  </p>
+
+                  <!-- Limit readout in big tabular numbers -->
+                  <div class="p-4 rounded-xl bg-black/40 border border-white/10 flex items-center justify-between mb-4">
+                    <span class="text-xs text-slate-400 font-mono uppercase">Single Order Limit:</span>
+                    <span id="bento-slider-amount" class="text-2xl font-black text-white font-num tabular-nums tracking-tight">₹2,500</span>
+                  </div>
+
+                  <!-- Range Slider -->
+                  <div class="space-y-2">
+                    <input type="range" id="bento-guardrail-slider" min="500" max="15000" step="250" value="2500"
+                      class="w-full h-2 rounded-lg appearance-none cursor-pointer accent-[#D946EF] bg-slate-800"
+                      oninput="updateBentoGuardrail(this.value)">
+                    <div class="flex justify-between text-[11px] font-mono text-slate-400">
+                      <span>₹500 (Lite)</span>
+                      <span>₹5,000</span>
+                      <span>₹10,000</span>
+                      <span>₹15,000 (Max)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-3 border-t border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-400">
+                  <span id="bento-guardrail-desc">Orders &gt; ₹1,000 bound by pre-delegated session mandate</span>
+                  <span class="text-emerald-400 font-bold"><i class="fa-solid fa-lock mr-1"></i>SECURED</span>
+                </div>
+              </div>
+
+              <!-- Secondary Card 1: Velocity & Risk Engine (Span 3) -->
+              <div class="lg:col-span-3 bento-card spotlight-card p-6 flex flex-col justify-between space-y-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-gauge-high text-amber-400"></i>
+                    <h4 class="font-editorial text-sm font-bold text-white uppercase">Velocity &amp; Risk</h4>
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans mb-3">
+                    Real-time transaction frequency throttler protecting against replay and runaway loops.
+                  </p>
+
+                  <div class="space-y-2.5 text-xs font-mono">
+                    <div class="p-2.5 rounded-lg bg-black/40 border border-white/10 flex justify-between items-center">
+                      <span class="text-slate-400">Max Frequency:</span>
+                      <span class="text-white font-bold">10 orders/hr</span>
+                    </div>
+                    <div class="p-2.5 rounded-lg bg-black/40 border border-white/10 flex justify-between items-center">
+                      <span class="text-slate-400">Risk Assessment:</span>
+                      <span class="text-emerald-400 font-bold">0.02% (LOW)</span>
+                    </div>
+                    <div class="p-2.5 rounded-lg bg-black/40 border border-white/10 flex justify-between items-center">
+                      <span class="text-slate-400">Daily Buffer:</span>
+                      <span class="text-cyan-300 font-bold font-num tabular-nums">₹25,000 / day</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 text-[10.5px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>ANOMALY DETECTION</span>
+                  <span class="text-emerald-400">ACTIVE</span>
+                </div>
+              </div>
+
+              <!-- Secondary Card 2: Merchant Allowlist & MCC Controls (Span 3) -->
+              <div class="lg:col-span-3 bento-card spotlight-card p-6 flex flex-col justify-between space-y-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-building-shield text-emerald-400"></i>
+                    <h4 class="font-editorial text-sm font-bold text-white uppercase">MCC &amp; Merchant Rules</h4>
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-relaxed font-sans mb-3">
+                    Cryptographic allowlisting for approved merchant category codes (MCCs).
+                  </p>
+
+                  <div class="space-y-2 text-[11px] font-mono">
+                    <div class="flex items-center justify-between p-2 rounded bg-emerald-950/40 border border-emerald-500/25">
+                      <span class="text-slate-200">Food / Grocery (5411)</span>
+                      <span class="text-emerald-400 font-bold text-[10px]">AUTO-APPROVE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded bg-emerald-950/40 border border-emerald-500/25">
+                      <span class="text-slate-200">Logistics / Rides (4121)</span>
+                      <span class="text-emerald-400 font-bold text-[10px]">AUTO-APPROVE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded bg-emerald-950/40 border border-emerald-500/25">
+                      <span class="text-slate-200">Cloud Services (7372)</span>
+                      <span class="text-emerald-400 font-bold text-[10px]">AUTO-APPROVE</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2 rounded bg-rose-950/30 border border-rose-500/20">
+                      <span class="text-slate-400">Gambling / Crypto (7995)</span>
+                      <span class="text-rose-400 font-bold text-[10px]">BLOCKED</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-2 text-[10.5px] font-mono text-slate-400 flex items-center justify-between">
+                  <span>POLICY ENFORCEMENT</span>
+                  <span class="text-emerald-400">STRICT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- ═══════════════════════════════════════════════════════
                STICKY SCROLL STORYTELLING STAGE
                ═══════════════════════════════════════════════════════ -->
           <div id="sticky-story-section" class="pt-8 pb-4 space-y-6">
@@ -1625,7 +1954,7 @@
                       <span>Zero-Touch Autonomous Commerce</span>
                     </span>
                     <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-500/35 flex items-center gap-1">
-                      <i class="fa-solid fa-wand-magic-sparkles text-[10px] text-fuchsia-400"></i> Gemini 3.8 Flash Active
+                      Gemini 3.8 Flash Active
                     </span>
                   </div>
                   <h3 class="font-editorial text-xl font-extrabold text-white tracking-tight" style="color:#FFFFFF !important">Executive Autonomous Purchasing Deck</h3>
@@ -1637,7 +1966,7 @@
               <div class="flex flex-col sm:flex-row gap-2">
                 <div class="relative flex-1">
                   <i class="fa-solid fa-cart-shopping absolute left-4 top-3.5 text-fuchsia-400 text-sm"></i>
-                  <input id="dash-quick-order-input" type="text" placeholder="Type what to order (e.g., 'order 1 kg chilli powder for me', 'buy 50 black balloons', 'buy wireless mouse')..." value="order 1 kg chilli powder for me" class="w-full pl-11 pr-4 py-3 bg-black/40 border border-fuchsia-500/30 rounded-xl text-sm text-white placeholder-fuchsia-300/40 focus:outline-none focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-500/30 font-medium transition shadow-inner" onkeydown="if(event.key==='Enter') quickOrderFromDashboard()" />
+                  <input id="dash-quick-order-input" type="text" placeholder="Type what to order..." value="order 1 kg chilli powder for me" class="w-full pl-11 pr-4 py-3 bg-black/40 border border-fuchsia-500/30 rounded-xl text-sm text-white placeholder-fuchsia-300/40 focus:outline-none focus:border-fuchsia-400 focus:ring-2 focus:ring-fuchsia-500/30 font-medium transition shadow-inner" onkeydown="if(event.key==='Enter') quickOrderFromDashboard()" />
                 </div>
                 <button onclick="quickOrderFromDashboard()" class="px-6 py-3 bg-gradient-to-r from-cyan-600 via-sky-600 to-fuchsia-600 hover:from-cyan-500 hover:to-fuchsia-500 text-white rounded-xl text-sm font-black shadow-lg shadow-sky-600/25 transition flex items-center justify-center space-x-2 flex-shrink-0 cursor-pointer">
                   <i class="fa-solid fa-bolt"></i>
@@ -1649,16 +1978,16 @@
               <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
                 <span class="text-[11px] font-extrabold uppercase tracking-wider" style="color:#F472B6 !important">Quick Prompts:</span>
                 <button onclick="document.getElementById('dash-quick-order-input').value='order 1 kg chilli powder for me'; quickOrderFromDashboard()" class="px-3 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-lg text-xs font-semibold transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-pepper-hot text-rose-400"></i> <span>1 kg Chilli Powder</span>
+                  <span>1 kg Chilli Powder</span>
                 </button>
                 <button onclick="document.getElementById('dash-quick-order-input').value='order me a pack of baloons of golden and black colour for my houseparty'; quickOrderFromDashboard()" class="px-3 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-lg text-xs font-semibold transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-shapes text-indigo-400"></i> <span>Black & Gold Balloons</span>
+                  <span>Black & Gold Balloons</span>
                 </button>
                 <button onclick="document.getElementById('dash-quick-order-input').value='order a logitech wireless mouse under 1000'; quickOrderFromDashboard()" class="px-3 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-lg text-xs font-semibold transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-mouse text-sky-400"></i> <span>Wireless Mouse</span>
+                  <span>Wireless Mouse</span>
                 </button>
                 <button onclick="document.getElementById('dash-quick-order-input').value='buy 2 packs of organic green tea'; quickOrderFromDashboard()" class="px-3 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-lg text-xs font-semibold transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer flex items-center gap-1.5 shadow-sm">
-                  <i class="fa-solid fa-mug-hot text-emerald-400"></i> <span>Organic Green Tea</span>
+                  <span>Organic Green Tea</span>
                 </button>
               </div>
             </div>
@@ -1817,7 +2146,7 @@
             </span>
             <input type="text" id="webscout-input" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:ring-2 focus:ring-paypal-accent outline-none" placeholder="Search anything across web (e.g. Nike Air Jordan 1, Floral Summer Dress, Samsung S24 Ultra...)" value="Nike Air Jordan 1">
           </div>
-          <button onclick="searchWebScout()" id="btn-webscout-search" class="px-8 py-3 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-sm shadow-lg shadow-paypal-blue/30 transition flex items-center justify-center space-x-2">
+          <button onclick="searchWebScout()" id="btn-webscout-search" class="px-8 py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 via-pink-600 to-fuchsia-700 hover:from-fuchsia-500 hover:to-pink-500 text-white font-black text-sm shadow-lg shadow-fuchsia-600/30 transition flex items-center justify-center space-x-2">
             <i class="fa-solid fa-bolt"></i>
             <span>Compare Live Web Deals</span>
           </button>
@@ -1826,11 +2155,11 @@
         <!-- Quick Search Suggestion Chips -->
         <div class="flex flex-wrap items-center gap-2 pt-1">
           <span class="text-xs font-semibold mr-1" style="color:#F472B6 !important">Trending Searches:</span>
-          <button onclick="setWebScoutQuery('Nike Air Jordan 1')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-shoe-prints text-indigo-400"></i> Nike Air Jordan 1</button>
-          <button onclick="setWebScoutQuery('Floral Summer Dress for Women')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-shirt text-pink-400"></i> Floral Summer Dress</button>
+          <button onclick="setWebScoutQuery('Nike Air Jordan 1')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Nike Air Jordan 1</button>
+          <button onclick="setWebScoutQuery('Floral Summer Dress for Women')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Floral Summer Dress</button>
           <button onclick="setWebScoutQuery('Samsung Galaxy S24 Ultra 256GB')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-mobile-screen text-slate-300"></i> Samsung Galaxy S24</button>
-          <button onclick="setWebScoutQuery('Sony WH-1000XM5 Wireless Headphones')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-headphones text-slate-300"></i> Sony WH-1000XM5</button>
-          <button onclick="setWebScoutQuery('Ceremonial Grade Matcha 100g')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-mug-hot text-emerald-400"></i> Uji Ceremonial Matcha</button>
+          <button onclick="setWebScoutQuery('Sony WH-1000XM5 Wireless Headphones')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-wave-square text-slate-300"></i> Sony WH-1000XM5</button>
+          <button onclick="setWebScoutQuery('Ceremonial Grade Matcha 100g')" class="px-3 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Uji Ceremonial Matcha</button>
         </div>
       </div>
 
@@ -1838,7 +2167,7 @@
       <div id="webscout-summary-banner" class="hidden p-5 rounded-2xl bg-emerald-950/70 border border-emerald-500/40 shadow-lg space-y-2">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
           <div class="flex items-center space-x-2">
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-600 text-white uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-award"></i> Top Recommended Deal</span>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-600 text-white uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Top Recommended Deal</span>
             <span class="text-xs text-emerald-300/80 font-mono" id="webscout-best-platform">Platform: Meesho</span>
           </div>
           <span class="text-sm font-black text-emerald-400 font-mono" id="webscout-savings-callout">Saves up to $49.45 vs Peak</span>
@@ -1888,7 +2217,6 @@
         <div class="lg:col-span-5 space-y-5">
           <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
             <h3 class="text-sm font-bold uppercase tracking-wider text-white flex items-center space-x-2">
-              <i class="fa-solid fa-graduation-cap text-paypal-accent"></i>
               <span>Teach Intent Rules to Agent</span>
             </h3>
             <p class="text-xs text-slate-400">Teach the agent in natural language. It semantically parses the condition, registers the policy, and adapts the dynamic mandate immediately.</p>
@@ -1898,14 +2226,13 @@
 
               <div class="flex flex-wrap gap-1.5">
                 <span class="text-[11px] font-semibold block w-full mb-0.5" style="color:#F472B6 !important">Quick-Teach Templates:</span>
-                <button onclick="setTeachRuleText('If supplier offers volume discount >= 15% and rating >= 4.8, allow mandate up to $1,500')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-lightbulb text-amber-400"></i> 15% Discount → $1.5k Mandate</button>
-                <button onclick="setTeachRuleText('Trust Kyoto Tea Co Direct with up to $1,200 reorder allowance for Ceremonial Matcha')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-mug-hot text-emerald-400"></i> Trust Kyoto Tea up to $1.2k</button>
+                <button onclick="setTeachRuleText('If supplier offers volume discount >= 15% and rating >= 4.8, allow mandate up to $1,500')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">15% Discount → $1.5k Mandate</button>
+                <button onclick="setTeachRuleText('Trust Kyoto Tea Co Direct with up to $1,200 reorder allowance for Ceremonial Matcha')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Trust Kyoto Tea up to $1.2k</button>
                 <button onclick="setTeachRuleText('If cash runway drops below 45 days, automatically compress all spending mandates by 40%')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-rose-400"></i> Runway &lt; 45d → 40% Cut</button>
                 <button onclick="setTeachRuleText('When restock cost exceeds mandate ceiling, dynamically auto-downsize batch to fit limit instead of halting')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-[11px] text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-compress text-sky-400"></i> Auto-downsize on Mandate Cap</button>
               </div>
 
               <button onclick="teachRuleToAgent()" id="btn-teach-rule" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-paypal-blue hover:opacity-95 text-white font-bold text-xs shadow-lg transition flex items-center justify-center space-x-2">
-                <i class="fa-solid fa-sparkles"></i>
                 <span>Teach Agent This Rule</span>
               </button>
             </div>
@@ -1941,7 +2268,7 @@
             <i class="fa-solid fa-triangle-exclamation text-rose-400"></i> Prompt Injection (System Override)
           </button>
           <button onclick="loadAttackPreset('spoof')" class="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 border border-rose-500/35 text-rose-200 text-xs font-semibold transition flex items-center gap-1.5">
-            <i class="fa-solid fa-user-secret text-rose-400"></i> Payee Spoofing (Offshore Divert)
+            Payee Spoofing (Offshore Divert)
           </button>
           <button onclick="loadAttackPreset('rtl')" class="px-3 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 border border-rose-500/35 text-rose-200 text-xs font-semibold transition flex items-center gap-1.5">
             <i class="fa-solid fa-code text-rose-400"></i> Stealth Unicode RTL (U+202E)
@@ -2090,7 +2417,6 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <h2 class="text-xl font-bold text-white flex items-center space-x-2.5">
-              <i class="fa-solid fa-handshake-angle text-[#FF1493]"></i>
               <span>Wholesale Deal Scout & Smart Restock</span>
             </h2>
             <p class="text-sm text-fuchsia-200/80 mt-1">Tell AgenticPay what you're running low on. We negotiate across verified wholesale suppliers, compute all-in landed prices with volume tiers, and handpick the sweetest deal before you run out of stock.</p>
@@ -2130,12 +2456,12 @@
         <!-- Quick Search Suggestion Chips -->
         <div class="flex flex-wrap items-center gap-2 pt-1">
           <span class="text-xs font-semibold mr-1" style="color:#F472B6 !important">Popular items:</span>
-          <button onclick="setScoutQuery('Organic Earl Grey Reserve', 100, 11)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-leaf text-emerald-400"></i> Earl Grey Reserve</button>
-          <button onclick="setScoutQuery('Kraft Stand-Up Pouches 250g', 250, 7)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-box-open text-amber-400"></i> Kraft Pouches 250g</button>
-          <button onclick="setScoutQuery('Ceremonial Grade Matcha 100g', 50, 8)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-mug-hot text-emerald-400"></i> Uji Matcha Powder</button>
-          <button onclick="setScoutQuery('Single-Origin Colombian Coffee Beans', 50, 10)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-mug-saucer text-amber-400"></i> Colombian Coffee 1kg</button>
-          <button onclick="setScoutQuery('Compostable Hot Cups 12oz', 10, 5)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-glass-water text-sky-400"></i> 12oz Eco Hot Cups</button>
-          <button onclick="setScoutQuery('Boba Tapioca Pearls 1kg', 80, 12)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5"><i class="fa-solid fa-circle-dot text-indigo-400"></i> Boba Pearls</button>
+          <button onclick="setScoutQuery('Organic Earl Grey Reserve', 100, 11)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Earl Grey Reserve</button>
+          <button onclick="setScoutQuery('Kraft Stand-Up Pouches 250g', 250, 7)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Kraft Pouches 250g</button>
+          <button onclick="setScoutQuery('Ceremonial Grade Matcha 100g', 50, 8)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Uji Matcha Powder</button>
+          <button onclick="setScoutQuery('Single-Origin Colombian Coffee Beans', 50, 10)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Colombian Coffee 1kg</button>
+          <button onclick="setScoutQuery('Compostable Hot Cups 12oz', 10, 5)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">12oz Eco Hot Cups</button>
+          <button onclick="setScoutQuery('Boba Tapioca Pearls 1kg', 80, 12)" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-xs text-fuchsia-100 font-medium transition border border-fuchsia-500/30 flex items-center gap-1.5">Boba Pearls</button>
         </div>
 
         <button onclick="searchAndScoutDeals()" id="btn-scout-search" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 via-pink-600 to-[#FF1493] hover:brightness-110 text-white font-black text-sm shadow-lg shadow-pink-900/30 transition flex items-center justify-center space-x-2 cursor-pointer">
@@ -2148,7 +2474,7 @@
       <div id="scout-recommendation-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-[#2c0524]/90 via-[#1c031a]/95 to-[#120214]/90 border border-[#FF1493]/40 shadow-[0_0_30px_rgba(255,20,147,0.2)] space-y-3">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div class="flex items-center space-x-2">
-            <span class="px-3 py-1 rounded-full text-[11px] font-black bg-[#FF1493] text-white uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_12px_rgba(255,20,147,0.7)]"><i class="fa-solid fa-award"></i> AgenticPay Top Recommendation</span>
+            <span class="px-3 py-1 rounded-full text-[11px] font-black bg-[#FF1493] text-white uppercase tracking-wider flex items-center gap-1.5 shadow-[0_0_12px_rgba(255,20,147,0.7)]"><i class="fa-solid fa-circle-check"></i> AgenticPay Top Recommendation</span>
             <span class="text-xs text-fuchsia-300/90 font-mono" id="scout-sku-tag">SKU: TEA-EG-001</span>
           </div>
           <span class="text-xs font-black text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1 rounded-xl font-mono text-sm self-start sm:self-auto" id="scout-total-savings">Total Savings: $93.00</span>
@@ -2372,7 +2698,7 @@
             </div>
           </div>
 
-          <button onclick="saveProfileChanges()" class="w-full py-3 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-sm shadow-lg shadow-paypal-blue/30 transition flex items-center justify-center space-x-2">
+          <button onclick="saveProfileChanges()" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 via-pink-600 to-fuchsia-700 hover:from-fuchsia-500 hover:to-pink-500 text-white font-black text-sm shadow-lg shadow-fuchsia-600/30 transition flex items-center justify-center space-x-2">
             <i class="fa-solid fa-floppy-disk"></i>
             <span>Save & Adapt Intent Profile</span>
           </button>
@@ -2443,8 +2769,8 @@
             <textarea id="dossier-notes" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-paypal-accent outline-none" placeholder="Explain the incident for PayPal Resolution Center reviewers...">Supplier submitted an unauthorized invoice attempting to redirect payment to an offshore cryptocurrency address. Pre-Flight Shield intercepted.</textarea>
           </div>
 
-          <button onclick="generateDisputeDossier()" id="btn-generate-dossier" class="w-full py-3 rounded-xl bg-gradient-to-r from-paypal-blue to-paypal-accent hover:opacity-95 text-slate-950 font-black text-sm shadow-lg shadow-paypal-blue/30 transition flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-stamp"></i>
+          <button onclick="generateDisputeDossier()" id="btn-generate-dossier" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 via-pink-600 to-fuchsia-700 hover:from-fuchsia-500 hover:to-pink-500 text-white font-black text-sm shadow-lg shadow-fuchsia-600/30 transition flex items-center justify-center space-x-2">
+            <i class="fa-solid fa-file-shield"></i>
             <span>Generate Cryptographic Dossier</span>
           </button>
         </div>
@@ -2660,22 +2986,22 @@
             <span class="text-[11px] font-semibold text-slate-400">Worldwide Presets to Test:</span>
             <div class="flex flex-wrap gap-2 text-xs">
               <button onclick="setRagPrompt('i want to order one kg of sugar')" class="px-2.5 py-1 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-100 border border-emerald-500/30 font-semibold transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-cube text-emerald-400"></i><span>1kg Sugar (BigBasket ₹48)</span>
+                <i class="fa-solid fa-database text-emerald-400"></i><span>1kg Sugar (BigBasket ₹48)</span>
               </button>
               <button onclick="setRagPrompt('buy me nike shoes under 1100')" class="px-2.5 py-1 rounded-lg bg-sky-950/60 hover:bg-sky-900/80 text-sky-100 border border-sky-500/30 font-semibold transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-shoe-prints text-sky-400"></i><span>Nike Shoes (Meesho ₹649)</span>
+                <span>Nike Shoes (Meesho ₹649)</span>
               </button>
               <button onclick="setRagPrompt('book 2 coldplay concert tickets under 5000')" class="px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 text-purple-100 border border-purple-500/30 font-semibold transition flex items-center space-x-1.5">
-                <i class="fa-solid fa-ticket text-purple-400"></i><span>Coldplay Tickets (₹3,500)</span>
+                <span>Coldplay Tickets (₹3,500)</span>
               </button>
               <button onclick="setRagPrompt('Reorder our popular matcha for next month, keep budget tight')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/70 text-fuchsia-100 font-medium border border-fuchsia-500/30 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-mug-hot text-emerald-400"></i><span>Matcha (Exact Alias)</span>
+                <span>Matcha (Exact Alias)</span>
               </button>
               <button onclick="setRagPrompt('Please replenish 15 units of SAAS-AWS-COMPUTE-01 right away, traffic is surging')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/70 text-fuchsia-100 font-medium border border-fuchsia-500/30 transition flex items-center gap-1.5">
                 <i class="fa-solid fa-cloud text-sky-400"></i><span>SaaS AWS (Exact SKU)</span>
               </button>
               <button onclick="setRagPrompt('Order 100 boxes of hospital sterile nitrile gloves large for surgery center')" class="px-2.5 py-1 rounded-lg bg-fuchsia-950/60 hover:bg-fuchsia-900/70 text-fuchsia-100 font-medium border border-fuchsia-500/30 transition flex items-center gap-1.5">
-                <i class="fa-solid fa-hand text-blue-400"></i><span>Hospital Nitrile Gloves</span>
+                <span>Hospital Nitrile Gloves</span>
               </button>
               <button onclick="setRagPrompt('Critical shortage: restock surgical gloves immediately!')" class="px-2.5 py-1 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 text-amber-100 font-medium border border-amber-500/30 transition flex items-center gap-1.5">
                 <i class="fa-solid fa-triangle-exclamation text-amber-400"></i><span>Ambiguity Trap (L vs M)</span>
@@ -2686,8 +3012,7 @@
             </div>
           </div>
 
-          <button onclick="executeRagGrounding()" id="btn-ground-rag" class="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 transition flex items-center justify-center space-x-2">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <button onclick="executeRagGrounding()" id="btn-ground-rag" class="w-full py-3 rounded-xl bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white font-bold text-sm shadow-lg shadow-fuchsia-600/30 transition flex items-center justify-center space-x-2">
             <span>Ground Intent & Generate ProposedIntentDraft JSON</span>
           </button>
         </div>
@@ -2735,7 +3060,7 @@
       </div>
 
       <!-- Small Business AI Intent & Transaction Audit Ledger -->
-      <div class="bg-gradient-to-b from-slate-900 to-slate-950 p-6 rounded-2xl border border-emerald-500/30 space-y-4 shadow-xl">
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
         <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-3">
           <div>
             <div class="flex items-center space-x-2">
@@ -2820,16 +3145,16 @@
             <span class="text-[11px] font-semibold text-slate-400">Quick Real-World Scenarios:</span>
             <div class="flex flex-col gap-2 text-xs">
               <button onclick="setSentinelPrompt('Watch Coldplay concert tickets on BookMyShow. If listed under ₹7,500, buy 2 tickets immediately.')" class="px-3 py-2 rounded-lg bg-amber-950/60 hover:bg-amber-900/80 text-amber-100 border border-amber-500/30 text-left transition flex items-center gap-2">
-                <i class="fa-solid fa-ticket text-amber-400"></i><span><strong class="text-amber-300">Coldplay Concert:</strong> Under ₹7,500 (Buy 2)</span>
+                <span><strong class="text-amber-300">Coldplay Concert:</strong> Under ₹7,500 (Buy 2)</span>
               </button>
               <button onclick="setSentinelPrompt('Watch Sony WH-1000XM5 headphones across Amazon and Flipkart. If price drops below ₹22,000, buy lowest net price.')" class="px-3 py-2 rounded-lg bg-sky-950/60 hover:bg-sky-900/80 text-sky-100 border border-sky-500/30 text-left transition flex items-center gap-2">
-                <i class="fa-solid fa-headphones text-sky-400"></i><span><strong class="text-sky-300">Sony WH-1000XM5:</strong> Under ₹22,000</span>
+                <i class="fa-solid fa-wave-square text-sky-400"></i><span><strong class="text-sky-300">Sony WH-1000XM5:</strong> Under ₹22,000</span>
               </button>
               <button onclick="setSentinelPrompt('Watch direct flights from Mumbai to Delhi for Dec 20. If airfare drops below ₹6,000, hold booking.')" class="px-3 py-2 rounded-lg bg-blue-950/60 hover:bg-blue-900/80 text-blue-100 border border-blue-500/30 text-left transition flex items-center gap-2">
-                <i class="fa-solid fa-plane-departure text-blue-400"></i><span><strong class="text-blue-300">Flight Flash Drop:</strong> Under ₹6,000</span>
+                <span><strong class="text-blue-300">Flight Flash Drop:</strong> Under ₹6,000</span>
               </button>
               <button onclick="setSentinelPrompt('Watch Ceremonial Matcha Uji bulk wholesale. If 1kg spot price drops below $180, restock 2 packs.')" class="px-3 py-2 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-100 border border-emerald-500/30 text-left transition flex items-center gap-2">
-                <i class="fa-solid fa-mug-hot text-emerald-400"></i><span><strong class="text-emerald-300">B2B Matcha Bulk:</strong> Under $180 (Restock 2)</span>
+                <span><strong class="text-emerald-300">B2B Matcha Bulk:</strong> Under $180 (Restock 2)</span>
               </button>
             </div>
           </div>
@@ -2965,7 +3290,7 @@
                 <i class="fa-solid fa-pause"></i>
                 <span>Pause Mandate (1-Tap Kill-Switch)</span>
               </button>
-              <button onclick="resumeUpiMandate()" id="btn-resume-mandate" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
+              <button onclick="resumeUpiMandate()" id="btn-resume-mandate" class="px-4 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
                 <i class="fa-solid fa-play"></i>
                 <span>Resume Mandate</span>
               </button>
@@ -3007,7 +3332,7 @@
           </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <button id="btn-run-5day" onclick="runSwarm5DaySimulation()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-teal-500 hover:from-purple-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-purple-900/40 transition flex items-center space-x-2 cursor-pointer">
+          <button id="btn-run-5day" onclick="runSwarm5DaySimulation()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-fuchsia-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white text-xs font-bold shadow-lg shadow-purple-900/40 transition flex items-center space-x-2 cursor-pointer">
             <i class="fa-solid fa-bolt"></i>
             <span>Run 5-Day Simulation (Mon-Fri)</span>
           </button>
@@ -3231,77 +3556,54 @@
 
     <!-- TAB 14: ONE-PROMPT ZERO-TOUCH COMMERCE & DOORSTEP DELIVERY -->
     <section id="tab-delivery" class="hidden space-y-6">
-      <!-- Hero Order Placement Console -->
-      <div class="bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 p-6 rounded-2xl border border-emerald-500/30 space-y-4">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Zero-Touch Commerce</span>
-              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">PayPal & UPI Auto-Settle</span>
-              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Live 15-Min Delivery</span>
-            </div>
-            <h2 class="text-2xl font-black text-white mt-2">Autonomous Doorstep Commerce</h2>
-            <p class="text-sm text-slate-300 mt-1">
-              Type literally ANY product request (e.g. <em>"order 1 kg chilli powder for me"</em>). AgenticPay matches live prices across Blinkit, Zepto, BigBasket & Amazon, confirms your delivery address, authorizes payment, and dispatches a live rider with real-time ETA tracking!
-            </p>
+      <!-- Doorstep Commerce Prompt Box (Black 3D Card matching Home Page) -->
+      <div id="delivery-prompt-card" class="max-w-3xl mx-auto my-6 p-6 rounded-3xl spotlight-card bento-card card-3d-tilt noise-overlay" style="background:rgba(18,18,21,0.92);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(20px);box-shadow:0 16px 44px -8px rgba(0,0,0,0.8),0 0 30px rgba(217,70,239,0.14)">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4">
+          <div class="flex items-center gap-3">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <h3 class="font-editorial text-2xl font-black text-white tracking-wide" style="font-family:'Bodoni Moda','Playfair Display',serif;font-style:italic">Need a quick delivery?</h3>
           </div>
-          <!-- Saved Address Pill & Edit -->
-          <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs space-y-1 max-w-sm">
-            <div class="flex items-center justify-between text-slate-400 font-semibold">
-              <span class="flex items-center space-x-1.5 text-emerald-400">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>Default Delivery Address:</span>
-              </span>
-              <button onclick="toggleEditAddressModal()" class="text-paypal-accent hover:underline text-[11px] font-bold cursor-pointer">Edit</button>
+          <div class="flex items-center gap-2">
+            <div class="px-3 py-1 rounded-full text-xs font-mono font-medium bg-black/60 text-fuchsia-200 border border-fuchsia-500/30 flex items-center gap-1.5">
+              <i class="fa-solid fa-location-dot text-fuchsia-400"></i>
+              <span id="delivery-address-display" class="truncate max-w-[200px]">Rushil Shah • Indiranagar, Bengaluru</span>
+              <button onclick="toggleEditAddressModal()" class="text-fuchsia-400 hover:text-white ml-1 font-bold cursor-pointer">Edit</button>
             </div>
-            <div id="delivery-address-display" class="text-white font-medium text-[11px] truncate">
-              Rushil Shah • Flat 402, Skyline Residency, 100ft Road, Indiranagar, Bengaluru
-            </div>
-          </div>
-        </div>
-
-        <!-- Natural Language Input Bar -->
-        <div class="space-y-2">
-          <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1">
-              <i class="fa-solid fa-cart-shopping absolute left-3.5 top-3.5 text-slate-400"></i>
-              <input id="prompt-delivery-input" type="text" placeholder="Type what you want to buy (e.g., 'order 1 kg chilli powder for me', 'buy wireless mouse', 'buy 5kg basmati rice')..." value="order 1 kg chilli powder for me" class="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium transition" onkeydown="if(event.key==='Enter') executeDoorstepOrder()" />
-            </div>
-            <button id="btn-execute-delivery" onclick="executeDoorstepOrder()" class="px-6 py-3 bg-gradient-to-r from-[#0070BA] via-[#0284C7] to-teal-600 hover:from-[#005ea6] hover:to-teal-700 text-white rounded-xl text-sm font-black shadow-lg shadow-sky-600/25 flex items-center justify-center space-x-2 transition cursor-pointer flex-shrink-0">
-              <i class="fa-solid fa-bolt"></i>
-              <span>Buy & Deliver Now</span>
-            </button>
-          </div>
-
-          <!-- Quick Suggestion Chips (Clean Vector Icons, No Emojis) -->
-          <div class="flex flex-wrap items-center gap-2 text-xs">
-            <span class="text-[10.5px] font-extrabold uppercase tracking-wider text-fuchsia-300/80 mr-1">Quick Prompts:</span>
-            <button onclick="setDeliveryPrompt('order 1 kg chilli powder for me')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">1 kg Chilli Powder</button>
-            <button onclick="setDeliveryPrompt('buy 5 kg basmati rice right now')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">5 kg Basmati Rice</button>
-            <button onclick="setDeliveryPrompt('order a logitech wireless mouse under 1000')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">Wireless Mouse</button>
-            <button onclick="setDeliveryPrompt('order 1 kg red label tea to my house')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">1 kg Red Label Tea</button>
-            <button onclick="setDeliveryPrompt('buy 1 kg madhur sugar urgent')" class="px-3.5 py-1.5 bg-fuchsia-950/60 hover:bg-fuchsia-900/80 text-fuchsia-100 rounded-xl text-xs font-medium tracking-wide transition border border-fuchsia-500/30 hover:border-fuchsia-400 cursor-pointer shadow-sm">1 kg Sugar</button>
-          </div>
-        </div>
-
-        <!-- Live Gemini Key Pool Status Pill & Optional Key Drawer Toggle -->
-        <div class="pt-2 border-t border-fuchsia-500/20 flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center space-x-2 px-3 py-1.5 bg-fuchsia-950/60 border border-fuchsia-500/40 rounded-xl text-xs text-fuchsia-200">
-            <span class="relative flex h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            <span class="badge" style="background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.35);color:#38BDF8;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:9999px">
+              15-MIN EXPRESS
             </span>
-            <span class="font-bold text-white tracking-wide uppercase text-[10.5px]">Google Gemini 3.8 Flash:</span>
-            <span class="text-fuchsia-300 font-mono">4-Key Failover Pool Active</span>
+          </div>
+        </div>
+
+        <!-- Main Textarea Input -->
+        <div class="relative mb-4">
+          <textarea id="prompt-delivery-input" rows="3" placeholder="Tell AgenticPay what to buy, restock, or negotiate..." class="w-full p-4 pl-4 pr-20 bg-black/50 border border-white/10 rounded-2xl text-base text-white placeholder-fuchsia-200/40 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-500/30 font-medium transition shadow-inner resize-none">order 1 kg chilli powder for me</textarea>
+          <button type="button" onclick="startVoiceDeliveryPrompt()" class="btn-magnetic absolute right-3.5 top-3.5 px-3 py-1 bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-500/35 rounded-lg text-xs font-bold text-cyan-300 hover:text-white transition cursor-pointer tracking-wider uppercase" title="Voice Input">VOICE</button>
+        </div>
+
+        <!-- Quick Prompts & Action Row -->
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center gap-2">
+            <span style="font-size:10.5px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:rgba(56,189,248,0.85);margin-right:2px">
+              Quick Prompts:
+            </span>
+            <button type="button" onclick="setDeliveryPrompt('order 1 kg chilli powder for me')" class="btn-magnetic px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition cursor-pointer">1 kg Chilli Powder</button>
+            <button type="button" onclick="setDeliveryPrompt('buy 5 kg basmati rice right now')" class="btn-magnetic px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition cursor-pointer">5 kg Basmati Rice</button>
+            <button type="button" onclick="setDeliveryPrompt('order a logitech wireless mouse under 1000')" class="btn-magnetic px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition cursor-pointer">Wireless Mouse</button>
+            <button type="button" onclick="setDeliveryPrompt('order 1 kg red label tea to my house')" class="btn-magnetic px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition cursor-pointer">Red Label Tea</button>
+            <button type="button" onclick="setDeliveryPrompt('buy 1 kg madhur sugar urgent')" class="btn-magnetic px-3 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-white transition cursor-pointer">1 kg Sugar</button>
           </div>
 
-          <button onclick="toggleApiKeyInput()" class="text-[11px] font-semibold text-fuchsia-300 hover:text-white flex items-center space-x-1.5 transition cursor-pointer tracking-wider uppercase">
-            <span>Override API Key &darr;</span>
-          </button>
-        </div>
-          <div id="api-key-drawer" class="hidden mt-2 p-3 bg-fuchsia-950/70 rounded-xl border border-fuchsia-500/30 flex gap-2">
-            <input id="custom-api-key-input" type="password" placeholder="Enter GEMINI_API_KEY (AIzaSy...)" class="flex-1 px-3 py-1.5 bg-black/40 border border-fuchsia-500/30 rounded-lg text-xs text-white placeholder-fuchsia-300/40 focus:outline-none focus:border-fuchsia-400" />
-            <button onclick="saveApiKey()" class="px-3.5 py-1.5 bg-fuchsia-800 hover:bg-fuchsia-700 text-white rounded-lg text-xs font-bold cursor-pointer uppercase tracking-wider">Save Key</button>
+          <!-- Action Bar -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/10">
+            <div class="text-xs text-fuchsia-200/70 flex items-center gap-2 font-mono">
+              <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+              <span>Blinkit &bull; Zepto &bull; Instamart &bull; 60s Reversible Escrow</span>
+            </div>
+            <button type="button" id="btn-execute-delivery" onclick="executeDoorstepOrder()" class="btn-primary btn-magnetic w-full sm:w-auto px-6 py-2.5 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-fuchsia-600/40 flex items-center justify-center gap-2 cursor-pointer" style="background:linear-gradient(135deg, #06B6D4 0%, #D946EF 100%);border:none;color:#FFFFFF">
+              <span>Buy &amp; Deliver Now</span>
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -3320,8 +3622,8 @@
 
         <div id="live-deliveries-container" class="space-y-4">
           <!-- Dynamic Live Order Tracking Cards injected here -->
-          <div class="p-8 bg-fuchsia-950/20 rounded-2xl border border-fuchsia-500/20 text-center space-y-3 backdrop-blur-xl">
-            <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:13px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:#F472B6">
+          <div class="py-8 text-center space-y-2 border-b border-fuchsia-500/20" style="background:transparent !important;border:none !important;border-bottom:1px solid rgba(244,114,182,0.2) !important;">
+            <div style="font-family:'Bodoni Moda','Playfair Display',serif;font-size:12px;font-weight:800;letter-spacing:0.25em;text-transform:uppercase;color:#F472B6">
               &mdash; ORDER QUEUE STANDING BY &mdash;
             </div>
             <div class="font-editorial text-lg font-bold text-white uppercase tracking-wide">No Active Deliveries Right Now</div>
@@ -3337,7 +3639,7 @@
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <h4 class="text-sm font-bold text-white flex items-center space-x-2">
-              <i class="fa-solid fa-house-chimney text-emerald-400"></i>
+              <i class="fa-solid fa-location-dot text-emerald-400"></i>
               <span>Edit Delivery Address</span>
             </h4>
             <button onclick="toggleEditAddressModal()" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
@@ -3368,7 +3670,7 @@
           </div>
           <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
             <button onclick="toggleEditAddressModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>
-            <button onclick="saveDeliveryAddress()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold cursor-pointer">Save Address</button>
+            <button onclick="saveDeliveryAddress()" class="px-4 py-1.5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-lg text-xs font-bold cursor-pointer">Save Address</button>
           </div>
         </div>
       </div>
@@ -3442,6 +3744,7 @@
         activeBtn.classList.add('border-paypal-accent', 'text-paypal-accent');
       }
       currentTab = tab;
+      setTimeout(() => { initSpotlightCards(); init3DTiltCards(); initMagneticButtons(); }, 60);
 
       // Toggle stat-cards-row visibility: keep Home focused on Agent Prompt, show on Financial Health & Vault
       const statRow = document.getElementById('stat-cards-row');
@@ -3548,7 +3851,7 @@
           if (isWinner) {
             // HIGHLIGHT BEST DEAL WITH NEON PINK
             cardBorderClass = 'border-2 border-[#FF1493] bg-gradient-to-b from-[#2d0526] via-[#1e031a] to-[#120110] shadow-[0_0_35px_rgba(255,20,147,0.45),inset_0_0_20px_rgba(255,20,147,0.12)] ring-1 ring-[#FF1493]/60';
-            badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#FF1493] text-white uppercase tracking-wider flex items-center gap-1 shadow-[0_0_15px_rgba(255,20,147,0.85)]"><i class="fa-solid fa-award"></i> Best Landed Deal</span>`;
+            badgeHtml = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-[#FF1493] text-white uppercase tracking-wider flex items-center gap-1 shadow-[0_0_15px_rgba(255,20,147,0.85)]"><i class="fa-solid fa-circle-check"></i> Best Landed Deal</span>`;
           } else if (isDisqualified) {
             // Keep remaining as is currently
             cardBorderClass = 'border-rose-500/30 bg-rose-950/40 opacity-75';
@@ -3952,7 +4255,7 @@
         alert("Failed to generate dossier: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-stamp"></i><span>Generate Cryptographic Dossier</span>`;
+        btn.innerHTML = `<i class="fa-solid fa-file-shield"></i><span>Generate Cryptographic Dossier</span>`;
       }
     }
 
@@ -4314,7 +4617,7 @@
                   <span class="px-2.5 py-1 rounded-lg text-xs font-black uppercase tracking-wider border ${deal.storeBadgeColor}">
                     ${deal.platform}
                   </span>
-                  ${isWinner ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-award"></i> Best Deal</span>` : ''}
+                  ${isWinner ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-black bg-emerald-600 text-white uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Best Deal</span>` : ''}
                 </div>
 
                 <h4 class="font-bold text-sm text-white line-clamp-2 leading-snug">${deal.title}</h4>
@@ -4411,7 +4714,7 @@
         alert("Error teaching rule: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-sparkles"></i><span>Teach Agent This Rule</span>`;
+        btn.innerHTML = `<span>Teach Agent This Rule</span>`;
       }
     }
 
@@ -4760,7 +5063,6 @@
             ${data.aiEngine ? `
               <div class="mb-3 p-2.5 bg-purple-950/40 rounded-xl border border-purple-500/30 flex items-center justify-between text-xs text-purple-200">
                 <span class="flex items-center space-x-1.5 font-bold">
-                  <i class="fa-solid fa-wand-magic-sparkles text-purple-400"></i>
                   <span>${data.aiEngine}</span>
                 </span>
                 <span class="text-[10px] font-mono text-emerald-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
@@ -4779,7 +5081,7 @@
                   ${data.draft.targetUnits} units of ${data.draft.sku} • Max budget capped at $${data.draft.maxBudgetUSD.toFixed(2)}
                 </div>
               </div>
-              <button onclick="executeGroundedDraft()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-emerald-900/40 flex items-center space-x-2 transition cursor-pointer">
+              <button onclick="executeGroundedDraft()" class="px-4 py-2 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-fuchsia-900/40 flex items-center space-x-2 transition cursor-pointer">
                 <i class="fa-solid fa-bolt"></i>
                 <span>Execute PayPal Hold (60s Undo)</span>
               </button>
@@ -4811,7 +5113,7 @@
         alert("Intent Grounding failed: " + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i><span>Ground Intent & Generate ProposedIntentDraft JSON</span>`;
+        btn.innerHTML = `<span>Ground Intent & Generate ProposedIntentDraft JSON</span>`;
       }
     }
 
@@ -4830,7 +5132,7 @@
         }
 
         container.innerHTML = records.map(r => `
-          <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 hover:border-emerald-500/40 transition space-y-3 font-sans">
+          <div class="bg-slate-850 p-4 rounded-xl border border-slate-800 hover:border-slate-700 transition space-y-3 font-sans" style="background:rgba(30,41,59,0.4);">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5">
               <div class="flex items-center space-x-2">
                 <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${r.id}</span>
@@ -4844,7 +5146,7 @@
             </div>
 
             <!-- Operator Intent & Business Goal -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-black/40 p-3 rounded-lg border border-fuchsia-500/20 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-xs">
               <div>
                 <span class="text-[10px] font-bold uppercase tracking-wider text-fuchsia-300/80 flex items-center gap-1"><i class="fa-solid fa-terminal text-fuchsia-400"></i> Original Operator Prompt:</span>
                 <div class="text-white font-medium mt-0.5 italic">"${r.originalPrompt}"</div>
@@ -4858,7 +5160,6 @@
             <!-- Sourcing & Arbitrage -->
             <div class="p-2.5 rounded-lg bg-black/40 border border-fuchsia-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div class="flex items-center space-x-2">
-                <i class="fa-solid fa-store text-emerald-400"></i>
                 <span class="text-fuchsia-100">Sourced via: <strong class="text-white font-bold">${r.selectedPlatform}</strong> (${r.units}x ${r.productName})</span>
               </div>
               <div class="text-[11px] text-emerald-300 font-mono font-semibold">
@@ -4869,7 +5170,6 @@
             <!-- AI Why-Trail Systematics -->
             <div class="p-3 bg-black/40 rounded-lg border border-fuchsia-500/20 text-xs space-y-1.5">
               <div class="text-[11px] font-bold text-amber-300 flex items-center space-x-1.5">
-                <i class="fa-solid fa-lightbulb text-amber-400"></i>
                 <span>Why Did AgenticPay Perform This Transaction? (AI Audit Rationalization)</span>
               </div>
               <p class="text-fuchsia-100/90 text-[11px] leading-relaxed">${r.whyReasoning.sourcingRationalization}</p>
@@ -4983,7 +5283,7 @@
                   </div>
                   <div class="flex items-center space-x-2">
                     ${!isCancelled && !isTriggered ? `
-                      <button onclick="simulateSentinelDrop('${w.id}', ${w.targetPriceUSD * 0.92})" class="px-3 py-1.5 bg-gradient-to-r from-amber-600 to-emerald-600 hover:from-amber-500 hover:to-emerald-500 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer">
+                      <button onclick="simulateSentinelDrop('${w.id}', ${w.targetPriceUSD * 0.92})" class="px-3 py-1.5 bg-gradient-to-r from-fuchsia-600 to-pink-600 hover:from-fuchsia-500 hover:to-pink-500 text-white rounded-lg text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer">
                         <i class="fa-solid fa-bolt"></i>
                         <span>Simulate Flash Drop (${(w.targetPriceUSD * 0.92).toFixed(2)})</span>
                       </button>
@@ -5097,7 +5397,7 @@
 
       activeVoiceTargetId = targetInputId;
       btn.classList.add('bg-rose-600', 'text-white', 'animate-pulse');
-      btn.innerHTML = '<i class="fa-solid fa-circle-dot"></i><span>Listening... Speak Now</span>';
+      btn.innerHTML = '<span>Listening... Speak Now</span>';
 
       speechRecognitionInstance.onresult = (event) => {
         let transcript = '';
@@ -6191,9 +6491,9 @@ function renderDeliveryCard(order) {
   }
 
   return `
-    <div class="p-6 bg-slate-950/90 rounded-2xl border ${isDelivered ? 'border-emerald-500/40' : (isCancelled ? 'border-slate-800 opacity-60' : 'border-fuchsia-500/40 shadow-xl shadow-fuchsia-950/40')} space-y-4 backdrop-blur-xl">
+    <div class="delivery-tracking-row py-6 border-b border-fuchsia-500/25 space-y-4" style="background:transparent !important;border-radius:0 !important;box-shadow:none !important;border-left:none !important;border-right:none !important;border-top:none !important;">
       <!-- Header Info -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-fuchsia-500/20 pb-3">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-fuchsia-500/15 pb-3">
         <div>
           <div class="flex items-center space-x-2">
             <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-500/35">
@@ -6213,12 +6513,12 @@ function renderDeliveryCard(order) {
         </div>
       </div>
 
-      <!-- Live Countdown & Rider Banner (if active) -->
+      <!-- Live Countdown & Rider Info directly on background -->
       ${!isCancelled ? `
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-fuchsia-950/30 p-4 rounded-xl border border-fuchsia-500/20">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 py-3 border-b border-white/5" style="background:transparent;">
           <!-- Countdown -->
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl ${isDelivered ? 'bg-emerald-500/20 text-emerald-300' : 'bg-cyan-500/20 text-cyan-300 animate-pulse'} flex items-center justify-center font-mono font-black text-xs border border-cyan-500/30">
+            <div class="w-9 h-9 rounded-lg ${isDelivered ? 'bg-emerald-500/20 text-emerald-300' : 'bg-cyan-500/20 text-cyan-300 animate-pulse'} flex items-center justify-center font-mono font-black text-xs border border-cyan-500/30">
               ETA
             </div>
             <div>
@@ -6229,7 +6529,7 @@ function renderDeliveryCard(order) {
 
           <!-- Rider -->
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-fuchsia-500/20 text-fuchsia-300 flex items-center justify-center font-editorial font-bold text-sm border border-fuchsia-500/30">
+            <div class="w-9 h-9 rounded-lg bg-fuchsia-500/20 text-fuchsia-300 flex items-center justify-center font-editorial font-bold text-sm border border-fuchsia-500/30">
               ${(order.riderInfo && order.riderInfo.name) ? order.riderInfo.name[0] : 'C'}
             </div>
             <div>
@@ -6241,7 +6541,7 @@ function renderDeliveryCard(order) {
 
           <!-- Delivery PIN & Address -->
           <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center font-mono font-bold text-xs border border-amber-500/30">
+            <div class="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-mono font-bold text-xs border border-amber-500/30">
               PIN
             </div>
             <div>
@@ -6253,46 +6553,45 @@ function renderDeliveryCard(order) {
         </div>
       ` : ''}
 
-      <!-- Gemini Multimodal Intent & Sourcing Rationale Callout -->
-      <div class="p-3.5 bg-gradient-to-r from-purple-950/40 via-slate-900/80 to-slate-900/50 rounded-xl border border-purple-500/30 space-y-2">
+      <!-- AI Sourcing Rationale Callout directly on background -->
+      <div class="py-2.5 border-b border-white/5 space-y-1.5" style="background:transparent;">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-gradient-to-r from-purple-500 to-indigo-500 text-white flex items-center space-x-1 shadow-sm shadow-purple-900/40">
-              <i class="fa-solid fa-wand-magic-sparkles"></i>
-              <span>Google Gemini AI</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-900/40 text-purple-200 border border-purple-500/30">
+              Gemini AI
             </span>
             <span class="text-[11px] font-semibold text-purple-300">Engine: models/gemini-3.8-flash</span>
           </div>
-          <span class="text-[10px] font-mono text-emerald-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 flex items-center gap-1">
+          <span class="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Verified Live Output
           </span>
         </div>
         <p class="text-xs text-slate-200 leading-relaxed font-sans">
           <strong class="text-purple-300 font-medium">AI Sourcing Rationale:</strong> ${order.aiRationale || 'Autonomous dynamic quick-commerce market comparison.'}
         </p>
-        <div class="text-[11px] text-cyan-300/90 font-mono bg-slate-950/70 p-2 rounded-lg border border-slate-800/80">
-          <i class="fa-solid fa-scale-balanced mr-1 text-cyan-400"></i> ${order.crossWebComparisonSummary}
+        <div class="text-[11px] text-cyan-300/90 font-mono pt-1">
+          ${order.crossWebComparisonSummary}
         </div>
       </div>
 
-      <!-- Milestones Progress Tracker -->
+      <!-- Milestones Progress Tracker directly on background -->
       <div class="space-y-1.5 pt-1">
-        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Fulfillment Journey:</span>
+        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Fulfillment Journey:</span>
         <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
           ${order.milestones.map((m, i) => `
-            <div class="p-2.5 rounded-xl border ${m.completed ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-slate-900/40 border-slate-800 text-slate-500'}">
-              <div class="flex items-center space-x-1.5 font-bold ${m.completed ? 'text-emerald-400' : 'text-slate-500'}">
+            <div class="p-2 border-b sm:border-b-0 sm:border-r border-white/10 ${m.completed ? 'text-emerald-400' : 'text-slate-500'}">
+              <div class="flex items-center space-x-1.5 font-bold">
                 <i class="fa-solid ${m.completed ? 'fa-circle-check' : 'fa-circle-dot'}"></i>
                 <span class="text-[11px]">${m.title}</span>
               </div>
-              <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">${m.description}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5 line-clamp-2">${m.description}</p>
             </div>
           `).join('')}
         </div>
       </div>
 
-      <!-- Footer Actions & Non-Repudiation Receipt -->
-      <div class="pt-2 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
+      <!-- Footer Actions -->
+      <div class="pt-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
         <div class="text-[11px] text-slate-400 font-mono flex flex-wrap items-center gap-2">
           <span>PayPal Order: <strong class="text-white">${order.paypalOrderId}</strong></span>
           <span class="text-slate-600">•</span>
@@ -6361,6 +6660,34 @@ function setHomePromptAndRun(promptText) {
   const input = document.getElementById('home-prompt-input');
   if (input) input.value = promptText;
   executeFromHomePrompt();
+}
+
+
+function startVoiceDeliveryPrompt() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    toast('Voice recognition not supported in this browser. Please type your prompt.', 'warning');
+    return;
+  }
+  try {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.start();
+    toast('Listening... Speak your delivery order now', 'info');
+    recognition.onresult = (event) => {
+      const speechToText = event.results[0][0].transcript;
+      const input = document.getElementById('prompt-delivery-input');
+      if (input) {
+        input.value = speechToText;
+        toast(`Voice captured: "${speechToText}"`, 'success');
+      }
+    };
+    recognition.onerror = (event) => {
+      toast('Voice input error: ' + event.error, 'danger');
+    };
+  } catch (err) {
+    toast('Voice error: ' + err.message, 'danger');
+  }
 }
 
 function startVoiceHomePrompt() {
@@ -6482,8 +6809,6 @@ function startConnectTransition() {
 
 function initScrollProgress() {
   const bar = document.getElementById('scroll-progress-bar');
-  const badge = document.getElementById('scroll-telemetry-badge');
-  const depthText = document.getElementById('scroll-depth-percent');
   const main = document.querySelector('main');
 
   const onScroll = () => {
@@ -6493,14 +6818,6 @@ function initScrollProgress() {
     const pct = scrollHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)) : 0;
 
     if (bar) bar.style.width = pct + '%';
-    if (depthText) depthText.textContent = Math.round(pct) + '%';
-    if (badge) {
-      if (scrollTop > 80) {
-        badge.classList.add('visible');
-      } else {
-        badge.classList.remove('visible');
-      }
-    }
 
     // Auto-advance storytelling chapters when scrolling past them
     const ch1 = document.getElementById('story-ch-1');
@@ -6568,8 +6885,10 @@ function activateStoryChapter(num, scrollIntoView = true) {
 }
 
 function initSpotlightCards() {
-  const cards = document.querySelectorAll('.spotlight-card, .story-chapter, .story-stage-card');
+  const cards = document.querySelectorAll('.spotlight-card, .story-chapter, .story-stage-card, .bento-card, .stat-card, .card-3d-tilt, .bg-slate-900, section > div.rounded-2xl, section > div.rounded-3xl');
   cards.forEach(card => {
+    if (card._hasSpotlight) return;
+    card._hasSpotlight = true;
     card.addEventListener('mousemove', e => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
@@ -6581,26 +6900,203 @@ function initSpotlightCards() {
 }
 
 function initMagneticButtons() {
-  const buttons = document.querySelectorAll('.btn-magnetic, .btn-primary, #btn-connect-hero');
+  const buttons = document.querySelectorAll('button, .btn-magnetic, .btn-primary, #btn-connect-hero, a.btn-primary');
   buttons.forEach(btn => {
+    if (btn._hasMagnetic) return;
+    btn._hasMagnetic = true;
     btn.addEventListener('mousemove', e => {
       const rect = btn.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       const deltaX = (e.clientX - centerX) * 0.28;
       const deltaY = (e.clientY - centerY) * 0.28;
-      const clampedX = Math.max(-12, Math.min(12, deltaX));
-      const clampedY = Math.max(-12, Math.min(12, deltaY));
-      btn.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
+      const clampedX = Math.max(-10, Math.min(10, deltaX));
+      const clampedY = Math.max(-10, Math.min(10, deltaY));
+      btn.style.transform = `translate(${clampedX}px, ${clampedY}px) scale(1.03)`;
       btn.style.transition = 'transform 0.08s ease-out';
     });
 
     btn.addEventListener('mouseleave', () => {
-      btn.style.transform = 'translate(0px, 0px)';
-      btn.style.transition = 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.35)';
+      btn.style.transform = 'translate(0px, 0px) scale(1)';
+      btn.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+    });
+  });
+}
+
+// Global delegated mouseover listener so all dynamic buttons instantly become magnetic
+document.addEventListener('mouseover', (e) => {
+  const btn = e.target.closest('button, .btn-magnetic, .btn-primary');
+  if (btn && !btn._hasMagnetic) {
+    btn._hasMagnetic = true;
+    btn.addEventListener('mousemove', ev => {
+      const rect = btn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const deltaX = (ev.clientX - centerX) * 0.28;
+      const deltaY = (ev.clientY - centerY) * 0.28;
+      const clampedX = Math.max(-10, Math.min(10, deltaX));
+      const clampedY = Math.max(-10, Math.min(10, deltaY));
+      btn.style.transform = `translate(${clampedX}px, ${clampedY}px) scale(1.03)`;
+      btn.style.transition = 'transform 0.08s ease-out';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'translate(0px, 0px) scale(1)';
+      btn.style.transition = 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
+    });
+  }
+});
+
+// ── 5 INTERACTIVE FINTECH ENGINES: SCROLL HUD, SIMULATOR, TILT, BENTO GUARDRAIL ──
+
+function updateHudScrollState() {
+  const bar = document.getElementById('hud-progress-bar');
+  const depthText = document.getElementById('hud-depth-percent');
+  const stageText = document.getElementById('hud-stage-text');
+  const latencyText = document.getElementById('hud-latency-val');
+  const main = document.querySelector('main');
+
+  const scrollTop = main ? main.scrollTop : (window.pageYOffset || document.documentElement.scrollTop);
+  const scrollHeight = (main ? main.scrollHeight : document.documentElement.scrollHeight) - (main ? main.clientHeight : window.innerHeight);
+  const pct = scrollHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)) : 0;
+
+  if (bar) bar.style.width = pct + '%';
+  if (depthText) depthText.textContent = Math.round(pct) + '%';
+
+  // Monospace Stage Text Updates based on scroll depth
+  if (stageText) {
+    if (pct < 25) {
+      stageText.textContent = 'STAGE 01 // INTENT_PARSED';
+      stageText.style.color = '#06B6D4';
+    } else if (pct < 50) {
+      stageText.textContent = 'STAGE 02 // MANDATE_VERIFIED';
+      stageText.style.color = '#F472B6';
+    } else if (pct < 80) {
+      stageText.textContent = 'STAGE 03 // NPCI_RAIL_ROUTING';
+      stageText.style.color = '#FBBF24';
+    } else {
+      stageText.textContent = 'STAGE 04 // SETTLED_INSTANTLY';
+      stageText.style.color = '#10B981';
+    }
+  }
+
+  // Smooth Latency counter ticking from 0ms up to 142ms
+  if (latencyText) {
+    const lat = Math.round((pct / 100) * 142);
+    latencyText.textContent = lat + 'ms';
+  }
+}
+
+// 2. Interactive "Prompt-to-Pay" Simulator Micro-Sequence
+let isSimulatorRunning = false;
+function runUpiSimulator(promptText, amount, merchant, triggerType) {
+  if (isSimulatorRunning) return;
+  isSimulatorRunning = true;
+
+  const idle = document.getElementById('sim-idle-state');
+  const step1 = document.getElementById('sim-step-1');
+  const step1Text = document.getElementById('sim-step-1-text');
+  const step2 = document.getElementById('sim-step-2');
+  const step2Text = document.getElementById('sim-step-2-text');
+  const step3 = document.getElementById('sim-step-3');
+  const rMerchant = document.getElementById('receipt-merchant');
+  const rAmount = document.getElementById('receipt-amount');
+  const rUtr = document.getElementById('receipt-utr');
+  const rAuthMode = document.getElementById('receipt-auth-mode');
+
+  if (idle) idle.classList.add('hidden');
+  if (step1) step1.classList.remove('hidden');
+  if (step2) step2.classList.add('hidden');
+  if (step3) step3.classList.add('hidden');
+
+  // Step 1: Parsing
+  if (step1Text) {
+    step1Text.innerHTML = `PARSED_INTENT: { action: "AUTONOMOUS_PAY", merchant: "${merchant}", amount_inr: ${amount}, trigger: "${triggerType}" }`;
+  }
+
+  // Step 2 (450ms): Mandate Check
+  setTimeout(() => {
+    if (step2) step2.classList.remove('hidden');
+    if (step2Text) {
+      const isLite = amount <= 1000;
+      step2Text.innerHTML = `VERIFIED: Limit ₹15,000 &ge; ₹${amount} &bull; Mode: ${isLite ? 'UPI_LITE_OFFLINE_PINLESS' : 'DELEGATED_MANDATE_BIOMETRIC'} &bull; Solvency Headroom: SATISFIED (Risk: 0.02%)`;
+    }
+  }, 450);
+
+  // Step 3 (900ms): Snap in 3D UPI Digital Receipt
+  setTimeout(() => {
+    if (step3) step3.classList.remove('hidden');
+    if (rMerchant) rMerchant.textContent = merchant;
+    if (rAmount) rAmount.textContent = '₹' + Number(amount).toLocaleString('en-IN') + '.00';
+    if (rUtr) rUtr.textContent = '41' + Math.floor(1000000000 + Math.random() * 9000000000);
+    if (rAuthMode) rAuthMode.textContent = amount <= 1000 ? 'UPI_LITE_PINLESS' : 'DELEGATED_MANDATE';
+
+    // Trigger subtle snap animation
+    const card = document.getElementById('sim-receipt-card');
+    if (card) {
+      card.style.transform = 'scale(0.96) translateY(6px)';
+      card.style.transition = 'all 0.35s cubic-bezier(0.22, 1, 0.36, 1)';
       setTimeout(() => {
-        btn.style.transition = '';
-      }, 500);
+        card.style.transform = 'scale(1) translateY(0)';
+      }, 50);
+    }
+    isSimulatorRunning = false;
+  }, 950);
+}
+
+// 4. Interactive Bento Guardrail Slider
+function updateBentoGuardrail(val) {
+  const numVal = parseInt(val, 10);
+  const amountEl = document.getElementById('bento-slider-amount');
+  const badgeEl = document.getElementById('bento-guardrail-badge');
+  const descEl = document.getElementById('bento-guardrail-desc');
+
+  if (amountEl) {
+    amountEl.textContent = '₹' + numVal.toLocaleString('en-IN');
+  }
+
+  if (badgeEl) {
+    if (numVal <= 1000) {
+      badgeEl.style.background = 'rgba(6, 182, 212, 0.18)';
+      badgeEl.style.borderColor = 'rgba(6, 182, 212, 0.45)';
+      badgeEl.style.color = '#06B6D4';
+      badgeEl.innerHTML = '<i class="fa-solid fa-bolt mr-1"></i> UPI LITE // PIN-LESS';
+      if (descEl) descEl.textContent = 'Offline UPI Lite rail active: Zero-PIN auto-settlement under ₹1,000';
+    } else {
+      badgeEl.style.background = 'rgba(217, 70, 239, 0.18)';
+      badgeEl.style.borderColor = 'rgba(244, 114, 182, 0.45)';
+      badgeEl.style.color = '#F472B6';
+      badgeEl.innerHTML = '<i class="fa-solid fa-fingerprint mr-1"></i> DELEGATED MANDATE // BIOMETRIC';
+      if (descEl) descEl.textContent = 'Orders > ₹1,000 bound by pre-delegated session mandate with biometric key';
+    }
+  }
+}
+
+// 5. Tactile 3D Card Tilt on Hover Engine
+function init3DTiltCards() {
+  const tiltCards = document.querySelectorAll('.card-3d-tilt, .bento-card, .spotlight-card, .stat-card, .bg-slate-900, section > div.rounded-2xl, section > div.rounded-3xl');
+  tiltCards.forEach(card => {
+    if (card._hasTilt) return;
+    card._hasTilt = true;
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -3.5; // max 3.5 deg
+      const rotateY = ((x - centerX) / centerX) * 3.5;  // max 3.5 deg
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.008, 1.008, 1.008)`;
+      card.style.boxShadow = '0 24px 50px -10px rgba(0,0,0,0.85), 0 0 35px rgba(217,70,239,0.22)';
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      card.style.boxShadow = '';
+      card.style.transition = 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease';
+      setTimeout(() => {
+        card.style.transition = '';
+      }, 400);
     });
   });
 }
@@ -6627,6 +7123,7 @@ fetchDashboardState();
 initScrollProgress();
 initSpotlightCards();
 initMagneticButtons();
+init3DTiltCards();
 switchTab('home');
 </script>
 </body>
