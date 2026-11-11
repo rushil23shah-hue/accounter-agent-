@@ -295,7 +295,7 @@ export class AutonomousPurchaseEngine {
         arbitrageSavingsUSD: Number(((geminiResult.arbitrageSavingsINR || 35) / FX_RATE).toFixed(2)),
         etaMinutes: geminiResult.etaMinutes || 15,
         crossWebComparisonSummary: geminiResult.crossWebComparisonSummary || `${geminiResult.fastestPlatform} selected for lowest price and fastest local fulfillment.`,
-        aiRationale: `[Powered by Google Gemini 1.5 Flash] ${geminiResult.aiRationale || "Autonomous commerce intent parsed with multimodal intelligence."}`,
+        aiRationale: `[Powered by Google Gemini 3.8 Flash • Key Pool #${geminiResult.keyUsedIndex || 1}/${geminiResult.totalKeysInPool || 4} Active] ${geminiResult.aiRationale || "Autonomous commerce intent parsed with multimodal intelligence."}`,
       };
     }
 
