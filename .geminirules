@@ -1,5 +1,0 @@
-# Global Execution Speed & Efficiency Directive
-
-- Execute immediately: Jump straight to the code and solution without redundant pre-checks.
-- Batch edits: Apply changes in single, direct modifications.
-- Minimal latency: Keep reasoning tightly focused on the edit, eliminate unnecessary tool cycles, and respond instantly with concise updates.

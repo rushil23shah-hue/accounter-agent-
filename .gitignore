@@ -1,4 +1,22 @@
+# Environment & secrets
 .env
-dist/
-node_modules/
+.env.*
+!.env.example
 
+# Dependencies & builds
+node_modules/
+dist/
+
+# Test outputs & logs
+test-results/
+*.log
+
+# Backups & temporary files
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# IDE & AI assistant scratch files
+.gemini/
+.geminirules
