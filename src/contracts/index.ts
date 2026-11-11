@@ -12,3 +12,4 @@ export * from "./sentinel.js";
 export * from "./upi-mandate.js";
 
 export * from "./intent-audit.js";
+export * from "./swarm.js";

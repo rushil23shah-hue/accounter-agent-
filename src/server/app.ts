@@ -29,6 +29,10 @@ import {
   PriceSentinelEngine,
   UPIMandateEngine,
   IntentAuditLedgerEngine,
+  AgentEventBus,
+  SemanticVectorMemoryEngine,
+  SwarmOrchestratorEngine,
+  BusinessHeartbeatEngine,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -513,7 +517,11 @@ const state = {
       tags: ["tea", "green-tea", "sencha"],
     },
   ]),
+  lastSimResult: null as any,
+  lastDagPlan: null as any,
 };
+
+SemanticVectorMemoryEngine.init();
 
 function parseJsonBody(req: http.IncomingMessage): Promise<any> {
   return new Promise((resolve, reject) => {
@@ -1713,7 +1721,110 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-    res.writeHead(404, { "Content-Type": "text/plain" });
+  // ── 32. API: Generate Dynamic DAG Plan ─────────────────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/swarm/dag/plan") {
+    try {
+      const body = await parseJsonBody(req);
+      const goal = String(body.goal || "Autonomous Restock Cycle");
+      const sku = String(body.sku || (state.inventory[0]?.sku ?? "TEA-EG-001"));
+      const plan = SwarmOrchestratorEngine.createDagPlan(goal, sku);
+      state.lastDagPlan = plan;
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, plan }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 33. API: Execute Dynamic DAG Plan ──────────────────────────────────────
+  if (req.method === "POST" && url.pathname === "/api/swarm/dag/execute") {
+    try {
+      const body = await parseJsonBody(req);
+      const sku = String(body.sku || (state.inventory[0]?.sku ?? "TEA-EG-001"));
+      const goal = String(body.goal || "Autonomous Restock Cycle");
+      const plan = body.plan || SwarmOrchestratorEngine.createDagPlan(goal, sku);
+      const executedPlan = await SwarmOrchestratorEngine.executeDagPlan({
+        plan,
+        inventory: state.inventory,
+        profile: state.profile,
+        vault: state.vault,
+        autonomyState: state.autonomyState,
+      });
+      state.lastDagPlan = executedPlan;
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, plan: executedPlan }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 34. API: 5-Day Autonomous Business Simulation (Mon-Fri) ────────────────
+  if (req.method === "POST" && url.pathname === "/api/swarm/simulate-5-days") {
+    try {
+      const result = await BusinessHeartbeatEngine.simulate5WorkingDays({
+        inventory: state.inventory,
+        profile: state.profile,
+        vault: state.vault,
+        autonomyState: state.autonomyState,
+      });
+      state.lastSimResult = result;
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, simulation: result }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 35. API: Long-Term Semantic Vector Memory (List & Search) ──────────────
+  if (req.method === "GET" && url.pathname === "/api/swarm/memory") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ memories: SemanticVectorMemoryEngine.getAllMemories() }));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/swarm/memory/search") {
+    try {
+      const body = await parseJsonBody(req);
+      const query = String(body.query || "");
+      const limit = Number(body.limit) || 3;
+      const results = SemanticVectorMemoryEngine.searchMemories(query, limit);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ results }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 36. API: Live Agent Swarm Message Feed ─────────────────────────────────
+  if (req.method === "GET" && url.pathname === "/api/swarm/messages") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ messages: AgentEventBus.getMessageLog() }));
+    return;
+  }
+
+  // ── 37. API: Swarm Health & Heartbeat Status ───────────────────────────────
+  if (req.method === "GET" && url.pathname === "/api/swarm/status") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(
+      JSON.stringify({
+        lastSimResult: state.lastSimResult,
+        lastDagPlan: state.lastDagPlan,
+        totalMemories: SemanticVectorMemoryEngine.getAllMemories().length,
+        totalMessages: AgentEventBus.getMessageLog().length,
+      })
+    );
+    return;
+  }
+
+  res.writeHead(404, { "Content-Type": "text/plain" });
   res.end("Not Found");
 });
 

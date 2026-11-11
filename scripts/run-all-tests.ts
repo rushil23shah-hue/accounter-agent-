@@ -63,6 +63,11 @@ const STAGES: TestStage[] = [
     command: "npx",
     args: ["tsx", "scripts/verify-upi-mandate.ts"],
   },
+  {
+    name: "Phase 9: Multi-Agent Swarm & 5-Day Business Simulator",
+    command: "npx",
+    args: ["tsx", "scripts/verify-swarm-5day.ts"],
+  },
 ];
 
 async function runStage(stage: TestStage): Promise<{ passed: boolean; durationMs: number; output: string }> {

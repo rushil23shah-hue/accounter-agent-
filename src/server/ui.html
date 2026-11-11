@@ -674,6 +674,9 @@
 
       <!-- AI & Automation -->
       <div class="nav-group-label">Automation</div>
+      <div class="nav-pill" data-nav-tab="swarm" onclick="switchTab('swarm')">
+        <div class="nav-dot"></div> ⚡ 5-Day Swarm (Jarvis)
+      </div>
       <div class="nav-pill" data-nav-tab="intent" onclick="switchTab('intent')">
         <div class="nav-dot"></div> AI Rules
       </div>
@@ -2130,6 +2133,244 @@
       </div>
     </section>
 
+    <!-- TAB 13: 5-DAY AUTONOMOUS SWARM & OPERATIONS DIRECTOR -->
+    <section id="tab-swarm" class="hidden space-y-6">
+      <!-- Hero Header -->
+      <div class="bg-gradient-to-r from-slate-900 via-purple-950/40 to-slate-900 p-6 rounded-2xl border border-purple-500/30 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40">5-Agent Swarm</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">120-Hour Continuous Autopilot</span>
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">Dynamic DAG Orchestration</span>
+          </div>
+          <h2 class="text-2xl font-black text-white mt-2">5-Day Autonomous Business Swarm</h2>
+          <p class="text-sm text-slate-300 mt-1">
+            Inspired by Luke Davis (lukebuildsai / Jarvis / Azaris). 5 specialized agents run Monday-Friday autonomously: inventory forecasting, wholesale arbitrage, ZK-solvency, prompt injection defense, and non-repudiable reconciliation.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button id="btn-run-5day" onclick="runSwarm5DaySimulation()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-teal-500 hover:from-purple-500 hover:to-teal-400 text-white text-xs font-bold shadow-lg shadow-purple-900/40 transition flex items-center space-x-2 cursor-pointer">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Run 5-Day Simulation (Mon-Fri)</span>
+          </button>
+          <button id="btn-run-dag" onclick="executeSwarmDagPlan()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center space-x-2 cursor-pointer">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span>Execute 6-Node DAG Plan</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live 5-Day Business Simulation Timeline Grid -->
+      <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-calendar-week text-purple-400"></i>
+            <span class="text-sm font-bold text-white">5-Day Autonomous Timeline (120 Hours Compressed Loop)</span>
+          </div>
+          <span id="swarm-sim-badge" class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-slate-800 text-slate-400 border border-slate-700">READY</span>
+        </div>
+
+        <div id="swarm-days-grid" class="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <!-- Monday Card -->
+          <div id="day-card-0" class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-purple-400">MON (Day 1)</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400">Restock</span>
+            </div>
+            <div class="text-xs text-white font-semibold">Morning Restock</div>
+            <div class="text-[11px] text-slate-400">Autonomous wholesale quote comparison & PayPal hold.</div>
+            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-emerald-400 font-mono">-$1,300.50 (Saved $198)</div>
+          </div>
+
+          <!-- Tuesday Card -->
+          <div id="day-card-1" class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-rose-400">TUE (Day 2)</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-500/20 text-rose-300">Defense</span>
+            </div>
+            <div class="text-xs text-white font-semibold">Injection Neutralized</div>
+            <div class="text-[11px] text-slate-400">Pre-Flight Shield blocked Cyrillic homoglyph payee attack in 0.34ms.</div>
+            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-rose-400 font-mono">Protected $357.00</div>
+          </div>
+
+          <!-- Wednesday Card -->
+          <div id="day-card-2" class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-cyan-400">WED (Day 3)</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-cyan-500/20 text-cyan-300">Sniper</span>
+            </div>
+            <div class="text-xs text-white font-semibold">Flash Deal Sniped</div>
+            <div class="text-[11px] text-slate-400">Autonomous Price Sentinel detected 35% dip on packaging pouches.</div>
+            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-cyan-400 font-mono">-$105.00 (Saved $57.50)</div>
+          </div>
+
+          <!-- Thursday Card -->
+          <div id="day-card-3" class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-400">THU (Day 4)</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300">Invariant</span>
+            </div>
+            <div class="text-xs text-white font-semibold">Spend Contracted</div>
+            <div class="text-[11px] text-slate-400">Revenue dip detected. Mandate dynamically tightened $800 → $450 (-43.75%).</div>
+            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-amber-400 font-mono">Runway: 89.2 Days</div>
+          </div>
+
+          <!-- Friday Card -->
+          <div id="day-card-4" class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-400">FRI (Day 5)</span>
+              <span class="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300">Reconciled</span>
+            </div>
+            <div class="text-xs text-white font-semibold">Weekly Dossier</div>
+            <div class="text-[11px] text-slate-400">Automated ledger audit & SHA-256 non-repudiable dispute docket emitted.</div>
+            <div class="pt-2 border-t border-slate-800/80 text-[11px] text-emerald-400 font-mono">Saved $963 / Clean</div>
+          </div>
+        </div>
+
+        <div id="swarm-sim-summary" class="hidden p-4 bg-purple-950/20 border border-purple-500/30 rounded-xl space-y-2">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+            <div>
+              <span class="text-xs font-bold text-white">5-Day Simulation Complete</span>
+              <div class="text-[11px] text-purple-200 mt-0.5" id="swarm-sim-summary-text">5/5 business days operated autonomously with zero cash-floor breaches.</div>
+            </div>
+            <div class="flex items-center space-x-3 text-xs font-mono">
+              <span class="text-emerald-400 font-bold" id="swarm-sim-total-savings">Saved: $963.00</span>
+              <span class="text-slate-500">•</span>
+              <span class="text-purple-300" id="swarm-sim-hash">SHA: cc71d2...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two-Column Layout: DAG Visualizer + Agent Event Bus & Vector Memory -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Left: Dynamic DAG Task Planning Engine Visualizer -->
+        <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-sitemap text-indigo-400"></i>
+              <span class="text-sm font-bold text-white">Dynamic DAG Task Graph (6 Nodes)</span>
+            </div>
+            <span id="dag-status-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-400">READY</span>
+          </div>
+
+          <div id="dag-nodes-container" class="space-y-2.5">
+            <!-- Node 1 -->
+            <div id="dag-node-1" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">1</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Audit Current Inventory & Velocity</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-amber-400 font-mono">INVENTORY_OFFICER</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+            <!-- Node 2 -->
+            <div id="dag-node-2" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">2</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Scout Multi-Supplier Wholesale Quotes</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-cyan-400 font-mono">ARBITRAGE_HUNTER</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+            <!-- Node 3 -->
+            <div id="dag-node-3" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">3</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Evaluate ZK-Solvency & Spending Mandate</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-emerald-400 font-mono">VIRTUAL_CFO</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+            <!-- Node 4 -->
+            <div id="dag-node-4" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">4</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Pre-Flight Payment Shield Security Scan</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-rose-400 font-mono">SECURITY_AUDITOR</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+            <!-- Node 5 -->
+            <div id="dag-node-5" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">5</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Execute PayPal Authorization Hold (60s Undo)</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-paypal-accent font-mono">CEO_ORCHESTRATOR</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+            <!-- Node 6 -->
+            <div id="dag-node-6" class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">6</span>
+                <div>
+                  <div class="text-xs font-semibold text-white">Commit Audit Record to Vector Memory</div>
+                  <div class="text-[10px] text-slate-400">Role: <span class="text-emerald-400 font-mono">VIRTUAL_CFO</span></div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800 text-slate-400">PENDING</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Agent Swarm Message Bus Feed + Vector Memory Explorer -->
+        <div class="space-y-6">
+          <!-- Agent Event Bus Messages -->
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-comments text-emerald-400"></i>
+                <span class="text-sm font-bold text-white">Live Agent-to-Agent Swarm Message Bus</span>
+              </div>
+              <button onclick="fetchSwarmMessages()" class="text-xs text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrows-rotate"></i>
+              </button>
+            </div>
+
+            <div id="swarm-messages-container" class="space-y-2 max-h-64 overflow-y-auto pr-1">
+              <!-- Dynamically populated messages -->
+              <div class="text-center py-6 text-slate-500 text-xs">
+                No active agent messages yet. Run the 5-day simulation or execute a DAG plan to view live actor negotiations.
+              </div>
+            </div>
+          </div>
+
+          <!-- Long-Term Semantic Vector Memory Explorer -->
+          <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-brain text-purple-400"></i>
+                <span class="text-sm font-bold text-white">Semantic Long-Term Vector Memory</span>
+              </div>
+              <span id="memory-count-badge" class="px-2 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-300">3 Memories</span>
+            </div>
+
+            <div class="flex gap-2">
+              <input id="swarm-memory-query" type="text" placeholder="Search vector memory (e.g. 'sugar discount', 'tea estate', 'injection attack')..." class="flex-1 px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 transition" />
+              <button onclick="searchSwarmMemory()" class="px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition cursor-pointer">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+            </div>
+
+            <div id="swarm-memory-results" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <!-- Dynamically populated vector memories -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   
       </div>
 
@@ -2180,7 +2421,7 @@
     document.querySelectorAll('[data-nav-tab]').forEach(el => {
       el.classList.toggle('nav-active', el.dataset.navTab === tab);
     });
-      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi', 'swarm'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -2211,8 +2452,10 @@
         fetchWebhookEvents();
       } else if (tab === 'rag') {
         loadRagKnowledge();
-      fetchSentinels();
-      fetchUpiMandate();
+        fetchSentinels();
+        fetchUpiMandate();
+      } else if (tab === 'swarm') {
+        loadSwarmDashboard();
       }
     }
 
@@ -4192,11 +4435,14 @@ const CMD_ACTIONS = [
   { group: 'Navigate', label: 'AI Rules', icon: 'fa-brain', action: () => switchTab('intent') },
   { group: 'Navigate', label: 'Ask Steward', icon: 'fa-comments', action: () => switchTab('rag') },
   { group: 'Navigate', label: 'UPI AutoPay', icon: 'fa-qrcode', action: () => switchTab('upi') },
+  { group: 'Navigate', label: '5-Day Swarm (Jarvis)', icon: 'fa-network-wired', action: () => switchTab('swarm') },
   { group: 'Navigate', label: 'Payment Protection', icon: 'fa-shield-halved', action: () => switchTab('shield') },
   { group: 'Navigate', label: 'Private Vault', icon: 'fa-vault', action: () => switchTab('vault') },
   { group: 'Navigate', label: 'Dispute Center', icon: 'fa-gavel', action: () => switchTab('dossier') },
   { group: 'Navigate', label: 'Live Activity', icon: 'fa-wave-square', action: () => switchTab('webhooks') },
   { group: 'Navigate', label: 'Settings', icon: 'fa-gear', action: () => switchTab('profile') },
+  { group: 'Actions', label: 'Run 5-Day Business Simulation', icon: 'fa-bolt', action: () => { switchTab('swarm'); runSwarm5DaySimulation(); } },
+  { group: 'Actions', label: 'Execute 6-Node DAG Plan', icon: 'fa-diagram-project', action: () => { switchTab('swarm'); executeSwarmDagPlan(); } },
   { group: 'Actions', label: 'Run Smart Restock', icon: 'fa-rotate', action: () => { switchTab('autopilot'); triggerAutopilot(); } },
   { group: 'Actions', label: 'Scan Payment Safety', icon: 'fa-shield', action: () => { switchTab('shield'); scanWithShield(); } },
   { group: 'Actions', label: 'Emergency Stop', icon: 'fa-power-off', action: emergencyKillSwitch },
@@ -4268,6 +4514,293 @@ showUndoWindow = function(hold) {
   toast(`Order placed · 60-second cancel window open`, 'warning', 61000);
 };
 
+// ── 5-DAY SWARM & MULTI-AGENT DAG ORCHESTRATOR ──────────
+async function loadSwarmDashboard() {
+  fetchSwarmMessages();
+  fetchSwarmMemories();
+  fetchSwarmStatus();
+}
+
+async function fetchSwarmStatus() {
+  try {
+    const res = await fetch('/api/swarm/status');
+    const data = await res.json();
+    if (data.totalMemories !== undefined) {
+      const badge = document.getElementById('memory-count-badge');
+      if (badge) badge.innerText = `${data.totalMemories} Memories`;
+    }
+    if (data.lastDagPlan) {
+      renderDagPlan(data.lastDagPlan);
+    }
+    if (data.lastSimResult) {
+      renderSimResult(data.lastSimResult);
+    }
+  } catch (err) {
+    console.error('Swarm status error:', err);
+  }
+}
+
+async function runSwarm5DaySimulation() {
+  const btn = document.getElementById('btn-run-5day');
+  const badge = document.getElementById('swarm-sim-badge');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Simulating 120h Operations...</span>`;
+  badge.innerText = 'SIMULATING (MON-FRI)...';
+  badge.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/40 animate-pulse';
+
+  try {
+    const res = await fetch('/api/swarm/simulate-5-days', { method: 'POST' });
+    const data = await res.json();
+    if (data.success && data.simulation) {
+      renderSimResult(data.simulation);
+      toast('5-day autonomous simulation completed successfully!', 'success');
+      if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+      }
+      fetchSwarmMessages();
+      fetchSwarmMemories();
+    } else {
+      toast('Simulation failed: ' + (data.error || 'Unknown error'), 'danger');
+    }
+  } catch (err) {
+    toast('Simulation error: ' + err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>Run 5-Day Simulation (Mon-Fri)</span>`;
+    badge.innerText = 'COMPLETED (MON-FRI)';
+    badge.className = 'px-2.5 py-0.5 rounded text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+  }
+}
+
+function renderSimResult(sim) {
+  const summaryBox = document.getElementById('swarm-sim-summary');
+  const summaryText = document.getElementById('swarm-sim-summary-text');
+  const totalSavings = document.getElementById('swarm-sim-total-savings');
+  const hashEl = document.getElementById('swarm-sim-hash');
+
+  if (summaryBox) {
+    summaryBox.classList.remove('hidden');
+    summaryText.innerText = `${sim.totalDaysCompleted}/5 working days operated autonomously. ${sim.totalRestocksExecuted} restocks executed, ${sim.totalThreatsNeutralized} security threats neutralized. Final Solvency Runway: ${sim.weeklySolvencyRunwayDays} days.`;
+    totalSavings.innerText = `Arbitrage Saved: $${Number(sim.cumulativeArbitrageSavingsUSD).toFixed(2)}`;
+    hashEl.innerText = `SHA-256: ${sim.forensicDossierHash.slice(0, 16)}...`;
+  }
+
+  // Highlight all 5 day cards with success glow
+  for (let i = 0; i < 5; i++) {
+    const card = document.getElementById(`day-card-${i}`);
+    if (card) {
+      card.classList.add('border-purple-500/50', 'bg-purple-950/20');
+    }
+  }
+}
+
+async function executeSwarmDagPlan() {
+  const btn = document.getElementById('btn-run-dag');
+  const badge = document.getElementById('dag-status-badge');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Executing 6 Nodes...</span>`;
+  badge.innerText = 'EXECUTING...';
+  badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 animate-pulse';
+
+  try {
+    const res = await fetch('/api/swarm/dag/execute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ goal: 'Autonomous Restock Cycle', sku: 'TEA-EG-001' })
+    });
+    const data = await res.json();
+    if (data.success && data.plan) {
+      renderDagPlan(data.plan);
+      toast('Dynamic DAG plan executed with zero invariant violations', 'success');
+      fetchSwarmMessages();
+      fetchSwarmMemories();
+    } else {
+      toast('DAG execution failed: ' + (data.error || 'Unknown error'), 'danger');
+    }
+  } catch (err) {
+    toast('DAG execution error: ' + err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-diagram-project"></i><span>Execute 6-Node DAG Plan</span>`;
+  }
+}
+
+function renderDagPlan(plan) {
+  const badge = document.getElementById('dag-status-badge');
+  if (badge) {
+    badge.innerText = plan.status;
+    badge.className = plan.status === 'SUCCESS'
+      ? 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+      : 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40';
+  }
+
+  const container = document.getElementById('dag-nodes-container');
+  if (!container || !plan.nodes) return;
+
+  container.innerHTML = plan.nodes.map((node, idx) => {
+    const isCompleted = node.status === 'COMPLETED';
+    const isFailed = node.status === 'FAILED';
+    const isBlocked = node.status === 'BLOCKED';
+
+    let statusClass = 'bg-slate-800 text-slate-400';
+    if (isCompleted) statusClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+    else if (isFailed) statusClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/40';
+    else if (isBlocked) statusClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/40';
+
+    const roleColors = {
+      'CEO_ORCHESTRATOR': 'text-paypal-accent',
+      'INVENTORY_OFFICER': 'text-amber-400',
+      'ARBITRAGE_HUNTER': 'text-cyan-400',
+      'SECURITY_AUDITOR': 'text-rose-400',
+      'VIRTUAL_CFO': 'text-emerald-400',
+    };
+    const roleColor = roleColors[node.assignedAgent] || 'text-indigo-400';
+
+    return `
+      <div class="p-3 bg-slate-950 rounded-xl border ${isCompleted ? 'border-emerald-500/30' : 'border-slate-800'} space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <span class="w-6 h-6 rounded-full ${isCompleted ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-slate-800 text-slate-300'} text-xs font-bold flex items-center justify-center">
+              ${idx + 1}
+            </span>
+            <div>
+              <div class="text-xs font-semibold text-white">${node.title}</div>
+              <div class="text-[10px] text-slate-400">Assigned: <span class="${roleColor} font-mono font-bold">${node.assignedAgent}</span></div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            ${node.executionTimeMs !== undefined ? `<span class="text-[10px] text-slate-500 font-mono">${node.executionTimeMs}ms</span>` : ''}
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${statusClass}">${node.status}</span>
+          </div>
+        </div>
+        ${node.result ? `
+          <div class="p-2 bg-slate-900/60 rounded-lg text-[10px] font-mono text-slate-300 overflow-x-auto">
+            ${JSON.stringify(node.result)}
+          </div>
+        ` : ''}
+        ${node.error ? `
+          <div class="p-2 bg-rose-950/40 border border-rose-500/30 rounded-lg text-[10px] font-mono text-rose-300">
+            Error: ${node.error}
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+async function fetchSwarmMessages() {
+  const container = document.getElementById('swarm-messages-container');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/swarm/messages');
+    const data = await res.json();
+    if (!data.messages || data.messages.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-6 text-slate-500 text-xs">
+          No active agent messages yet. Run the 5-day simulation or execute a DAG plan to view live actor negotiations.
+        </div>
+      `;
+      return;
+    }
+
+    const roleColors = {
+      'CEO_ORCHESTRATOR': 'text-paypal-accent',
+      'INVENTORY_OFFICER': 'text-amber-400',
+      'ARBITRAGE_HUNTER': 'text-cyan-400',
+      'SECURITY_AUDITOR': 'text-rose-400',
+      'VIRTUAL_CFO': 'text-emerald-400',
+      'BROADCAST': 'text-purple-300',
+    };
+
+    container.innerHTML = data.messages.slice(-8).reverse().map(m => {
+      const senderColor = roleColors[m.sender] || 'text-slate-300';
+      const recipientColor = roleColors[m.recipient] || 'text-slate-300';
+      const timeStr = new Date(m.timestamp).toLocaleTimeString();
+
+      return `
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800/80 text-xs space-y-1">
+          <div class="flex items-center justify-between text-[10px] text-slate-500">
+            <div class="flex items-center space-x-1 font-mono">
+              <span class="${senderColor} font-bold">${m.sender}</span>
+              <span class="text-slate-600">➔</span>
+              <span class="${recipientColor} font-bold">${m.recipient}</span>
+            </div>
+            <span>${timeStr}</span>
+          </div>
+          <div class="font-mono text-[11px] text-purple-300 font-semibold">${m.intent}</div>
+          <div class="text-[10px] text-slate-400 font-mono truncate">${JSON.stringify(m.payload)}</div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error('Fetch swarm messages error:', err);
+  }
+}
+
+async function fetchSwarmMemories() {
+  const container = document.getElementById('swarm-memory-results');
+  const countBadge = document.getElementById('memory-count-badge');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/swarm/memory');
+    const data = await res.json();
+    if (data.memories) {
+      if (countBadge) countBadge.innerText = `${data.memories.length} Memories`;
+      renderMemoryCards(data.memories.map(m => ({ item: m, score: 1.0 })));
+    }
+  } catch (err) {
+    console.error('Fetch swarm memories error:', err);
+  }
+}
+
+async function searchSwarmMemory() {
+  const query = document.getElementById('swarm-memory-query').value.trim();
+  if (!query) {
+    fetchSwarmMemories();
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/swarm/memory/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query, limit: 5 })
+    });
+    const data = await res.json();
+    if (data.results) {
+      renderMemoryCards(data.results);
+    }
+  } catch (err) {
+    toast('Memory search error: ' + err.message, 'danger');
+  }
+}
+
+function renderMemoryCards(scoredList) {
+  const container = document.getElementById('swarm-memory-results');
+  if (!container) return;
+
+  if (scoredList.length === 0) {
+    container.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">No matching memories found in vector store.</div>`;
+    return;
+  }
+
+  container.innerHTML = scoredList.map(({ item, score }) => `
+    <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 space-y-1 text-xs">
+      <div class="flex items-center justify-between">
+        <span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-purple-500/20 text-purple-300 font-bold">${item.topic}</span>
+        <span class="text-[10px] font-mono text-emerald-400">Score: ${Number(score).toFixed(2)}</span>
+      </div>
+      <p class="text-[11px] text-slate-300">${item.content}</p>
+      <div class="flex items-center justify-between text-[10px] text-slate-500 font-mono pt-1 border-t border-slate-900">
+        <span>Vendor: ${item.metadata.vendor || 'N/A'}</span>
+        <span>${item.metadata.timestamp ? new Date(item.metadata.timestamp).toLocaleDateString() : ''}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
 // ── SECTION PAGE HEADERS ─────────────────────────────────
 // Inject a consistent header bar into every tab section so they
 // all have a unified look without touching inner JS-bound content.
@@ -4284,6 +4817,7 @@ const SECTION_META = {
   'rag':       { icon: 'fa-comments', title: 'Ask Steward', sub: 'Natural language purchasing commands' },
   'sentinel':  { icon: 'fa-satellite-dish', title: 'Price Watcher', sub: 'Set price targets — auto-buy when hit' },
   'upi':       { icon: 'fa-qrcode', title: 'UPI AutoPay', sub: 'Manage autonomous payment mandate' },
+  'swarm':     { icon: 'fa-network-wired', title: '5-Day Swarm (Jarvis)', sub: '5 autonomous agents running Mon-Fri business ops' },
 };
 
 document.querySelectorAll('section[id^="tab-"]').forEach(section => {
