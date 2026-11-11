@@ -18,3 +18,4 @@ export * from "./agent-event-bus.js";
 export * from "./vector-memory.js";
 export * from "./swarm-orchestrator.js";
 export * from "./business-heartbeat.js";
+export * from "./autonomous-purchase-engine.js";

@@ -33,6 +33,7 @@ import {
   SemanticVectorMemoryEngine,
   SwarmOrchestratorEngine,
   BusinessHeartbeatEngine,
+  AutonomousPurchaseEngine,
 } from "../index.js";
 import { BENCHMARK_CASES, BENCHMARK_WHITELIST } from "../benchmark/cases.js";
 
@@ -1821,6 +1822,100 @@ const server = http.createServer(async (req, res) => {
         totalMessages: AgentEventBus.getMessageLog().length,
       })
     );
+    return;
+  }
+
+  // ── 38. API: Execute Autonomous Order (Zero-Touch Prompt to Delivery) ────
+  if (req.method === "POST" && url.pathname === "/api/autonomous/order") {
+    try {
+      const body = await parseJsonBody(req);
+      const prompt = String(body.prompt || "");
+      const order = await AutonomousPurchaseEngine.executeAutonomousOrder({
+        prompt,
+        customAddress: body.customAddress,
+        apiKey: body.apiKey,
+      });
+
+      // Also record in Small Business AI Intent Audit Ledger
+      IntentAuditLedgerEngine.recordTransaction({
+        originalPrompt: prompt,
+        sku: order.productName,
+        productName: order.productName,
+        units: order.unitsCount,
+        unitPriceUSD: order.unitPriceUSD,
+        grossTotalUSD: order.totalPriceUSD,
+        grossTotalINR: order.totalPriceINR,
+        selectedPlatform: order.platform,
+        paypalReceiverEmail: `orders@${order.platform.toLowerCase().replace(/\s+/g, "")}.com`,
+        crossWebComparisonSummary: order.crossWebComparisonSummary,
+        arbitrageSavingsUSD: order.arbitrageSavingsUSD,
+        mandateCapUSD: 800.0,
+        liquidRunwayDays: 88.5,
+        paypalOrderId: order.paypalOrderId,
+      });
+
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, order }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 39. API: List All Autonomous Orders ─────────────────────────────────────
+  if (req.method === "GET" && url.pathname === "/api/autonomous/orders") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ orders: AutonomousPurchaseEngine.getAllOrders() }));
+    return;
+  }
+
+  // ── 40. API: Get Single Order Status & Live ETA Countdown ──────────────────
+  if (req.method === "GET" && url.pathname.startsWith("/api/autonomous/order/")) {
+    const orderId = url.pathname.split("/").pop();
+    const order = orderId ? AutonomousPurchaseEngine.getOrder(orderId) : undefined;
+    if (!order) {
+      res.writeHead(404, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: "Order not found" }));
+      return;
+    }
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ order }));
+    return;
+  }
+
+  // ── 41. API: Cancel Order within 60s Undo Window ───────────────────────────
+  if (req.method === "POST" && url.pathname.includes("/cancel")) {
+    try {
+      const match = url.pathname.match(/\/api\/autonomous\/order\/(.+)\/cancel/);
+      const orderId = match ? match[1] : "";
+      const order = AutonomousPurchaseEngine.cancelOrder(orderId);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, order }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // ── 42. API: Get & Update Saved Delivery Address ────────────────────────────
+  if (req.method === "GET" && url.pathname === "/api/autonomous/address") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ address: AutonomousPurchaseEngine.getSavedAddress() }));
+    return;
+  }
+
+  if (req.method === "POST" && url.pathname === "/api/autonomous/address") {
+    try {
+      const body = await parseJsonBody(req);
+      const address = AutonomousPurchaseEngine.updateAddress(body);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ success: true, address }));
+    } catch (err: any) {
+      res.writeHead(400, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: err.message }));
+    }
     return;
   }
 

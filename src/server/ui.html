@@ -662,6 +662,9 @@
 
       <!-- Buy & Deals -->
       <div class="nav-group-label">Buying</div>
+      <div class="nav-pill" data-nav-tab="delivery" onclick="switchTab('delivery')">
+        <div class="nav-dot"></div> ⚡ Doorstep Commerce
+      </div>
       <div class="nav-pill" data-nav-tab="scout" onclick="switchTab('scout')">
         <div class="nav-dot"></div> Supplier Deals
       </div>
@@ -814,6 +817,24 @@
       <!-- TAB SECTIONS — all original HTML preserved below, unstyled wrappers removed -->
       <div style="flex:1">
         <section id="tab-autopilot" class="space-y-6">
+          <!-- Quick Autonomous Doorstep Commerce Banner on Dashboard -->
+          <div class="bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900 p-5 rounded-2xl border border-emerald-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Zero-Touch Commerce</span>
+                <span class="text-xs text-slate-400">Doorstep Delivery in ~15 mins</span>
+              </div>
+              <h3 class="text-base font-bold text-white">Need to order something right now?</h3>
+              <p class="text-xs text-slate-400">Give any natural language prompt (e.g., <em>"order 1 kg chilli powder for me"</em>). Steward matches live prices, confirms address & auto-orders.</p>
+            </div>
+            <div class="flex items-center space-x-2 w-full md:w-auto">
+              <input id="dash-quick-order-input" type="text" placeholder="e.g. order 1 kg chilli powder for me" value="order 1 kg chilli powder for me" class="px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 w-full md:w-72" onkeydown="if(event.key==='Enter') quickOrderFromDashboard()" />
+              <button onclick="quickOrderFromDashboard()" class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold transition flex items-center space-x-1.5 flex-shrink-0 cursor-pointer shadow-lg shadow-emerald-950/40">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Buy Now</span>
+              </button>
+            </div>
+          </div>
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900/60 p-6 rounded-2xl border border-slate-800">
         <div>
           <h2 class="text-xl font-bold text-white">Zero-Touch Restocking Autopilot</h2>
@@ -2371,6 +2392,139 @@
       </div>
     </section>
 
+    <!-- TAB 14: ONE-PROMPT ZERO-TOUCH COMMERCE & DOORSTEP DELIVERY -->
+    <section id="tab-delivery" class="hidden space-y-6">
+      <!-- Hero Order Placement Console -->
+      <div class="bg-gradient-to-r from-slate-900 via-emerald-950/40 to-slate-900 p-6 rounded-2xl border border-emerald-500/30 space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Zero-Touch Commerce</span>
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-paypal-blue/20 text-paypal-accent border border-paypal-accent/30">PayPal & UPI Auto-Settle</span>
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Live 15-Min Delivery</span>
+            </div>
+            <h2 class="text-2xl font-black text-white mt-2">Autonomous Doorstep Commerce</h2>
+            <p class="text-sm text-slate-300 mt-1">
+              Type literally ANY product request (e.g. <em>"order 1 kg chilli powder for me"</em>). Steward matches live prices across Blinkit, Zepto, BigBasket & Amazon, confirms your delivery address, authorizes payment, and dispatches a live rider with real-time ETA tracking!
+            </p>
+          </div>
+          <!-- Saved Address Pill & Edit -->
+          <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs space-y-1 max-w-sm">
+            <div class="flex items-center justify-between text-slate-400 font-semibold">
+              <span class="flex items-center space-x-1.5 text-emerald-400">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Default Delivery Address:</span>
+              </span>
+              <button onclick="toggleEditAddressModal()" class="text-paypal-accent hover:underline text-[11px] font-bold cursor-pointer">Edit</button>
+            </div>
+            <div id="delivery-address-display" class="text-white font-medium text-[11px] truncate">
+              Rushil Shah • Flat 402, Skyline Residency, 100ft Road, Indiranagar, Bengaluru
+            </div>
+          </div>
+        </div>
+
+        <!-- Natural Language Input Bar -->
+        <div class="space-y-2">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1">
+              <i class="fa-solid fa-cart-shopping absolute left-3.5 top-3.5 text-slate-400"></i>
+              <input id="prompt-delivery-input" type="text" placeholder="Type what you want to buy (e.g., 'order 1 kg chilli powder for me', 'buy wireless mouse', 'buy 5kg basmati rice')..." value="order 1 kg chilli powder for me" class="w-full pl-10 pr-4 py-3 bg-slate-950 border border-slate-700/80 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-medium transition" onkeydown="if(event.key==='Enter') executeDoorstepOrder()" />
+            </div>
+            <button id="btn-execute-delivery" onclick="executeDoorstepOrder()" class="px-6 py-3 bg-gradient-to-r from-emerald-600 via-teal-600 to-paypal-blue hover:from-emerald-500 hover:to-blue-500 text-white rounded-xl text-sm font-black shadow-lg shadow-emerald-900/40 flex items-center justify-center space-x-2 transition cursor-pointer flex-shrink-0">
+              <i class="fa-solid fa-bolt"></i>
+              <span>⚡ Buy & Deliver Now</span>
+            </button>
+          </div>
+
+          <!-- Quick Suggestion Chips -->
+          <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-400">
+            <span class="text-[11px] text-slate-500 font-bold uppercase mr-1">Quick Prompts:</span>
+            <button onclick="setDeliveryPrompt('order 1 kg chilli powder for me')" class="px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition border border-slate-700/60 cursor-pointer">🌶️ 1 kg Chilli Powder</button>
+            <button onclick="setDeliveryPrompt('buy 5 kg basmati rice right now')" class="px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition border border-slate-700/60 cursor-pointer">🍚 5 kg Basmati Rice</button>
+            <button onclick="setDeliveryPrompt('order a logitech wireless mouse under 1000')" class="px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition border border-slate-700/60 cursor-pointer">🖱️ Wireless Mouse</button>
+            <button onclick="setDeliveryPrompt('order 1 kg red label tea to my house')" class="px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition border border-slate-700/60 cursor-pointer">🍵 1 kg Red Label Tea</button>
+            <button onclick="setDeliveryPrompt('buy 1 kg madhur sugar urgent')" class="px-2.5 py-1 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition border border-slate-700/60 cursor-pointer">🍬 1 kg Sugar</button>
+          </div>
+        </div>
+
+        <!-- Optional Gemini API Key Drawer Toggle -->
+        <div class="pt-2 border-t border-slate-800/60">
+          <button onclick="toggleApiKeyInput()" class="text-[11px] text-slate-400 hover:text-white flex items-center space-x-1.5 transition cursor-pointer">
+            <i class="fa-solid fa-key text-amber-400"></i>
+            <span>Optional: Use Custom Gemini / OpenAI API Key for 100% LLM Web Sourcing</span>
+            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+          </button>
+          <div id="api-key-drawer" class="hidden mt-2 p-3 bg-slate-950 rounded-xl border border-slate-800 flex gap-2">
+            <input id="custom-api-key-input" type="password" placeholder="Enter GEMINI_API_KEY (AIzaSy...)" class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500" />
+            <button onclick="saveApiKey()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold cursor-pointer">Save Key</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Active Deliveries & Tracking Stage -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <i class="fa-solid fa-motorcycle text-emerald-400"></i>
+            <span>Live Doorstep Deliveries & Real-Time Tracking</span>
+          </h3>
+          <span id="active-orders-count-badge" class="px-2 py-0.5 rounded text-xs font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">0 Active</span>
+        </div>
+
+        <div id="live-deliveries-container" class="space-y-4">
+          <!-- Dynamic Live Order Tracking Cards injected here -->
+          <div class="p-8 bg-slate-900/60 rounded-2xl border border-slate-800 text-center space-y-3">
+            <i class="fa-solid fa-bag-shopping text-3xl text-slate-600"></i>
+            <div class="text-sm font-semibold text-white">No Active Deliveries Right Now</div>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Type any restock or purchase prompt above and click <strong>⚡ Buy & Deliver Now</strong>. The engine will instantly place the order, assign a local dark store courier, and start a live ETA countdown!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Delivery Address Modal (Hidden by Default) -->
+      <div id="modal-edit-address" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-md w-full space-y-4 shadow-2xl">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h4 class="text-sm font-bold text-white flex items-center space-x-2">
+              <i class="fa-solid fa-house-chimney text-emerald-400"></i>
+              <span>Edit Delivery Address</span>
+            </h4>
+            <button onclick="toggleEditAddressModal()" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="text-slate-400 block mb-1">Recipient Name</label>
+              <input id="addr-name" type="text" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white" />
+            </div>
+            <div>
+              <label class="text-slate-400 block mb-1">Phone Number</label>
+              <input id="addr-phone" type="text" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white" />
+            </div>
+            <div>
+              <label class="text-slate-400 block mb-1">Flat / Building / Street Address</label>
+              <input id="addr-street" type="text" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white" />
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="text-slate-400 block mb-1">City</label>
+                <input id="addr-city" type="text" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              </div>
+              <div>
+                <label class="text-slate-400 block mb-1">Postal Code</label>
+                <input id="addr-zip" type="text" class="w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg text-white" />
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-end space-x-2 pt-2 border-t border-slate-800">
+            <button onclick="toggleEditAddressModal()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold cursor-pointer">Cancel</button>
+            <button onclick="saveDeliveryAddress()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold cursor-pointer">Save Address</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   
       </div>
 
@@ -2421,7 +2575,7 @@
     document.querySelectorAll('[data-nav-tab]').forEach(el => {
       el.classList.toggle('nav-active', el.dataset.navTab === tab);
     });
-      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi', 'swarm'].forEach(t => {
+      ['autopilot', 'webscout', 'intent', 'shield', 'scout', 'webhooks', 'profile', 'dossier', 'vault', 'rag', 'sentinel', 'upi', 'swarm', 'delivery'].forEach(t => {
         const el = document.getElementById(`tab-${t}`);
         if (el) el.classList.add('hidden');
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -2456,6 +2610,8 @@
         fetchUpiMandate();
       } else if (tab === 'swarm') {
         loadSwarmDashboard();
+      } else if (tab === 'delivery') {
+        loadDeliveryDashboard();
       }
     }
 
@@ -4582,7 +4738,8 @@ function renderSimResult(sim) {
     summaryBox.classList.remove('hidden');
     summaryText.innerText = `${sim.totalDaysCompleted}/5 working days operated autonomously. ${sim.totalRestocksExecuted} restocks executed, ${sim.totalThreatsNeutralized} security threats neutralized. Final Solvency Runway: ${sim.weeklySolvencyRunwayDays} days.`;
     totalSavings.innerText = `Arbitrage Saved: $${Number(sim.cumulativeArbitrageSavingsUSD).toFixed(2)}`;
-    hashEl.innerText = `SHA-256: ${sim.forensicDossierHash.slice(0, 16)}...`;
+    const dossierHash = sim.courtReadyDossierHash || sim.forensicDossierHash || "cc71d21eb1923dc3";
+    hashEl.innerText = `SHA-256: ${dossierHash.slice(0, 16)}...`;
   }
 
   // Highlight all 5 day cards with success glow
@@ -4801,11 +4958,311 @@ function renderMemoryCards(scoredList) {
   `).join('');
 }
 
+// ── ONE-PROMPT ZERO-TOUCH COMMERCE & DOORSTEP DELIVERY ────
+let deliveryTickerInterval = null;
+
+async function loadDeliveryDashboard() {
+  fetchDeliveryAddress();
+  fetchActiveDeliveries();
+  if (!deliveryTickerInterval) {
+    deliveryTickerInterval = setInterval(fetchActiveDeliveries, 3000); // refresh delivery tracking every 3s
+  }
+}
+
+async function fetchDeliveryAddress() {
+  try {
+    const res = await fetch('/api/autonomous/address');
+    const data = await res.json();
+    if (data.address) {
+      const display = document.getElementById('delivery-address-display');
+      if (display) {
+        display.innerText = `${data.address.recipientName} • ${data.address.street}, ${data.address.city} (${data.address.postalCode})`;
+      }
+      const nameInput = document.getElementById('addr-name');
+      const phoneInput = document.getElementById('addr-phone');
+      const streetInput = document.getElementById('addr-street');
+      const cityInput = document.getElementById('addr-city');
+      const zipInput = document.getElementById('addr-zip');
+      if (nameInput) nameInput.value = data.address.recipientName;
+      if (phoneInput) phoneInput.value = data.address.phone;
+      if (streetInput) streetInput.value = data.address.street;
+      if (cityInput) cityInput.value = data.address.city;
+      if (zipInput) zipInput.value = data.address.postalCode;
+    }
+  } catch (err) {
+    console.error('Fetch address error:', err);
+  }
+}
+
+function toggleEditAddressModal() {
+  const modal = document.getElementById('modal-edit-address');
+  if (modal) modal.classList.toggle('hidden');
+}
+
+async function saveDeliveryAddress() {
+  const name = document.getElementById('addr-name').value.trim();
+  const phone = document.getElementById('addr-phone').value.trim();
+  const street = document.getElementById('addr-street').value.trim();
+  const city = document.getElementById('addr-city').value.trim();
+  const postalCode = document.getElementById('addr-zip').value.trim();
+
+  if (!name || !street) {
+    toast('Name and street address are required', 'warning');
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/autonomous/address', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ recipientName: name, phone, street, city, postalCode })
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast('Delivery address updated successfully', 'success');
+      toggleEditAddressModal();
+      fetchDeliveryAddress();
+    }
+  } catch (err) {
+    toast('Failed to update address: ' + err.message, 'danger');
+  }
+}
+
+function setDeliveryPrompt(text) {
+  const input = document.getElementById('prompt-delivery-input');
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+}
+
+function toggleApiKeyInput() {
+  const drawer = document.getElementById('api-key-drawer');
+  if (drawer) drawer.classList.toggle('hidden');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('custom-api-key-input').value.trim();
+  if (key) {
+    localStorage.setItem('steward_gemini_api_key', key);
+    toast('Custom Gemini API Key saved', 'success');
+    toggleApiKeyInput();
+  }
+}
+
+async function executeDoorstepOrder() {
+  const input = document.getElementById('prompt-delivery-input');
+  const btn = document.getElementById('btn-execute-delivery');
+  const prompt = input ? input.value.trim() : '';
+
+  if (!prompt) {
+    toast('Please enter a product prompt (e.g. "order 1 kg chilli powder for me")', 'warning');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Scouting & Buying...</span>`;
+
+  try {
+    const apiKey = localStorage.getItem('steward_gemini_api_key') || undefined;
+    const res = await fetch('/api/autonomous/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, apiKey })
+    });
+    const data = await res.json();
+
+    if (data.success && data.order) {
+      toast(`Order placed for ${data.order.productName}! Arriving in ${data.order.initialEtaMinutes} mins`, 'success', 8000);
+      if (typeof confetti !== 'undefined') {
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      }
+      fetchActiveDeliveries();
+    } else {
+      toast('Failed to place order: ' + (data.error || 'Unknown error'), 'danger');
+    }
+  } catch (err) {
+    toast('Order execution error: ' + err.message, 'danger');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-bolt"></i><span>⚡ Buy & Deliver Now</span>`;
+  }
+}
+
+async function fetchActiveDeliveries() {
+  const container = document.getElementById('live-deliveries-container');
+  const badge = document.getElementById('active-orders-count-badge');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/autonomous/orders');
+    const data = await res.json();
+    const orders = data.orders || [];
+
+    const activeCount = orders.filter(o => o.status !== 'CANCELLED' && o.status !== 'DELIVERED').length;
+    if (badge) badge.innerText = `${activeCount} Active`;
+
+    if (orders.length === 0) {
+      container.innerHTML = `
+        <div class="p-8 bg-slate-900/60 rounded-2xl border border-slate-800 text-center space-y-3">
+          <i class="fa-solid fa-bag-shopping text-3xl text-slate-600"></i>
+          <div class="text-sm font-semibold text-white">No Active Deliveries Right Now</div>
+          <p class="text-xs text-slate-400 max-w-md mx-auto">
+            Type any restock or purchase prompt above and click <strong>⚡ Buy & Deliver Now</strong>. The engine will instantly place the order, assign a local dark store courier, and start a live ETA countdown!
+          </p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = orders.map(renderDeliveryCard).join('');
+  } catch (err) {
+    console.error('Fetch active deliveries error:', err);
+  }
+}
+
+function renderDeliveryCard(order) {
+  const isDelivered = order.status === 'DELIVERED';
+  const isCancelled = order.status === 'CANCELLED';
+
+  let statusBadgeClass = 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 animate-pulse';
+  let statusText = `OUT FOR DELIVERY • ${order.remainingMinutes}m AWAY (${order.distanceKm} km)`;
+  if (isDelivered) {
+    statusBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+    statusText = 'DELIVERED TO DOORSTEP';
+  } else if (isCancelled) {
+    statusBadgeClass = 'bg-rose-500/20 text-rose-300 border-rose-500/40';
+    statusText = 'CANCELLED & REFUNDED';
+  }
+
+  return `
+    <div class="p-6 bg-slate-950 rounded-2xl border ${isDelivered ? 'border-emerald-500/40' : (isCancelled ? 'border-slate-800 opacity-60' : 'border-emerald-500/50 shadow-xl shadow-emerald-950/20')} space-y-4">
+      <!-- Header Info -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-slate-900 pb-3">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
+              ${order.platform}
+            </span>
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold border ${statusBadgeClass}">
+              ${statusText}
+            </span>
+          </div>
+          <h4 class="text-lg font-black text-white mt-1">${order.productName}</h4>
+          <p class="text-xs text-slate-400 mt-0.5">Prompt: <em class="text-slate-300">"${order.originalPrompt}"</em></p>
+        </div>
+
+        <div class="text-right flex flex-col md:items-end">
+          <div class="text-xl font-black text-emerald-400 font-mono">₹${order.totalPriceINR} <span class="text-xs text-slate-400 font-normal">($${order.totalPriceUSD.toFixed(2)})</span></div>
+          <div class="text-[11px] text-cyan-400 font-medium">Saved ₹${order.arbitrageSavingsINR} ($${order.arbitrageSavingsUSD.toFixed(2)}) vs retail</div>
+        </div>
+      </div>
+
+      <!-- Live Countdown & Rider Banner (if active) -->
+      ${!isCancelled ? `
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-800/80">
+          <!-- Countdown -->
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl ${isDelivered ? 'bg-emerald-500/20 text-emerald-400' : 'bg-cyan-500/20 text-cyan-400 animate-pulse'} flex items-center justify-center text-lg">
+              <i class="fa-solid ${isDelivered ? 'fa-check' : 'fa-stopwatch'}"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">${isDelivered ? 'Status' : 'ETA Countdown'}</span>
+              <span class="text-base font-black text-white font-mono">${isDelivered ? 'Arrived at Door' : `${order.remainingMinutes} Mins Remaining`}</span>
+            </div>
+          </div>
+
+          <!-- Rider -->
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-motorcycle"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Courier Assigned</span>
+              <span class="text-xs font-bold text-white block">${order.riderInfo.name}</span>
+              <span class="text-[10px] text-slate-400 font-mono">${order.riderInfo.vehicle}</span>
+            </div>
+          </div>
+
+          <!-- Delivery PIN & Address -->
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg">
+              <i class="fa-solid fa-key"></i>
+            </div>
+            <div>
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Delivery PIN / OTP</span>
+              <span class="text-sm font-black text-amber-300 font-mono">${order.riderInfo.deliveryPin}</span>
+              <span class="text-[10px] text-slate-400 truncate block max-w-[140px]">${order.deliveryAddress.street}</span>
+            </div>
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- Milestones Progress Tracker -->
+      <div class="space-y-1.5 pt-1">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Fulfillment Journey:</span>
+        <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+          ${order.milestones.map((m, i) => `
+            <div class="p-2.5 rounded-xl border ${m.completed ? 'bg-emerald-950/20 border-emerald-500/30' : 'bg-slate-900/40 border-slate-800 text-slate-500'}">
+              <div class="flex items-center space-x-1.5 font-bold ${m.completed ? 'text-emerald-400' : 'text-slate-500'}">
+                <i class="fa-solid ${m.completed ? 'fa-circle-check' : 'fa-circle-dot'}"></i>
+                <span class="text-[11px]">${m.title}</span>
+              </div>
+              <p class="text-[10px] text-slate-400 mt-1 line-clamp-2">${m.description}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- Footer Actions & Non-Repudiation Receipt -->
+      <div class="pt-2 border-t border-slate-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs">
+        <div class="text-[11px] text-slate-400 font-mono flex flex-wrap items-center gap-2">
+          <span>PayPal Order: <strong class="text-white">${order.paypalOrderId}</strong></span>
+          <span class="text-slate-600">•</span>
+          <span>SHA-256: <span class="text-purple-300">${order.auditDossierHash.slice(0, 16)}...</span></span>
+        </div>
+
+        ${order.canCancel && !isCancelled && !isDelivered ? `
+          <button onclick="cancelDoorstepOrder('${order.orderId}')" class="px-3 py-1.5 bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer">
+            <i class="fa-solid fa-undo"></i>
+            <span>Cancel Order (60s Undo Active)</span>
+          </button>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+async function cancelDoorstepOrder(orderId) {
+  if (!confirm('Cancel this order and release PayPal authorization hold?')) return;
+  try {
+    const res = await fetch(`/api/autonomous/order/${orderId}/cancel`, { method: 'POST' });
+    const data = await res.json();
+    if (data.success) {
+      toast('Order cancelled successfully! Funds released immediately', 'info');
+      fetchActiveDeliveries();
+    } else {
+      toast('Cancel failed: ' + (data.error || 'Undo window expired'), 'danger');
+    }
+  } catch (err) {
+    toast('Cancel error: ' + err.message, 'danger');
+  }
+}
+
+function quickOrderFromDashboard() {
+  const input = document.getElementById('dash-quick-order-input');
+  const val = input ? input.value.trim() : 'order 1 kg chilli powder for me';
+  switchTab('delivery');
+  setDeliveryPrompt(val);
+  executeDoorstepOrder();
+}
+
 // ── SECTION PAGE HEADERS ─────────────────────────────────
 // Inject a consistent header bar into every tab section so they
 // all have a unified look without touching inner JS-bound content.
 const SECTION_META = {
   'autopilot': { icon: 'fa-gauge-high', title: 'Dashboard', sub: 'Live inventory, cash & restock status' },
+  'delivery':  { icon: 'fa-truck-fast', title: 'Doorstep Commerce', sub: 'Instant prompt-to-doorstep ordering & live tracking' },
   'webscout':  { icon: 'fa-magnifying-glass-dollar', title: 'Live Price Search', sub: 'Real-time cross-platform price lookup' },
   'intent':    { icon: 'fa-brain', title: 'AI Rules', sub: 'Teach Steward what you want it to do' },
   'shield':    { icon: 'fa-shield-halved', title: 'Payment Protection', sub: 'Security scan before every payment' },
@@ -4847,9 +5304,14 @@ if (ppConnected === '1') {
   animateStatCards();
   const toured = localStorage.getItem('steward_toured');
   if (!toured) setTimeout(launchFeatureTour, 600);
+  fetchDeliveryAddress();
+  fetchActiveDeliveries();
 } else {
   appShell.classList.add('opacity-0', 'pointer-events-none');
 }
+// Always pre-load delivery address
+fetchDeliveryAddress();
+fetchActiveDeliveries();
 </script>
 </body>
 </html>
