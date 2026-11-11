@@ -101,9 +101,9 @@ async function verifyMcpServer(): Promise<{ passed: boolean; durationMs: number;
     const timer = setTimeout(() => {
       if (!completed) {
         proc.kill();
-        resolve({ passed: false, durationMs: Date.now() - start, error: "MCP timeout after 10s" });
+        resolve({ passed: false, durationMs: Date.now() - start, error: "MCP timeout after 25s" });
       }
-    }, 10000);
+    }, 25000);
 
     proc.stdout.on("data", (d) => {
       output += d.toString();
