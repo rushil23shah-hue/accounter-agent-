@@ -5078,6 +5078,7 @@ async function executeDoorstepOrder() {
         confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
       }
       fetchActiveDeliveries();
+      fetchDashboardState();
     } else {
       toast('Failed to place order: ' + (data.error || 'Unknown error'), 'danger');
     }
@@ -5241,6 +5242,7 @@ async function cancelDoorstepOrder(orderId) {
     if (data.success) {
       toast('Order cancelled successfully! Funds released immediately', 'info');
       fetchActiveDeliveries();
+      fetchDashboardState();
     } else {
       toast('Cancel failed: ' + (data.error || 'Undo window expired'), 'danger');
     }

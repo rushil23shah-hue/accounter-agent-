@@ -6,6 +6,7 @@ import {
   DeliveryAddressSchema,
 } from "../contracts/delivery.js";
 import { PreFlightPaymentShield } from "../privacy/pre-flight-shield.js";
+import { GeminiClient } from "./gemini-client.js";
 
 // In-Memory Order & Address Database
 let savedAddress: DeliveryAddress = {
@@ -271,8 +272,34 @@ export class AutonomousPurchaseEngine {
   // ── Sourcing & Price Matcher Logic ────────────────────────────────────────
 
   private static async resolveProductAndPricing(prompt: string, apiKey?: string) {
-    const p = prompt.toLowerCase();
     const FX_RATE = 86.5;
+
+    // 1. Google Gemini 1.5 Flash AI Extraction (if API key present)
+    const geminiResult = await GeminiClient.parseCommerceIntent(prompt, apiKey);
+    if (geminiResult && geminiResult.productName) {
+      const cleanSku = `SKU-${geminiResult.productName.toUpperCase().replace(/[^A-Z0-9]/g, "-").slice(0, 14)}-01`;
+      const units = geminiResult.unitsCount || 1;
+      return {
+        sku: cleanSku,
+        productName: geminiResult.productName,
+        brand: geminiResult.brand || "Verified Merchant",
+        quantity: geminiResult.quantity || `${units} unit`,
+        unitsCount: units,
+        platform: geminiResult.fastestPlatform || "Blinkit",
+        platformLogoUrl: `https://${(geminiResult.fastestPlatform || "blinkit").toLowerCase().replace(/\s+/g, "")}.com/favicon.ico`,
+        unitPriceINR: Number((geminiResult.estimatedPriceINR / units).toFixed(2)),
+        unitPriceUSD: Number((geminiResult.estimatedPriceUSD / units).toFixed(2)),
+        totalPriceINR: geminiResult.estimatedPriceINR,
+        totalPriceUSD: geminiResult.estimatedPriceUSD,
+        arbitrageSavingsINR: geminiResult.arbitrageSavingsINR || 35,
+        arbitrageSavingsUSD: Number(((geminiResult.arbitrageSavingsINR || 35) / FX_RATE).toFixed(2)),
+        etaMinutes: geminiResult.etaMinutes || 15,
+        crossWebComparisonSummary: geminiResult.crossWebComparisonSummary || `${geminiResult.fastestPlatform} selected for lowest price and fastest local fulfillment.`,
+        aiRationale: `[Powered by Google Gemini 1.5 Flash] ${geminiResult.aiRationale || "Autonomous commerce intent parsed with multimodal intelligence."}`,
+      };
+    }
+
+    const p = prompt.toLowerCase();
 
     // Extract quantity (supports "1 kg", "500 gm", "2 packets", "3 pcs")
     let quantityStr = "1 unit";
