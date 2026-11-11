@@ -79,7 +79,7 @@ export class GeminiClient {
     this.currentKeyIndex = (this.currentKeyIndex + 1) % keys.length;
 
     const systemInstruction = `
-You are the autonomous purchasing engine for Steward 2.0. 
+You are the autonomous purchasing engine for AgenticPay. 
 Analyze the following natural language user buying request across Indian and global retail/quick-commerce.
 Extract the exact product, appropriate commercial brand, realistic unit price in INR and USD (assume 1 USD = 86.5 INR), fastest delivery service (Blinkit, Zepto, BigBasket, Amazon, Flipkart), estimated delivery time, and competitive price comparison.
 

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { UPIMandateEngine } from "../src/index.js";
 
 console.log("══════════════════════════════════════════════════════════════════════════════");
-console.log("   STEWARD 2.0: AGENTIC UPI AUTOPAY MANDATE PROTOCOL VERIFICATION             ");
+console.log("   AGENTICPAY: AGENTIC UPI AUTOPAY MANDATE PROTOCOL VERIFICATION             ");
 console.log("   NPCI Compliance • Scannable QR • Asymmetric Ceiling • 1-Tap Revocation     ");
 console.log("══════════════════════════════════════════════════════════════════════════════\n");
 
@@ -13,7 +13,7 @@ function runMandateTests() {
   const mandate = UPIMandateEngine.getMandate();
 
   assert.ok(mandate.umn.startsWith("UMN-IND-2026-"), "Must have cryptographic NPCI UMN prefix");
-  assert.equal(mandate.agentVpa, "steward.autopilot@paypal", "Agent VPA must be steward.autopilot@paypal");
+  assert.equal(mandate.agentVpa, "agenticpay.autopilot@paypal", "Agent VPA must be agenticpay.autopilot@paypal");
   assert.equal(mandate.status, "ACTIVE", "Default mandate must be ACTIVE");
   assert.equal(mandate.maxAmountINR, 15000, "Default single cap must be ₹15,000");
   assert.ok(mandate.maxAmountUSD > 150 && mandate.maxAmountUSD < 190, "Calculated USD cap must match FX rate");

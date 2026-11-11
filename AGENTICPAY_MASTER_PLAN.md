@@ -1,4 +1,4 @@
-# Steward 2.0: The Intent-Aware Agentic Financial Autopilot
+# AgenticPay: The Intent-Aware Agentic Financial Autopilot
 ### *Zero-Knowledge Financial Privacy, Pre-Flight Security Shield & Autonomous Zero-Touch Commerce on PayPal*
 **PayPal AI Hackathon 2026 — Master Specification & Implementation Roadmap**
 
@@ -7,7 +7,7 @@
 ## 1. Executive Summary & Core Pitch
 
 ### The One-Line Pitch
-> **Steward is an autonomous, privacy-preserving financial autopilot that acts like a human CFO for small businesses—learning inventory consumption rhythms, scouting the web for the best wholesale deals, and executing zero-touch restocking via dynamic PayPal mandates—all while protecting business financials behind a Zero-Knowledge Confidential Vault and neutralizing prompt injections through a Pre-Flight Payment Security Shield.**
+> **AgenticPay is an autonomous, privacy-preserving financial autopilot that acts like a human CFO for small businesses—learning inventory consumption rhythms, scouting the web for the best wholesale deals, and executing zero-touch restocking via dynamic PayPal mandates—all while protecting business financials behind a Zero-Knowledge Confidential Vault and neutralizing prompt injections through a Pre-Flight Payment Security Shield.**
 
 ### The Problem It Solves
 1. **The Small Business Reordering Nightmare**: Online sellers (e.g. specialty food, tea shops, beauty brands, craft retailers) spend 10+ hours a week juggling inventory spreadsheets. They either over-order and lock up critical cash, or under-order and lose sales to stockouts.
@@ -110,7 +110,7 @@
   * Shipping fees and delivery lead times.
 * Computes the net cost per unit and selects the highest-value option.
 
-### 5. Pre-Flight Payment Security Shield ("Steward Shield")
+### 5. Pre-Flight Payment Security Shield ("AgenticPay Shield")
 * **Inbound Firewall**: Positioned directly between web inputs/invoices and the payment execution layer.
 * **Taint Parser**: Wraps external supplier text inside safe JSON data literals with SHA-256 hashes, preventing prompt injections from executing as system instructions.
 * **Adversarial Pattern Detection**: Scans for:
@@ -123,8 +123,8 @@
 * Leverages PayPal Orders v2 with `intent: "AUTHORIZE"`.
 * Money is held on PayPal's network, not captured.
 * A live 60-second interactive countdown gives the owner complete control.
-* If cancelled, Steward calls `POST /v2/payments/authorizations/{id}/void` — money is immediately released with **zero transaction fees**.
-* If the window expires cleanly, Steward issues `/capture`.
+* If cancelled, AgenticPay calls `POST /v2/payments/authorizations/{id}/void` — money is immediately released with **zero transaction fees**.
+* If the window expires cleanly, AgenticPay issues `/capture`.
 
 ### 7. Transparent Earned Autonomy & Zero-Tolerance Penalty Box
 * **Tier 0 (Suggest Only)**: New suppliers; requires full human confirmation.

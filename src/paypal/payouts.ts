@@ -1,4 +1,4 @@
-//payouts api: supplier payments (pays immediately, so Steward delays it itself)
+//payouts api: supplier payments (pays immediately, so AgenticPay delays it itself)
 import { z } from "zod";
 import { PayPalClient } from "./client.js";
 
@@ -15,7 +15,7 @@ export class PayPalPayouts {
       "POST",
       "/v1/payments/payouts",
       {
-        sender_batch_header: { sender_batch_id: params.batchId, email_subject: "Payment from Steward" },
+        sender_batch_header: { sender_batch_id: params.batchId, email_subject: "Payment from AgenticPay" },
         items: [
           {
             recipient_type: "EMAIL",

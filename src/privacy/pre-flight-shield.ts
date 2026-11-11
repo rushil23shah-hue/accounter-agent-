@@ -451,8 +451,8 @@ export class PreFlightPaymentShield {
     const clearedForPayment = threats.length === 0;
 
     const whyExplanation = clearedForPayment
-      ? `Steward Shield CLEARED: Payee "${request.proposedPayeeEmail}" is verified. Amount within quote. All checks passed.`
-      : `Steward Shield BLOCKED: ${threats.length} threat(s) detected [${[...reportedTypes].join(", ")}]. Risk: ${(riskScore * 100).toFixed(0)}%.`;
+      ? `AgenticPay Shield CLEARED: Payee "${request.proposedPayeeEmail}" is verified. Amount within quote. All checks passed.`
+      : `AgenticPay Shield BLOCKED: ${threats.length} threat(s) detected [${[...reportedTypes].join(", ")}]. Risk: ${(riskScore * 100).toFixed(0)}%.`;
 
     return {
       clearedForPayment,

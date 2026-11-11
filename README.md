@@ -1,4 +1,4 @@
-# Steward 2.0 (AgenticPay)
+# AgenticPay
 
 ### The Intent-Aware Agentic Financial Autopilot for Small Businesses
 *Zero-Knowledge Financial Privacy • Google Gemini 3.8 Flash Failover Pool • 5-Day Autonomous Swarm • Pre-Flight Security Shield • Zero-Touch Doorstep Commerce on PayPal*
@@ -7,13 +7,13 @@
 
 ## Overview
 
-**Steward 2.0 (AgenticPay)** acts as an autonomous, privacy-preserving Chief Financial Officer for small businesses. It learns daily inventory burn rates, scouts dark-stores and wholesale suppliers for optimal pricing, and executes zero-touch restocking through dynamic PayPal mandates—all while keeping sensitive business financials locked behind an on-device Zero-Knowledge (ZK) Vault and neutralizing adversarial prompt injections before a single dollar moves.
+**AgenticPay** acts as an autonomous, privacy-preserving Chief Financial Officer for small businesses. It learns daily inventory burn rates, scouts dark-stores and wholesale suppliers for optimal pricing, and executes zero-touch restocking through dynamic PayPal mandates—all while keeping sensitive business financials locked behind an on-device Zero-Knowledge (ZK) Vault and neutralizing adversarial prompt injections before a single dollar moves.
 
 From a single natural-language merchant request such as:
 
 > *"Sales of matcha have increased. Reorder without risking payroll."*
 
-Steward coordinates multi-agent intelligence, mathematical solvency verification, and PayPal authorization escrow to deliver end-to-end commerce with complete peace of mind.
+AgenticPay coordinates multi-agent intelligence, mathematical solvency verification, and PayPal authorization escrow to deliver end-to-end commerce with complete peace of mind.
 
 ---
 
@@ -69,13 +69,13 @@ Steward coordinates multi-agent intelligence, mathematical solvency verification
 ```
 
 ### 1. Google Gemini 3.8 Flash with 4-Key Failover Rotation Pool
-Steward integrates Google’s state-of-the-art **Gemini 3.8 Flash** model (`gemini-3.8-flash`) for dynamic prompt parsing, universal intent grounding, and sourcing rationale generation. To guarantee uninterrupted production availability, the system implements an automated **4-key round-robin rotation pool**:
+AgenticPay integrates Google’s state-of-the-art **Gemini 3.8 Flash** model (`gemini-3.8-flash`) for dynamic prompt parsing, universal intent grounding, and sourcing rationale generation. To guarantee uninterrupted production availability, the system implements an automated **4-key round-robin rotation pool**:
 - Seamlessly distributes requests across API keys.
 - Catches quota exhaustion and transient errors, automatically failing over to the next healthy key.
 - Surfaces active key pool health and rationale metrics directly in the commerce dashboard.
 
 ### 2. Zero-Touch Doorstep Commerce & Live Delivery Routing
-Beyond traditional procurement, Steward connects directly to hyperlocal dark-stores (e.g. Blinkit, Zepto) and regional wholesale partners:
+Beyond traditional procurement, AgenticPay connects directly to hyperlocal dark-stores (e.g. Blinkit, Zepto) and regional wholesale partners:
 - Translates natural-language intents into granular item quantities and specifications.
 - Dispatches orders with dynamic dark-store selection, live rider assignment, and simulated minute-by-minute ETA progression.
 - Backed by address profile management and live cash reconciliation with the ZK-Vault.
@@ -93,7 +93,7 @@ Business owners never have to expose their sensitive bank balances, revenue numb
 - Cloud agents receive only blinded boolean clearances (`budget_clearance_granted: true`).
 
 ### 5. Pre-Flight Inbound Payment Security Shield
-Empowering AI agents to transact online introduces prompt injection and fraudulent payee vulnerabilities. Steward’s shield sanitizes all external inputs:
+Empowering AI agents to transact online introduces prompt injection and fraudulent payee vulnerabilities. AgenticPay’s shield sanitizes all external inputs:
 - Quarantines incoming supplier memos and scrape payloads in isolated data envelopes.
 - Neutralizes prompt injection, delimiter collisions, and instruction overrides (validated against a 65-case red-team adversarial benchmark).
 - Enforces strict payee whitelisting to block rogue recipient tampering.
@@ -105,7 +105,7 @@ Empowering AI agents to transact online introduces prompt injection and fraudule
 - Once the timer expires, the payment auto-captures cleanly.
 
 ### 7. MCP Server (Model Context Protocol) Integration
-Steward exposes its core financial verification and payment tools via an official **MCP STDIO server** (JSON-RPC 2.0), allowing external agents (such as Claude Desktop, Cursor, or custom multi-agent frameworks) to safely interact with Steward's tools:
+AgenticPay exposes its core financial verification and payment tools via an official **MCP STDIO server** (JSON-RPC 2.0), allowing external agents (such as Claude Desktop, Cursor, or custom multi-agent frameworks) to safely interact with AgenticPay's tools:
 - `inspect_payment`
 - `evaluate_spending_mandate`
 - `find_wholesale_suppliers`
@@ -154,7 +154,7 @@ GEMINI_API_KEY_4=your_gemini_key_4
 PORT=3000
 ```
 
-> **Note:** Steward runs in **MOCK mode by default**. You can test every dashboard feature, ZK calculation, and payment flow out of the box without real API credentials.
+> **Note:** AgenticPay runs in **MOCK mode by default**. You can test every dashboard feature, ZK calculation, and payment flow out of the box without real API credentials.
 
 ### 3. Run the Development Server
 
@@ -209,7 +209,7 @@ To configure Claude Desktop or Cursor, add this entry to your client configurati
 ```json
 {
   "mcpServers": {
-    "steward": {
+    "agenticpay": {
       "command": "npx",
       "args": ["tsx", "src/mcp/server.ts"],
       "cwd": "/absolute/path/to/accounter-agent-"

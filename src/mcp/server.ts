@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 /**
- * Steward 2.0 — Model Context Protocol (MCP) Server
+ * AgenticPay — Model Context Protocol (MCP) Server
  *
  * Implements the standard JSON-RPC 2.0 MCP interface over STDIO.
  * Allows external autonomous agents (Claude Desktop, Cursor, LangChain, CrewAI, AutoGPT)
- * to use Steward as their financial safety proxy and wholesale procurement engine.
+ * to use AgenticPay as their financial safety proxy and wholesale procurement engine.
  *
  * Capabilities exposed:
- *   1. steward_inspect_payment   (Pre-Flight Security Shield: prompt injection & payee quarantine)
- *   2. steward_evaluate_mandate   (ZK-Vault Solvency & Dynamic Spending Mandate Verification)
- *   3. steward_scout_wholesale    (Blind Multi-Vendor Wholesale Deal & Landed Cost Optimizer)
- *   4. steward_web_price_compare  (Real-Time Consumer E-Commerce Market Price Comparer)
- *   5. steward_simulate_undo_hold (Native PayPal AUTHORIZE Hold with 60s Reversible Undo Window)
+ *   1. agenticpay_inspect_payment   (Pre-Flight Security Shield: prompt injection & payee quarantine)
+ *   2. agenticpay_evaluate_mandate   (ZK-Vault Solvency & Dynamic Spending Mandate Verification)
+ *   3. agenticpay_scout_wholesale    (Blind Multi-Vendor Wholesale Deal & Landed Cost Optimizer)
+ *   4. agenticpay_web_price_compare  (Real-Time Consumer E-Commerce Market Price Comparer)
+ *   5. agenticpay_simulate_undo_hold (Native PayPal AUTHORIZE Hold with 60s Reversible Undo Window)
  */
 
 import * as readline from "node:readline";
@@ -130,7 +130,7 @@ const zkVault = new ZKVault(activeLedger);
 
 const TOOLS = [
   {
-    name: "steward_inspect_payment",
+    name: "agenticpay_inspect_payment",
     description:
       "Pre-Flight Payment Security Shield. Scans untrusted invoices, emails, or agent memos for prompt injections, payee spoofing, price inflation, homoglyph attacks, and hidden instructions before any transaction is initiated.",
     inputSchema: {
@@ -165,7 +165,7 @@ const TOOLS = [
     },
   },
   {
-    name: "steward_evaluate_mandate",
+    name: "agenticpay_evaluate_mandate",
     description:
       "Evaluates Zero-Knowledge solvency and dynamic revenue-based spending limits on-device. Proves mathematical cash safety and runway compliance without exposing the merchant's confidential ledger balance to cloud models.",
     inputSchema: {
@@ -184,7 +184,7 @@ const TOOLS = [
     },
   },
   {
-    name: "steward_scout_wholesale",
+    name: "agenticpay_scout_wholesale",
     description:
       "Wholesale Multi-Vendor Deal Scout. Anonymously evaluates verified supplier quotes, volume discount tiers, and shipping lead times to compute the lowest net landed cost per unit.",
     inputSchema: {
@@ -207,7 +207,7 @@ const TOOLS = [
     },
   },
   {
-    name: "steward_web_price_compare",
+    name: "agenticpay_web_price_compare",
     description:
       "Real-Time Consumer E-Commerce Market Scout. Crawls real-world Indian marketplaces (Amazon, Flipkart, Meesho, Nike Store, Myntra) for authentic catalog prices, best deal badges, and direct purchase URLs.",
     inputSchema: {
@@ -222,7 +222,7 @@ const TOOLS = [
     },
   },
   {
-    name: "steward_simulate_undo_hold",
+    name: "agenticpay_simulate_undo_hold",
     description:
       "Initiates a PayPal Orders v2 AUTHORIZE hold with an active 60-second Undo Window. Funds are locked on PayPal's network but not captured, granting the merchant a one-tap zero-fee cancellation window.",
     inputSchema: {
@@ -252,6 +252,7 @@ const TOOLS = [
 
 async function handleToolCall(name: string, args: Record<string, unknown>): Promise<unknown> {
   switch (name) {
+    case "agenticpay_inspect_payment":
     case "steward_inspect_payment": {
       const sourceText = String(args.sourceText || "");
       const proposedPayeeEmail = String(args.proposedPayeeEmail || "");
@@ -282,6 +283,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       };
     }
 
+    case "agenticpay_evaluate_mandate":
     case "steward_evaluate_mandate": {
       const orderCostUSD = Number(args.orderCostUSD || 0);
       const hardCeilingUSD = args.hardCeilingUSD ? Number(args.hardCeilingUSD) : 800.0;
@@ -299,6 +301,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       };
     }
 
+    case "agenticpay_scout_wholesale":
     case "steward_scout_wholesale": {
       const sku = String(args.sku || "").toUpperCase();
       const targetUnits = Number(args.targetUnits || 1);
@@ -334,6 +337,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       };
     }
 
+    case "agenticpay_web_price_compare":
     case "steward_web_price_compare": {
       const query = String(args.query || "");
       if (!query.trim()) {
@@ -365,6 +369,7 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
       };
     }
 
+    case "agenticpay_simulate_undo_hold":
     case "steward_simulate_undo_hold": {
       const amountUSD = Number(args.amountUSD || 0);
       const payeeEmail = String(args.payeeEmail || "");
@@ -428,10 +433,10 @@ rl.on("line", async (line: string) => {
           tools: {},
         },
         serverInfo: {
-          name: "steward-shield-mcp",
+          name: "agenticpay-shield-mcp",
           version: "2.0.0",
           description:
-            "Steward 2.0 Financial Safety Proxy and Autonomous Commerce Engine for Agentic Systems.",
+            "AgenticPay Financial Safety Proxy and Autonomous Commerce Engine for Agentic Systems.",
         },
       },
     });

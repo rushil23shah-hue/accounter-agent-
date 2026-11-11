@@ -1,4 +1,4 @@
-//steward-side undo window: delay the final action, cancel releases it
+//agenticpay-side undo window: delay the final action, cancel releases it
 import { UndoHoldWindow } from "../contracts/index.js";
 
 type Timers = {

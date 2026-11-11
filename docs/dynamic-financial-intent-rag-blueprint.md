@@ -1,13 +1,13 @@
 # Dynamic Financial Intent-RAG: Architecture & Implementation Blueprint
 ### *Context-Aware Semantic Grounding, Policy Memory & Zero-Hallucination Transaction Synthesis*
-**Steward 2.0 — Extended Architectural Specification for Real-World Usability**
+**AgenticPay — Extended Architectural Specification for Real-World Usability**
 
 ---
 
 ## 1. Executive Summary: Why We Need an Intent-RAG
 
 Small business owners and everyday shoppers do not speak in database queries, JSON payloads, or strict API parameters. In the real world, a user says:
-* *"Hey Steward, grab some more of that ceremonial green tea we sold out of last Saturday, but keep the spend tight."*
+* *"Hey AgenticPay, grab some more of that ceremonial green tea we sold out of last Saturday, but keep the spend tight."*
 * *"Order another batch of Earl Grey like we discussed with Assam Valley, but make sure shipping is free."*
 * *"Buy those white sneakers we saw on Nike or Flipkart, whichever has the better deal with 2-day delivery."*
 
@@ -80,7 +80,7 @@ flowchart TD
         S1 --> S2
     end
 
-    subgraph StewardGates["4. Steward Deterministic Safety & PayPal Gates"]
+    subgraph AgenticPayGates["4. AgenticPay Deterministic Safety & PayPal Gates"]
         G1["ZKVault Solvency Proof (On-Device)"]
         G2["Pre-Flight Payment Security Shield"]
         G3["Wholesale Deal Scout Landed Cost Optimizer"]
@@ -92,7 +92,7 @@ flowchart TD
     CorpusA --> HybridEngine
     CorpusB -.->|Quarantined Metadata Only| HybridEngine
     HybridEngine --> Synthesis
-    Synthesis --> StewardGates
+    Synthesis --> AgenticPayGates
 ```
 
 ---
@@ -143,7 +143,7 @@ export const ProposedIntentDraftSchema = z.object({
 
 ## 5. Security Invariant: Why Intent-RAG Cannot Hallucinate Money
 
-Even if an ambiguous prompt is entered, Steward's architecture prevents rogue execution:
+Even if an ambiguous prompt is entered, AgenticPay's architecture prevents rogue execution:
 
 1. **The Synthesizer Drafts, It Does Not Execute**:
    The RAG engine only produces a *proposed draft*. It cannot move funds.
@@ -172,4 +172,4 @@ Even if an ambiguous prompt is entered, Steward's architecture prevents rogue ex
 ---
 
 ## 7. Summary
-This design transforms Steward from a traditional dashboard into an **intuitive, conversational CFO agent** that anyone can use naturally, while maintaining mathematical financial safety and zero cloud privacy leakage.
+This design transforms AgenticPay from a traditional dashboard into an **intuitive, conversational CFO agent** that anyone can use naturally, while maintaining mathematical financial safety and zero cloud privacy leakage.

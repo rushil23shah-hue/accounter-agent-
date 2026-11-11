@@ -5348,9 +5348,9 @@ function connectPayPal() {
   const limit = limitInput ? limitInput.value : '500';
 
   localStorage.setItem('agenticpay_pp_connected', '1');
-  localStorage.setItem('steward_pp_connected', '1');
+  localStorage.setItem('agenticpay_pp_connected', '1');
   localStorage.setItem('agenticpay_pp_limit', limit);
-  localStorage.setItem('steward_pp_limit', limit);
+  localStorage.setItem('agenticpay_pp_limit', limit);
 
   // 1. Hide connect card smoothly
   if (overlay) {
@@ -5598,7 +5598,7 @@ function nextTourStep() {
 function skipTour() {
   document.getElementById('feature-tour-overlay').classList.add('hidden');
   localStorage.setItem('agenticpay_toured', '1');
-  localStorage.setItem('steward_toured', '1');
+  localStorage.setItem('agenticpay_toured', '1');
   switchTab('autopilot');
   toast('Welcome to AgenticPay! Use ⌘K to quickly find anything.', 'info', 5000);
 }
@@ -6065,7 +6065,7 @@ function toggleApiKeyInput() {
 function saveApiKey() {
   const key = document.getElementById('custom-api-key-input').value.trim();
   if (key) {
-    localStorage.setItem('agenticpay_gemini_api_key', key); localStorage.setItem('steward_gemini_api_key', key);
+    localStorage.setItem('agenticpay_gemini_api_key', key); localStorage.setItem('agenticpay_gemini_api_key', key);
     toast('Custom Gemini API Key saved', 'success');
     toggleApiKeyInput();
   }
@@ -6085,7 +6085,7 @@ async function executeDoorstepOrder() {
   btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Scouting & Buying...</span>`;
 
   try {
-    const apiKey = localStorage.getItem('agenticpay_gemini_api_key') || localStorage.getItem('steward_gemini_api_key') || undefined;
+    const apiKey = localStorage.getItem('agenticpay_gemini_api_key') || localStorage.getItem('agenticpay_gemini_api_key') || undefined;
     const res = await fetch('/api/autonomous/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -6400,7 +6400,7 @@ async function executeFromHomePrompt() {
   btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Scouting & Sourcing...</span>`;
 
   try {
-    const apiKey = localStorage.getItem('agenticpay_gemini_api_key') || localStorage.getItem('steward_gemini_api_key') || undefined;
+    const apiKey = localStorage.getItem('agenticpay_gemini_api_key') || localStorage.getItem('agenticpay_gemini_api_key') || undefined;
     const res = await fetch('/api/autonomous/order', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

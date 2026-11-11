@@ -1,4 +1,4 @@
-# Steward 2.0: Complete Architectural Catalog & Feature Specification
+# AgenticPay: Complete Architectural Catalog & Feature Specification
 ### *The Intent-Aware Autonomous Financial Operating System & Privacy Shield for Agentic Commerce*
 **PayPal AI Hackathon 2026 — Master Technical Reference**
 
@@ -6,12 +6,12 @@
 
 ## 1. Executive Summary & Core Engineering Philosophy
 
-Steward 2.0 is built on three non-negotiable financial security invariants:
+AgenticPay is built on three non-negotiable financial security invariants:
 
 1. **"Code Computes, AI Explains" (Zero LLM Arithmetic)**:
-   Large Language Models are probabilistic text generators, not arithmetic calculators. In Steward, all monetary calculations (Exponential Moving Averages, safety stock buffers, reorder thresholds, cash runways, volume discount percentages, and landed costs) are computed strictly in deterministic TypeScript. The AI's role is exclusively to parse natural intent and craft clear executive briefings.
+   Large Language Models are probabilistic text generators, not arithmetic calculators. In AgenticPay, all monetary calculations (Exponential Moving Averages, safety stock buffers, reorder thresholds, cash runways, volume discount percentages, and landed costs) are computed strictly in deterministic TypeScript. The AI's role is exclusively to parse natural intent and craft clear executive briefings.
 2. **Zero-Knowledge Financial Privacy**:
-   A business owner or consumer's raw ledger numbers (liquid bank balances, profit margins, operational burn rates, and minimum floor reserves) never leave the local runtime. When communicating with cloud LLMs or wholesale vendors, Steward generates cryptographic boolean zero-knowledge constraint proofs (`ZKFinancialProof`) verified by local SHA-256 commitments.
+   A business owner or consumer's raw ledger numbers (liquid bank balances, profit margins, operational burn rates, and minimum floor reserves) never leave the local runtime. When communicating with cloud LLMs or wholesale vendors, AgenticPay generates cryptographic boolean zero-knowledge constraint proofs (`ZKFinancialProof`) verified by local SHA-256 commitments.
 3. **The Asymmetric Limit Invariant ("AI Can Only Tighten, Never Loosen")**:
    $$\text{Effective Mandate Cap} = \min(\text{OwnerHardCeiling}, \text{AIAdjustedAllowance})$$
    If revenue slows down or inventory turnover decelerates, the autonomous agent dynamically reduces spending limits to safeguard cash. However, if an attacker, hallucinating model, or rogue prompt attempts to loosen or increase limits above the owner's ceiling, a hard code exception is triggered. Raising limits requires explicit cryptographic owner confirmation.
@@ -110,7 +110,7 @@ flowchart TD
 
 ---
 
-### Layer 4: Pre-Flight Payment Security Shield ("Steward Shield")
+### Layer 4: Pre-Flight Payment Security Shield ("AgenticPay Shield")
 * **Location**: [`src/privacy/pre-flight-shield.ts`](file:///c:/Users/Pinal%20Shah/Desktop/accounter-agent-/src/privacy/pre-flight-shield.ts)
 * **What it does**:
   * An inbound security firewall positioned directly between untrusted text (invoices, emails, web memos, agent reasoning traces) and the payment execution gate.
@@ -181,12 +181,12 @@ flowchart TD
 * **Location**: [`src/mcp/server.ts`](file:///c:/Users/Pinal%20Shah/Desktop/accounter-agent-/src/mcp/server.ts)
 * **What it does**:
   * Implements the Anthropic/Linux Foundation Model Context Protocol over standard STDIO JSON-RPC 2.0.
-  * Allows any external agent (Claude Desktop, Cursor, LangChain, CrewAI, AutoGPT) to use Steward as a financial proxy by calling tools:
-    * `steward_inspect_payment`
-    * `steward_evaluate_mandate`
-    * `steward_scout_wholesale`
-    * `steward_web_price_compare`
-    * `steward_simulate_undo_hold`
+  * Allows any external agent (Claude Desktop, Cursor, LangChain, CrewAI, AutoGPT) to use AgenticPay as a financial proxy by calling tools:
+    * `agenticpay_inspect_payment`
+    * `agenticpay_evaluate_mandate`
+    * `agenticpay_scout_wholesale`
+    * `agenticpay_web_price_compare`
+    * `agenticpay_simulate_undo_hold`
 
 ---
 

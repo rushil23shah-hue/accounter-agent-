@@ -164,7 +164,7 @@ export class BusinessHeartbeatEngine {
     const dossierPayload = JSON.stringify({ simulationId, cumulativeSpent, cumulativeSaved, totalThreats });
     const courtReadyDossierHash = crypto.createHash("sha256").update(dossierPayload).digest("hex");
 
-    const weeklyBrief = `5-Day Autonomous Stewardship Complete: Stewarded $${cumulativeSpent.toFixed(2)} in critical procurement with $${cumulativeSaved.toFixed(2)} in locked arbitrage savings. 1 critical prompt injection intercepted. Cash runway maintained at 86.8 days with Zero Cash-Floor Breach.`;
+    const weeklyBrief = `5-Day Autonomous AgenticPay Oversight Complete: Procured $${cumulativeSpent.toFixed(2)} in critical procurement with $${cumulativeSaved.toFixed(2)} in locked arbitrage savings. 1 critical prompt injection intercepted. Cash runway maintained at 86.8 days with Zero Cash-Floor Breach.`;
 
     const result = Simulation5DayResultSchema.parse({
       simulationId,

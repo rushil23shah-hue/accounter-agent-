@@ -58,9 +58,9 @@ try { await orders.captureAuthorization("BAD"); } catch (e) { apiErr = e; }
 check(apiErr instanceof PayPalApiError && (apiErr as PayPalApiError).status === 404, "1i. API failure surfaces as PayPalApiError with status");
 
 // 2. Payouts
-const payout = await payouts.sendPayout({ batchId: "steward-001", receiverEmail: "supplier-assam@example.com", amountUSD: 450, note: "Reorder" });
+const payout = await payouts.sendPayout({ batchId: "agenticpay-001", receiverEmail: "supplier-assam@example.com", amountUSD: 450, note: "Reorder" });
 const pc = calls.find((c) => c.path === "/v1/payments/payouts")!;
-check(payout.payoutBatchId === "PB-1" && pc.body.items[0].amount.value === "450.00" && pc.headers["PayPal-Request-Id"] === "steward-001", "2. Payout sent with unique batch id as idempotency key");
+check(payout.payoutBatchId === "PB-1" && pc.body.items[0].amount.value === "450.00" && pc.headers["PayPal-Request-Id"] === "agenticpay-001", "2. Payout sent with unique batch id as idempotency key");
 
 // 3. Undo window (fake timers)
 let fire: (() => void) | null = null;

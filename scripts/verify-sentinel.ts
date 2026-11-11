@@ -8,7 +8,7 @@ import {
 } from "../src/index.js";
 
 console.log("══════════════════════════════════════════════════════════════════════════════");
-console.log("   STEWARD 2.0: AUTONOMOUS PRICE SENTINEL & DROP SNIPER VERIFICATION          ");
+console.log("   AGENTICPAY: AUTONOMOUS PRICE SENTINEL & DROP SNIPER VERIFICATION          ");
 console.log("   24/7 Standing Intent • Asymmetric Ceiling Invariant • ZK-Vault Solvency    ");
 console.log("══════════════════════════════════════════════════════════════════════════════\n");
 

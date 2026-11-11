@@ -145,7 +145,7 @@ export interface AutopilotCycleInput {
 /**
  * Zero-Touch Restocking Autopilot Orchestrator.
  *
- * Connects the full Steward 2.0 pipeline in a single autonomous cycle:
+ * Connects the full AgenticPay pipeline in a single autonomous cycle:
  *
  * ```
  * [Consumption Forecast]
@@ -484,12 +484,12 @@ export class RestockingAutopilotOrchestrator {
         const order = await input.paypalOrders.createOrder(
           recommended.grossTotalUSD,
           recommended.paypalReceiverEmail,
-          `steward_${executionId}`,
+          `agenticpay_${executionId}`,
         );
         paypalOrderId = order.orderId;
 
         // After createOrder the buyer must approve the order at order.approveUrl.
-        // In the full Steward flow the buyer is the merchant's own PayPal account
+        // In the full AgenticPay flow the buyer is the merchant's own PayPal account
         // which approves via a configured webhook. For the sandbox/demo we
         // proceed to authorise immediately if the undoWindow is provided.
         if (input.undoWindow) {

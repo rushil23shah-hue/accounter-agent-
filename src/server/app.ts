@@ -1460,7 +1460,7 @@ const server = http.createServer(async (req, res) => {
     const csv = IntentAuditLedgerEngine.exportCSV();
     res.writeHead(200, {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="steward-intent-audit-ledger.csv"',
+      "Content-Disposition": 'attachment; filename="agenticpay-intent-audit-ledger.csv"',
     });
     res.end(csv);
     return;
@@ -2029,7 +2029,7 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`\n======================================================================`);
-  console.log(`🚀 STEWARD 2.0 LIVE INTERACTIVE DASHBOARD RUNNING!`);
+  console.log(`🚀 AGENTICPAY LIVE INTERACTIVE DASHBOARD RUNNING!`);
   console.log(`👉 Open in your browser: http://localhost:${PORT}`);
   console.log(`======================================================================\n`);
 });

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Professional PDF Generator for Steward 2.0 Documentation
+ * Professional PDF Generator for AgenticPay Documentation
  * Uses marked + Chromium headless (Edge / Chrome) to render high-resolution,
  * beautifully formatted PDFs with zero overlapping or text-clipping issues.
  */
@@ -222,14 +222,14 @@ function buildHtmlDocument(title, bodyHtml) {
 <body>
   <div class="header-banner">
     <div>
-      <div class="logo-badge">STEWARD <span>2.0</span></div>
+      <div class="logo-badge">AGENTICPAY <span>2.0</span></div>
       <div class="tagline">PayPal AI Hackathon 2026 — Engineering Reference</div>
     </div>
     <div class="conf-badge">Official Architecture Document</div>
   </div>
   ${bodyHtml}
   <div class="footer">
-    <span>Steward 2.0 — Intent-Aware Financial Autopilot & ZK-Privacy Shield</span>
+    <span>AgenticPay — Intent-Aware Financial Autopilot & ZK-Privacy Shield</span>
     <span>Confidential & Non-Repudiable Evidence</span>
   </div>
 </body>
@@ -278,13 +278,13 @@ function convertMarkdownToPdf(mdFilename, pdfFilename) {
 
 async function main() {
   console.log("\n" + "═".repeat(70));
-  console.log("   STEWARD 2.0 — PROFESSIONAL PDF DOCUMENTATION GENERATOR");
+  console.log("   AGENTICPAY — PROFESSIONAL PDF DOCUMENTATION GENERATOR");
   console.log("═".repeat(70) + "\n");
 
   const browser = getChromiumExecutable();
   console.log(`Using Chromium Engine: ${browser}\n`);
 
-  convertMarkdownToPdf("steward-comprehensive-feature-catalog.md", "Steward-2.0-Feature-Catalog.pdf");
+  convertMarkdownToPdf("agenticpay-comprehensive-feature-catalog.md", "AgenticPay-Feature-Catalog.pdf");
   convertMarkdownToPdf("dynamic-financial-intent-rag-blueprint.md", "Dynamic-Financial-Intent-RAG-Blueprint.pdf");
 
   console.log("\n🎉 All documentation PDFs generated with perfect typography & zero overlap!\n");

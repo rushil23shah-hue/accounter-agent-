@@ -11,7 +11,7 @@ import {
 
 async function runSwarmVerification() {
   console.log("══════════════════════════════════════════════════════════════════════════════");
-  console.log("   STEWARD 2.0 — MULTI-AGENT SWARM & 5-DAY BUSINESS SIMULATOR AUDIT");
+  console.log("   AGENTICPAY — MULTI-AGENT SWARM & 5-DAY BUSINESS SIMULATOR AUDIT");
   console.log("   DAG Task Planning • Agent Negotiations • Vector Memory • PayPal Holds");
   console.log("══════════════════════════════════════════════════════════════════════════════\n");
 
@@ -71,7 +71,7 @@ async function runSwarmVerification() {
 
   const mockProfile: OwnerIntentProfile = {
     profileId: "11111111-1111-4111-a111-111111111111",
-    ownerName: "Steward Artisan Tea & Grocery Hub",
+    ownerName: "AgenticPay Artisan Tea & Grocery Hub",
     mode: "BUSINESS_CFO",
     hardCeilingUSD: 800.0,
     reservedCashFloorUSD: 2500.0,

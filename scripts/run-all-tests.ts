@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Steward 2.0 — Master Verification Suite & Compliance Certificate Runner
+ * AgenticPay — Master Verification Suite & Compliance Certificate Runner
  *
  * Sequentially executes all verification layers:
  *   1. Milestone 1: Domain Contracts & Zod Schemas
@@ -129,7 +129,7 @@ async function verifyMcpServer(): Promise<{ passed: boolean; durationMs: number;
 
 async function main() {
   console.log("\n" + "═".repeat(78));
-  console.log("   STEWARD 2.0 — MASTER END-TO-END VERIFICATION SUITE");
+  console.log("   AGENTICPAY — MASTER END-TO-END VERIFICATION SUITE");
   console.log("   PayPal AI Hackathon 2026 — Comprehensive Championship Audit");
   console.log("═".repeat(78) + "\n");
 
@@ -169,11 +169,11 @@ async function main() {
   const certTimestamp = new Date().toISOString();
   const certHash = crypto
     .createHash("sha256")
-    .update(`STEWARD_2.0_COMPLIANCE_${certId}_${certTimestamp}`)
+    .update(`AGENTICPAY_2.0_COMPLIANCE_${certId}_${certTimestamp}`)
     .digest("hex");
 
   console.log("\n" + "╔" + "═".repeat(76) + "╗");
-  console.log("║           STEWARD 2.0 — OFFICIAL COMPLIANCE CERTIFICATE                    ║");
+  console.log("║           AGENTICPAY — OFFICIAL COMPLIANCE CERTIFICATE                    ║");
   console.log("╠" + "═".repeat(76) + "╣");
   console.log(`║ Certificate ID : ${certId.padEnd(58)}║`);
   console.log(`║ Timestamp      : ${certTimestamp.padEnd(58)}║`);

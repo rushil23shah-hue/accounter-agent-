@@ -1,5 +1,5 @@
 /**
- * STEWARD 2.0 — Phase 4 Gold-Standard Verification Suite
+ * AGENTICPAY — Phase 4 Gold-Standard Verification Suite
  *
  * Tests every module with carefully chosen edge cases including:
  *   - ZK-Vault: solvency, runway, mandate, bad inputs
@@ -182,7 +182,7 @@ const supplierQuotes: WholesaleSupplierQuote[] = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 console.log("\n╔══════════════════════════════════════════════════════════════╗");
-console.log("║  STEWARD 2.0 — PHASE 4 GOLD-STANDARD VERIFICATION SUITE     ║");
+console.log("║  AGENTICPAY — PHASE 4 GOLD-STANDARD VERIFICATION SUITE     ║");
 console.log("╚══════════════════════════════════════════════════════════════╝\n");
 
 console.log("━━━ 1. ZK-Vault ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");

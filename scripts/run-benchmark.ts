@@ -16,7 +16,7 @@ interface BenchmarkResult {
 }
 
 console.log("\n================================================================================");
-console.log(`STEWARD — ${BENCHMARK_CASES.length}-CASE ADVERSARIAL STRESS-TEST BENCHMARK`);
+console.log(`AGENTICPAY — ${BENCHMARK_CASES.length}-CASE ADVERSARIAL STRESS-TEST BENCHMARK`);
 console.log("    Evaluating Pre-Flight Payment Security Shield against all known attack vectors");
 console.log("================================================================================\n");
 

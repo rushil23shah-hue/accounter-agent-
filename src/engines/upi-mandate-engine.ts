@@ -33,8 +33,8 @@ export class UPIMandateEngine {
     const monthlyCapUSD = Number((monthlyCapINR / DEFAULT_USD_TO_INR).toFixed(2));
 
     const qrPayload = UPIMandateEngine.buildUPIIntentUri({
-      agentVpa: "steward.autopilot@paypal",
-      agentName: "Steward Autonomous Agent",
+      agentVpa: "agenticpay.autopilot@paypal",
+      agentName: "AgenticPay Autonomous Agent",
       umn,
       maxAmountINR: maxINR,
       validFrom: now.toISOString(),
@@ -44,9 +44,9 @@ export class UPIMandateEngine {
     return UPIMandateSchema.parse({
       umn,
       payerVpa: "owner@okhdfcbank",
-      payerName: "Steward Merchant Owner",
-      agentVpa: "steward.autopilot@paypal",
-      agentName: "Steward Autonomous Agent",
+      payerName: "AgenticPay Merchant Owner",
+      agentVpa: "agenticpay.autopilot@paypal",
+      agentName: "AgenticPay Autonomous Agent",
       status: "ACTIVE",
       maxAmountINR: maxINR,
       maxAmountUSD: maxUSD,
@@ -89,8 +89,8 @@ export class UPIMandateEngine {
     const monthlyCapUSD = Number((monthlyCapINR / DEFAULT_USD_TO_INR).toFixed(2));
 
     const qrPayload = this.buildUPIIntentUri({
-      agentVpa: "steward.autopilot@paypal",
-      agentName: "Steward Autonomous Agent",
+      agentVpa: "agenticpay.autopilot@paypal",
+      agentName: "AgenticPay Autonomous Agent",
       umn,
       maxAmountINR: input.maxAmountINR,
       validFrom: now.toISOString(),
@@ -101,8 +101,8 @@ export class UPIMandateEngine {
       umn,
       payerVpa: input.payerVpa,
       payerName: input.payerName,
-      agentVpa: "steward.autopilot@paypal",
-      agentName: "Steward Autonomous Agent",
+      agentVpa: "agenticpay.autopilot@paypal",
+      agentName: "AgenticPay Autonomous Agent",
       status: "ACTIVE",
       maxAmountINR: input.maxAmountINR,
       maxAmountUSD: maxUSD,

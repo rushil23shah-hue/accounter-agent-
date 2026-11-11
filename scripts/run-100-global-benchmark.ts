@@ -17,7 +17,7 @@ if (!fs.existsSync(outputDir)) {
 }
 
 console.log("══════════════════════════════════════════════════════════════════════════════");
-console.log("   STEWARD 2.0: 100 GLOBAL PAYPAL & COMMERCE INTENT-GROUNDING BENCHMARK       ");
+console.log("   AGENTICPAY: 100 GLOBAL PAYPAL & COMMERCE INTENT-GROUNDING BENCHMARK       ");
 console.log("   Worldwide Topics • Zero Hardcoding • Exact-Match Priority • Zero LLM Math  ");
 console.log("══════════════════════════════════════════════════════════════════════════════\n");
 
@@ -1464,7 +1464,7 @@ for (const tc of testCases) {
 // ─────────────────────────────────────────────────────────────────────────────
 const outputPath = path.resolve(outputDir, "100-global-intents-benchmark-output.json");
 const outputPayload = {
-  benchmarkTitle: "Steward 2.0: 100 Global Intent-RAG Grounding Test Suite",
+  benchmarkTitle: "AgenticPay: 100 Global Intent-RAG Grounding Test Suite",
   timestamp: new Date().toISOString(),
   totalTestCases: testCases.length,
   passedTestCases: passedCount,
