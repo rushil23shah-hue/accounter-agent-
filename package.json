@@ -14,6 +14,7 @@
     "verify:rag": "tsx scripts/run-100-global-benchmark.ts",
     "live:m3": "tsx --env-file=.env scripts/live-sandbox.ts",
     "pdf": "node scripts/generate-pdf.js",
+    "start": "tsx src/server/app.ts",
     "ui": "tsx src/server/app.ts",
     "dev": "tsx src/server/app.ts",
     "mcp": "tsx src/mcp/server.ts",
