@@ -34,7 +34,7 @@
     "autopilot"
   ],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "type": "module",
   "bugs": {
     "url": "https://github.com/rushil23shah-hue/accounter-agent-/issues"

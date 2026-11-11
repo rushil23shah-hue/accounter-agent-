@@ -17,6 +17,39 @@ AgenticPay coordinates multi-agent intelligence, mathematical solvency verificat
 
 ---
 
+## Repository Structure
+
+```
+accounter-agent-/
+├── docs/                                  # Specifications and architectural blueprints
+├── images/                                # Brand emblems and visual assets
+├── scripts/                               # Verification suites and benchmark runners
+│   ├── run-all-tests.ts                   # Master 9-phase compliance runner
+│   ├── run-benchmark.ts                   # 65-case red-team security benchmark
+│   ├── run-100-global-benchmark.ts        # 100-topic intent-RAG benchmark
+│   ├── verify-swarm-5day.ts               # Multi-agent swarm verification
+│   └── live-sandbox.ts                    # Live PayPal Sandbox verification
+├── src/
+│   ├── contracts/                         # Zod domain schemas (delivery, swarm, mandates)
+│   ├── engines/                           # Core business logic & AI orchestration
+│   │   ├── gemini-client.ts               # Gemini 3.8 Flash pool & failover manager
+│   │   ├── autonomous-purchase-engine.ts  # Zero-touch doorstep commerce & order routing
+│   │   ├── swarm-orchestrator.ts          # 5-day multi-agent DAG engine
+│   │   ├── business-heartbeat.ts          # Operations heartbeat & velocity tracker
+│   │   ├── vector-memory.ts               # Long-term semantic supplier memory
+│   │   ├── taint-engine.ts                # Inbound security shield & injection detector
+│   │   └── zk-vault.ts                    # Local zero-knowledge solvency verifier
+│   ├── mcp/                               # Model Context Protocol STDIO server
+│   ├── paypal/                            # Native PayPal Orders v2 & Payouts client
+│   └── server/
+│       ├── app.ts                         # Express application & API endpoints
+│       └── ui.html                        # AgenticPay interactive luxury UI
+├── package.json
+└── tsconfig.json
+```
+
+---
+
 ## Core Capabilities & Architecture
 
 ```
@@ -106,11 +139,11 @@ Empowering AI agents to transact online introduces prompt injection and fraudule
 
 ### 7. MCP Server (Model Context Protocol) Integration
 AgenticPay exposes its core financial verification and payment tools via an official **MCP STDIO server** (JSON-RPC 2.0), allowing external agents (such as Claude Desktop, Cursor, or custom multi-agent frameworks) to safely interact with AgenticPay's tools:
-- `inspect_payment`
-- `evaluate_spending_mandate`
-- `find_wholesale_suppliers`
-- `compare_consumer_prices`
-- `simulate_payment_hold`
+- `agenticpay_inspect_payment`
+- `agenticpay_evaluate_mandate`
+- `agenticpay_scout_wholesale`
+- `agenticpay_web_price_compare`
+- `agenticpay_simulate_undo_hold`
 
 ---
 
@@ -220,69 +253,6 @@ To configure Claude Desktop or Cursor, add this entry to your client configurati
 
 ---
 
-## Interactive Dashboard Walkthrough
-
-| Tab / View | Feature | What to Explore |
-|---|---|---|
-| **Agent Home** | Conversational Omnibar & Treasury Advice | Enter natural shopping/restock prompts, use dynamic suggestion pills, and view real-time dark-store routing. |
-| **Doorstep Commerce** | Hyperlocal Zero-Touch Delivery | Watch live rider dispatch, minute-by-minute ETA countdowns, and Gemini sourcing rationales. |
-| **5-Day Swarm (Jarvis)** | Multi-Agent Operational Simulation | Inspect the DAG orchestrator running 5 days of demand forecasting, supplier negotiation, and heartbeat events. |
-| **Financial Health** | Treasury & Invariant Cockpit | Monitor liquid cash ($14,245.26), runway (73.4 days), reserved cash floors, and earned autonomy tier. |
-| **Private ZK-Vault** | Zero-Knowledge Constraint Verifier | Verify local mathematical solvency proofs without exposing private merchant data to the cloud. |
-| **Pre-Flight Shield** | Red-Team Playground | Test malicious supplier memos, instruction overrides, and watch the shield quarantine attacks in real time. |
-| **Dynamic Intent Rules** | Grounded Intent Processing | Review how unstructured human text maps to deterministic purchasing specifications. |
-| **UPI AutoPay Mandates** | Adaptive Mandate Engine | Inspect asymmetric spending limits that expand during high demand and contract during lulls. |
-| **Price Sentinels** | Autonomous Price Sniping | Set threshold alerts and automated buy triggers for fluctuating wholesale commodities. |
-| **Forensic Dispute Dossier** | Audit & Resolution Pack | Generate printable, cryptographic SHA-256 evidence dossiers tailored for the PayPal Resolution Center. |
-| **Emergency Stop** | Global Kill Switch | Instantly freeze all autonomous spending and agent operations with a single click. |
-
----
-
-## 3-Minute Demo Walkthrough
-
-| Time | Section | Key Demonstration |
-|---|---|---|
-| `0:00 – 0:45` | **Agent Home & The Merchant's Dilemma** | Show the emotional friction of manual restocking; enter a natural-language intent in the omnibar; deploy autonomous sourcing. |
-| `0:45 – 1:30` | **Financial Health & ZK-Vault** | Showcase the 4 stat cards; explain why cloud LLMs shouldn't see balance sheets; demonstrate local ZK solvency proofs and dynamic mandates. |
-| `1:30 – 2:15` | **Pre-Flight Security Shield** | Load a sample prompt injection in the Red-Team Playground; demonstrate real-time quarantine and payee whitelist enforcement. |
-| `2:15 – 2:45` | **Autonomous PayPal Commerce & Undo Window** | Trigger restock; demonstrate the glowing 60-second amber undo banner with 1-Tap Void; open the Forensic Dispute Dossier. |
-| `2:45 – 3:00` | **Emergency Kill Switch & Closing Vision** | Highlight the emergency stop button; recap the zero-data-leak, fraud-proof vision of AgenticPay. |
-
----
-
-## Repository Structure
-
-```
-accounter-agent-/
-├── docs/                                  # Specifications and design blueprints
-├── images/                                # Brand emblems and visual assets
-├── scripts/                               # Verification suites and benchmark runners
-│   ├── run-all-tests.ts                   # Master 9-phase compliance runner
-│   ├── run-benchmark.ts                   # 65-case red-team security benchmark
-│   ├── run-100-global-benchmark.ts        # 100-topic intent-RAG benchmark
-│   ├── verify-swarm-5day.ts               # Multi-agent swarm verification
-│   └── live-sandbox.ts                    # Live PayPal Sandbox verification
-├── src/
-│   ├── contracts/                         # Zod domain schemas (delivery, swarm, mandates)
-│   ├── engines/                           # Core business logic & AI orchestration
-│   │   ├── gemini-client.ts               # Gemini 3.8 Flash pool & failover manager
-│   │   ├── autonomous-purchase-engine.ts  # Zero-touch doorstep commerce & order routing
-│   │   ├── swarm-orchestrator.ts          # 5-day multi-agent DAG engine
-│   │   ├── business-heartbeat.ts          # Operations heartbeat & velocity tracker
-│   │   ├── vector-memory.ts               # Long-term semantic supplier memory
-│   │   ├── taint-engine.ts                # Inbound security shield & injection detector
-│   │   └── zk-vault.ts                    # Local zero-knowledge solvency verifier
-│   ├── mcp/                               # Model Context Protocol STDIO server
-│   ├── paypal/                            # Native PayPal Orders v2 & Payouts client
-│   └── server/
-│       ├── app.ts                         # Express application & API endpoints
-│       └── ui.html                        # AgenticPay interactive luxury UI
-├── package.json
-└── tsconfig.json
-```
-
----
-
 ## License
 
-This project is licensed under the [ISC License](LICENSE).
+This project is licensed under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for details.
